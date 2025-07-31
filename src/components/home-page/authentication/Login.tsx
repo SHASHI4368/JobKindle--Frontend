@@ -4,20 +4,36 @@ import InputWithIcon from "@/components/common/input-fields/input-with-icon";
 import PasswordWithIcon from "@/components/common/input-fields/password-with-icon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { setLogin } from "@/redux/features/authSlice";
 import { Lock, Mail } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
-const Content = () => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
     console.log(e.target.value); // Log the email value to the console
   };
+
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
     console.log(e.target.value); // Log the password value to the console
   };
+
+  const changeView = () => {
+    dispatch(setLogin(false));
+  };
+
+  useEffect(() => {
+    dispatch(setLogin(false));
+
+  },[]);
+
+
   return (
     <div className="w-full font-raleway h-full flex flex-col">
       <div className="flex cursor-pointer text-[22px] font-raleway flex-row items-center justify-center space-x-3 w-full">
@@ -28,10 +44,10 @@ const Content = () => {
           JobKindle
         </div>
       </div>
-      <h1 className="text-[28px] font-[700] text-center mt-[20px] ">
+      <h1 className="md:text-[21px] text-[17px] font-[700] text-center mt-[20px] ">
         Welcome Back
       </h1>
-      <p className="text-center text-[16px] text-gray-600 mb-[40px] ">
+      <p className="text-center md:text-[16px] text-[14px] text-gray-600 mb-[40px] ">
         Sign in to your account to continue
       </p>
       <div className="flex flex-col w-full gap-5">
@@ -65,25 +81,36 @@ const Content = () => {
             Forgot password?
           </p>
         </div>
-        <Button className="text-white h-[45px]" size={"home"} variant={"default"}>
+        <Button
+          className="text-white h-[45px]"
+          size={"home"}
+          variant={"default"}
+          disabled={!email || !password}
+        >
           Sign In
         </Button>
         <div className="w-full flex flex-row items-center gap-3">
           <div className="w-full h-[0.5px] bg-gray-300"></div>
-          <p className="text-[14px] w-full text-center font-[400] text-gray-600">or continue with</p>
+          <p className="text-[14px] w-full text-center font-[400] text-gray-600">
+            or continue with
+          </p>
           <div className="w-full h-[0.5px] bg-gray-300"></div>
         </div>
-        <Button className="text-white font-[500] h-[45px] bg-white " size={"home"} variant={"outline"}>
-          <img
-            src="/images/google.png"
-            className="w-5 h-5 mr-2 inline-block"
-          />
+        <Button
+          className="text-white font-[500] h-[45px] bg-white "
+          size={"home"}
+          variant={"outline"}
+        >
+          <img src="/images/google.png" className="w-5 h-5 mr-2 inline-block" />
           <span className="text-gray-800">Sign In with Google</span>
         </Button>
         <div className="">
           <p className="text-[14px] text-gray-600 text-center">
             Don't have an account?{" "}
-            <span className="text-primary hover:scale-[1.02] transition-all duration-300 cursor-pointer">
+            <span
+              onClick={changeView}
+              className="text-primary hover:scale-[1.02] transition-all duration-300 cursor-pointer"
+            >
               Sign Up
             </span>
           </p>
@@ -93,4 +120,4 @@ const Content = () => {
   );
 };
 
-export default Content;
+export default Login;
