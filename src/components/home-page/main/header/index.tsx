@@ -1,6 +1,7 @@
-import { Button } from '@/components/ui/button';
-import React from 'react'
-import SideBar from '../sidebar';
+import { Button } from "@/components/ui/button";
+import React from "react";
+import SideBar from "../sidebar";
+import Login from "../../login";
 
 const Header = () => {
   return (
@@ -14,9 +15,7 @@ const Header = () => {
         </div>
       </div>
       <div className="md:flex text-[50px] space-x-2 text-gray-500 hidden justify-end items-center w-full">
-        <Button size={"home"} variant={"ghost"}>
-          Login
-        </Button>
+        <Login />
         <Button className="text-white" size={"home"} variant={"default"}>
           Sign Up
         </Button>
@@ -24,6 +23,6 @@ const Header = () => {
       <SideBar />
     </div>
   );
-}
+};
 
-export default Header
+export default Header;
