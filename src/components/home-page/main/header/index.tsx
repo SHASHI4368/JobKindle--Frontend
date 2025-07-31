@@ -1,9 +1,18 @@
-import { Button } from "@/components/ui/button";
-import React from "react";
-import SideBar from "../sidebar";
-import Login from "../../login";
+"use client";
+
+import { Button } from '@/components/ui/button';
+import React from 'react'
+import SideBar from '../sidebar';
+import { useDispatch } from 'react-redux';
+import { setLoginDialogOpen } from '@/redux/features/authSlice';
+import Authentication from '../../authentication';
+
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const openAuthenticationDialog = () => {
+    dispatch(setLoginDialogOpen(true));
+  }
   return (
     <div className="bg-white font-raleway sticky top-0 z-[100]  shadow-2xs text-2xl h-[10vh] xl:px-[10vw] px-[5vw] flex flex-row justify-between items-center w-full">
       <div className="flex cursor-pointer text-[22px] font-raleway flex-row items-center justify-start space-x-3 w-full">
@@ -15,14 +24,17 @@ const Header = () => {
         </div>
       </div>
       <div className="md:flex text-[50px] space-x-2 text-gray-500 hidden justify-end items-center w-full">
-        <Login />
-        <Button className="text-white" size={"home"} variant={"default"}>
+        <Button onClick={openAuthenticationDialog} size={"home"} variant={"ghost"}>
+          Login
+        </Button>
+        <Button onClick={openAuthenticationDialog} className="text-white" size={"home"} variant={"default"}>
           Sign Up
         </Button>
+        <Authentication/>
       </div>
       <SideBar />
     </div>
   );
-};
+}
 
-export default Header;
+export default Header
