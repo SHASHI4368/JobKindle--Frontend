@@ -1,19 +1,88 @@
-import React from 'react'
+"use client"
+
+import React, { useState } from 'react'
 import SidePanelItem from './SidePanelItem'
+import { User, Shield, Bell, Lock, ChevronRight, Briefcase, FileText, Building2 } from "lucide-react";
 
 const SidePanel = () => {
+  const [activeItem, setActiveItem] = useState("Profile");
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const handleItemClick = (itemTitle: string) => {
+    if (itemTitle === activeItem) return;
+
+    setIsAnimating(true);
+    setTimeout(() => {
+      setActiveItem(itemTitle);
+      console.log(`Selected: ${itemTitle}`);
+
+      // Simulate content change animation
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, 200);
+    }, 100);
+  };
+
+  const menuItems = [
+    {
+      title: "Profile",
+      icon: <User size={18} />,
+      description: "Personal information",
+    },
+    {
+      title: "Professional",
+      icon: <Briefcase size={18} />,
+      description: "Work and education details",
+    },
+    {
+      title: "Documents",
+      icon: <FileText size={18} />,
+      description: "Manage your documents",
+    },
+    {
+      title: "Organization",
+      icon: <Building2 size={18} />,
+      description: "Manage your organizations",
+    },
+  ];
+
   return (
-    <div className='w-[30%] rounded-[10px] shadow-sm flex flex-col p-4 bg-gray-100'>
-      <h2 className='text-lg font-semibold mb-4'>Account Settings</h2>
-      <div className='flex flex-col'>
-        {/* Add SidePanelItem components here */}
-        <SidePanelItem title="Profile" />
-        <SidePanelItem title="Security" />
-        <SidePanelItem title="Notifications" />
-        <SidePanelItem title="Privacy" />
+    <div className="relative w-[25%]">
+      {/* Loading overlay for transitions */}
+      {/* {isAnimating && (
+        <div className="absolute inset-0 bg-white/70 backdrop-blur-sm rounded-[10px] z-10 flex items-center justify-center">
+          <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+        </div>
+      )} */}
+
+      {/* Main panel */}
+      <div
+        className={`
+        w-full rounded-[10px] shadow-lg flex flex-col p-6 bg-gradient-to-br from-gray-50 to-white border border-gray-200
+        transition-all duration-300 ${
+          isAnimating ? "scale-98 opacity-90" : "scale-100 opacity-100"
+        }
+      `}
+      >
+    
+        {/* Menu items */}
+        <div className="flex flex-col space-y-1">
+          {menuItems.map((item) => (
+            <SidePanelItem
+              key={item.title}
+              title={item.title}
+              icon={item.icon}
+              description={item.description}
+              isActive={activeItem === item.title}
+              onClick={() => handleItemClick(item.title)}
+            />
+          ))}
+        </div>
+
+        
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default SidePanel

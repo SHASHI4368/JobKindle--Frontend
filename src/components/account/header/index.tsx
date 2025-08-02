@@ -5,7 +5,7 @@ import { EditIcon } from 'lucide-react';
 
 const AccountHeader = () => {
   return (
-    <div className="w-full px-[20px] flex flex-row items-center justify-between mt-[20px] bg-white h-[20vh] shadow-sm rounded-[10px] ">
+    <div className="w-full px-[20px] flex flex-row items-center justify-between mt-[20px] border border-gray-200 bg-white h-[20vh] shadow-lg rounded-[10px] ">
       <Picture />
       <Button variant={"outline"} className="cursor-pointer">
         {/* You can add an icon here if needed */}
