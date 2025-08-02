@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react'
 import SidePanelItem from './SidePanelItem'
-import { User, Shield, Bell, Lock, ChevronRight, Briefcase, FileText, Building2 } from "lucide-react";
+import { User,  Briefcase, FileText, Building2 } from "lucide-react";
+import { parseAsString, useQueryState } from 'nuqs';
 
 const SidePanel = () => {
-  const [activeItem, setActiveItem] = useState("Profile");
+  const [activeItem, setActiveItem] = useQueryState("activeItem", parseAsString.withDefault("Profile"));
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleItemClick = (itemTitle: string) => {

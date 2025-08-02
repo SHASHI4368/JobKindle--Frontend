@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/redux/provider";
 import Header from "@/components/header";
+import { NuqsAdapter } from "nuqs/adapters/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,10 +31,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          <div className="w-full min-h-full h-full flex flex-col">
-            <Header/>
-            {children}
-          </div>
+          <NuqsAdapter>
+            <div className="w-full min-h-full h-full flex flex-col">
+              <Header />
+              {children}
+            </div>
+          </NuqsAdapter>
         </Providers>
       </body>
     </html>

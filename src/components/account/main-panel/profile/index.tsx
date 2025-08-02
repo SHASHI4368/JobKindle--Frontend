@@ -10,16 +10,14 @@ import React, { useState } from 'react'
 
 const Profile = () => {
  const [location, setLocation] = useState("");
- const [school, setSchool] = useState("");
+ 
  
 
  const handleLocation = (e: React.ChangeEvent<HTMLInputElement>) => {
    setLocation(e.target.value);
  }
 
- const handleSchoolChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-   setSchool(e.target.value);
- }
+ 
 
   return (
     <div className="w-full flex flex-col gap-4">
@@ -94,20 +92,7 @@ const Profile = () => {
           }}
         />
       </div>
-      <div className="flex md:flex-row flex-col mt-[20px] gap-4 items-center ">
-        <SchoolInput
-          icon={<MapPin size={18} className="text-gray-400" />}
-          label="Location"
-          placeholder="Enter your location"
-          value={school}
-          onChange={handleSchoolChange}
-          isSchoolSearch={true}
-          onSchoolSelect={(selectedSchool) => {
-            console.log("Selected:", selectedSchool);
-            // selectedSchool contains: display_name, lat, lon, place_id
-          }}
-        />
-      </div>
+     
     </div>
   );
 }
