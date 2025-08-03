@@ -9,6 +9,7 @@ import {
   Video,
   File,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type ImageKitUploaderProps = {
   publicKey?: string;
@@ -26,7 +27,7 @@ type ImageKitUploaderProps = {
 const ImageKitUploader = ({
   publicKey = "public_Nb3Uiddx43llkFGng2BHCcZHgWo=",
   urlEndpoint = "https://ik.imagekit.io/web92xyy0/",
-  authenticationEndpoint = "http://localhost:3001/api/imagekit/auth",
+  authenticationEndpoint = "http://localhost:3000/api/auth",
   onUploadSuccess,
   onUploadError,
   maxFileSize = 10 * 1024 * 1024, // 10MB default
@@ -192,10 +193,10 @@ const ImageKitUploader = ({
   };
 
   return (
-    <div className="w-full mt-[20px]  bg-white ">
+    <div className="w-full mt-[20px]">
       {uploadStatus === "idle" && !selectedFile && (
         <div
-          className={`border-2 border-dashed min-h-[200px] rounded-lg p-8 text-center transition-colors cursor-pointer ${
+          className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer ${
             isDragOver
               ? "border-blue-400 bg-blue-50"
               : "border-gray-300 hover:border-gray-400"
@@ -267,12 +268,13 @@ const ImageKitUploader = ({
               <p className="text-xs text-green-600">Upload successful!</p>
             </div>
           </div>
-          <button
+          <Button
+            variant={'outline'}
             onClick={resetUpload}
             className="text-sm text-green-600 hover:text-green-700 transition-colors font-medium"
           >
             Upload Another
-          </button>
+          </Button>
         </div>
       )}
 

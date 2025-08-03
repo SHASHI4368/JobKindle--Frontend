@@ -7,6 +7,7 @@ import Profile from './main-panel/profile';
 import { parseAsString, useQueryState } from 'nuqs';
 import Professional from './main-panel/professional';
 import Documents from './main-panel/documents';
+import Organizations from './main-panel/organizations';
 
 const Account = () => {
   const [activeItem, setActiveItem] = useQueryState(
@@ -22,6 +23,7 @@ const Account = () => {
          {activeItem === "Profile" && <Profile />}
          {activeItem === "Professional" && <Professional />}
          {activeItem === "Documents" && <Documents />}
+         {activeItem === "Organization" && <Organizations />}
         </div>
       </div>
     </div>
