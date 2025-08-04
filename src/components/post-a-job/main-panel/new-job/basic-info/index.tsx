@@ -92,7 +92,7 @@ const BasicInfo = () => {
 
  
   return (
-    <div className="w-full px-[20px] flex flex-col gap-4 justify-between mt-[20px] border border-gray-200 bg-white shadow-lg rounded-[10px] p-4 ">
+    <div className="w-full px-[20px] flex flex-col gap-4 justify-between mt-[20px] border border-gray-200 bg-white  rounded-[10px] p-4 ">
       <div className="flex flex-row items-center w-fit justify-start gap-2">
         <SquareLibrary size={25} className="text-blue-600" />
         <h1 className="font-raleway font-[600] text-[20px] ">

@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Button } from '@/components/ui/button';
-import { Briefcase, Building2, EditIcon, Eye, Plus } from 'lucide-react';
+import { Briefcase,  Eye,  } from 'lucide-react';
 
 const PostAJobHeader = () => {
   
@@ -12,7 +12,7 @@ const PostAJobHeader = () => {
         <Briefcase size={40} className="text-gray-600" />
         <div className="flex flex-col justify-items-center-safe">
           <h1 className="font-raleway text-[20px] font-[600] ">
-            Post a New Job
+            Post Jobs
           </h1>
           <p className="font-raleway text-[14px] font-[400] text-gray-500">
             Find the perfect candidate for your team

@@ -28,7 +28,7 @@ const JobCard = ({ job }: { job: advertisement }) => {
           <div className="flex flex-row gap-1 items-center">
             <Clock4 className="size-4 text-gray-500" />
             <p>{`${
-              new Date().getDate() - new Date(job.calledDate).getDate()
+              (new Date().getDate() - new Date(job.calledDate).getDate())
             } day(s) ago`}</p>
           </div>
         </div>
