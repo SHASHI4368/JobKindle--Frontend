@@ -1,12 +1,21 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react'
-import SidePanelItem from './SidePanelItem'
-import { User,  Briefcase, FileText, Building2 } from "lucide-react";
-import { parseAsString, useQueryState } from 'nuqs';
+import React, { useState } from "react";
+import SidePanelItem from "./SidePanelItem";
 
-const SidePanel = () => {
-  const [activeItem, setActiveItem] = useQueryState("activeItem", parseAsString.withDefault("Profile"));
+import { parseAsString, useQueryState } from "nuqs";
+
+type SidePanelProps = {
+  activeItem?: any;
+  setActiveItem?: any;
+  menuItems: {
+    title: string;
+    icon: React.ReactNode;
+    description: string;
+  }[];
+}
+
+const SidePanel = ({ activeItem, setActiveItem, menuItems }: SidePanelProps) => {
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleItemClick = (itemTitle: string) => {
@@ -24,28 +33,7 @@ const SidePanel = () => {
     }, 100);
   };
 
-  const menuItems = [
-    {
-      title: "Profile",
-      icon: <User size={18} />,
-      description: "Personal information",
-    },
-    {
-      title: "Professional",
-      icon: <Briefcase size={18} />,
-      description: "Work and education details",
-    },
-    {
-      title: "Documents",
-      icon: <FileText size={18} />,
-      description: "Manage your documents",
-    },
-    {
-      title: "Organization",
-      icon: <Building2 size={18} />,
-      description: "Manage your organizations",
-    },
-  ];
+  
 
   return (
     <div className="relative w-[25%]">
@@ -65,7 +53,6 @@ const SidePanel = () => {
         }
       `}
       >
-    
         {/* Menu items */}
         <div className="flex flex-col space-y-1">
           {menuItems.map((item) => (
@@ -79,11 +66,9 @@ const SidePanel = () => {
             />
           ))}
         </div>
-
-        
       </div>
     </div>
   );
 };
 
-export default SidePanel
+export default SidePanel;
