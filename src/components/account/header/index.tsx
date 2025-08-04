@@ -12,6 +12,7 @@ const AccountHeader = () => {
         <EditIcon className="ml-2" />
         <span className="text-[14px] font-semibold">Edit Profile</span>
       </Button>
+      
     </div>
   );
 }

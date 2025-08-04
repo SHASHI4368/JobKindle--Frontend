@@ -26,6 +26,7 @@ const Account = () => {
          {activeItem === "Organization" && <Organizations />}
         </div>
       </div>
+      
     </div>
   ); 
 }

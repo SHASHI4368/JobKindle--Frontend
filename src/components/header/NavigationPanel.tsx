@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Home, Briefcase, User } from "lucide-react";
+import { Home, Briefcase, User, Building2, ScanSearch } from "lucide-react";
 import NavigationItem from "./NavigationItem";
 import { useRouter } from "next/navigation";
 
@@ -58,27 +58,52 @@ const NavigationPanel = () => {
           label="Home"
           icon={<Home size={18} />}
           isActive={activeItem === "Home"}
-          onClick={() => {handleNavClick("Home"); router.push("/")}}
+          onClick={() => {
+            handleNavClick("Home");
+            router.push("/");
+          }}
         />
 
         <div className="h-[20px] w-[0.5px] bg-gray-300 mx-2"></div>
 
         <NavigationItem
-          label="Jobs"
+          label="Post a Job"
           icon={<Briefcase size={18} />}
-          isActive={activeItem === "Jobs"}
-          onClick={() => handleNavClick("Jobs")}
+          isActive={activeItem === "Post a Job"}
+          onClick={() => {
+            handleNavClick("Post a Job");
+            router.push("/post-a-job");
+          }}
+        />
+        <div className="h-[20px] w-[0.5px] bg-gray-300 mx-2"></div>
+
+        <NavigationItem
+          label="Find Jobs"
+          icon={<ScanSearch size={18} />}
+          isActive={activeItem === "Find Jobs"}
+          onClick={() => handleNavClick("Find Jobs")}
         />
 
         <div className="h-[20px] w-[0.5px] bg-gray-300 mx-2"></div>
 
-        <NavigationItem
+        {/* <NavigationItem
           label="My Account"
           icon={<User size={18} />}
           isActive={activeItem === "My Account"}
           onClick={() => {
             handleNavClick("My Account");
             router.push("/account");
+          }}
+        />
+        <div className="h-[20px] w-[0.5px] bg-gray-300 mx-2"></div> */}
+
+        <NavigationItem
+          label="Organizations"
+          icon={<Building2 size={18} />}
+          isActive={activeItem === "Organizations"}
+          onClick={() => {
+            handleNavClick("Organizations");
+            router.push("/organizations");
           }}
         />
       </div>
