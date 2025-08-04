@@ -2,10 +2,14 @@
 
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import authReducer from "./features/authSlice";
+import accountReducer from "./features/accountSlice";
+import organizationReducer from "./features/organizationSlice";
 
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  account: accountReducer,
+  organization: organizationReducer,
 });
 
 export const store = configureStore({

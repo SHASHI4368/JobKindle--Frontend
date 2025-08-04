@@ -2,8 +2,8 @@
 
 import { FileText } from "lucide-react";
 import React, { useState } from "react";
-import ImageKitUploader from "./ImageKitUploader";
 import { Button } from "@/components/ui/button";
+import ImageKitUploader from "@/components/common/document-upload/ImageKitUploader";
 
 const Documents = () => {
   const [upload, setUpload] = useState(false);
@@ -67,6 +67,7 @@ const Documents = () => {
         upload={upload}
         selectedFile={selectedFile}
         setSelectedFile={setSelectedFile}
+        placeholder="Upload your resume or any document"
       />
       <div className="w-full flex justify-end "></div>
     </div>

@@ -6,6 +6,7 @@ import {
   UserCircle,
   Bell,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
 
 type AvatarSize = "small" | "default" | "large";
@@ -35,6 +36,7 @@ const Avatar = ({
 }: AvatarProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const sizeClasses = {
     small: "w-[32px] h-[32px]",
@@ -68,8 +70,8 @@ const Avatar = ({
     }
   };
 
-  const handleMenuItemClick = (callback:any) => {
-    callback();
+  const handleMenuItemClick = (path:string) => {
+    router.push(path);
     setIsDropdownOpen(false);
   };
 
@@ -132,7 +134,7 @@ const Avatar = ({
           {/* Menu Items */}
           <div className="py-1">
             <button
-              onClick={() => handleMenuItemClick(onProfile)}
+              onClick={() => handleMenuItemClick("/account")}
               className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors duration-150"
             >
               <UserCircle size={16} className="mr-3 text-gray-400" />
@@ -140,7 +142,7 @@ const Avatar = ({
             </button>
 
             <button
-              onClick={() => handleMenuItemClick(onSettings)}
+              onClick={() => handleMenuItemClick("/settings")}
               className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors duration-150"
             >
               <Settings size={16} className="mr-3 text-gray-400" />
@@ -148,7 +150,7 @@ const Avatar = ({
             </button>
 
             <button
-              onClick={() => handleMenuItemClick(onNotifications)}
+              onClick={() => handleMenuItemClick("/notifications")}
               className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors duration-150"
             >
               <Bell size={16} className="mr-3 text-gray-400" />
@@ -160,7 +162,7 @@ const Avatar = ({
 
             {/* Logout */}
             <button
-              onClick={() => handleMenuItemClick(onLogout)}
+              onClick={() => handleMenuItemClick("/logout")}
               className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors duration-150"
             >
               <LogOut size={16} className="mr-3 text-red-500" />

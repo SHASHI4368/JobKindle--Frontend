@@ -10,6 +10,7 @@ import {
   File,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { wrapMiddle } from "@/utils/text-wrappers/textWrappers";
 
 type ImageKitUploaderProps = {
   publicKey?: string;
@@ -22,6 +23,7 @@ type ImageKitUploaderProps = {
   upload?: boolean;
   selectedFile?: File | null;
   setSelectedFile?: (file: File | null) => void;
+  placeholder?: string;
 };
 
 const ImageKitUploader = ({
@@ -35,12 +37,14 @@ const ImageKitUploader = ({
   upload,
   selectedFile,
   setSelectedFile,
+  placeholder = "Drop your file here or click to browse",
 }: ImageKitUploaderProps) => {
   const [uploadStatus, setUploadStatus] = useState("idle"); // idle, uploading, success, error
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadedFile, setUploadedFile] = useState<any>(null);
   const [error, setError] = useState("");
   const [isDragOver, setIsDragOver] = useState(false);
+
 
   // Effect to trigger upload when upload prop becomes true
   useEffect(() => {
@@ -208,7 +212,7 @@ const ImageKitUploader = ({
         >
           <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
           <p className="text-gray-600 mb-2">
-            Drop your resume here or click to browse
+            {placeholder}
           </p>
           <p className="text-sm text-gray-500">
             Max size: {(maxFileSize / 1024 / 1024).toFixed(1)}MB
@@ -256,14 +260,14 @@ const ImageKitUploader = ({
       )}
 
       {uploadStatus === "success" && uploadedFile && (
-        <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+        <div className="flex max-w-full gap-4 wrap items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
               <Check className="h-5 w-5 text-green-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-green-800">
-                {uploadedFile.name}
+                {wrapMiddle(uploadedFile.name, 20)}
               </p>
               <p className="text-xs text-green-600">Upload successful!</p>
             </div>

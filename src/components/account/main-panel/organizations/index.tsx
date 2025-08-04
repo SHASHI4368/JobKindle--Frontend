@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { BellRing, Building2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const Organizations = () => {
+  const router = useRouter();
   return (
     <div className="w-full flex flex-col gap-4">
       <div className="flex flex-row items-center justify-between">
@@ -37,7 +39,7 @@ const Organizations = () => {
             </span>
           </div>
         </div>
-        <Button variant="outline" className="ml-4">
+        <Button onClick={() => router.push("/organizations")} variant="outline" className="ml-4">
           Manage Organizations
         </Button>
       </div>
