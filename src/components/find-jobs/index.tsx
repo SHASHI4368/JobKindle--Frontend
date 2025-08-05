@@ -1,46 +1,46 @@
 "use client";
 
 import React from "react";
-import PostAJobHeader from "./header";
+import FindJobsHeader from "./header";
 import { parseAsString, useQueryState } from "nuqs";
-import NewJob from "./main-panel/new-job";
-import { Briefcase, FileUser } from "lucide-react";
+import { Bot, FileSearch2, FileUser } from "lucide-react";
 import SidePanel from "../common/side-panel";
 
-const PostAJob = () => {
+const FindJobs = () => {
   const [activeItem, setActiveItem] = useQueryState(
     "activeItem",
-    parseAsString.withDefault("New Job")
+    parseAsString.withDefault("Job Search")
   );
 
   const menuItems = [
     {
-      title: "New Job",
-      icon: <Briefcase size={18} />,
+      title: "Job Search",
+      icon: <FileSearch2 size={18} />,
       description: "Create a new job posting",
     },
     {
-      title: "Applications",
+      title: "Applied Jobs",
       icon: <FileUser size={18} />,
-      description: "Manage job applications",
+      description: "Manage selected jobs",
+    },
+    {
+      title: "Interviews",
+      icon: <Bot size={18} />,
+      description: "Manage selected job interviews",
     },
   ];
-  
   return (
     <div className="w-full gap-4 mb-[20px] flex flex-col xl:px-[10vw] px-[5vw]">
-      <PostAJobHeader />
+      <FindJobsHeader />
       <div className="flex-1 gap-5 flex flex-row">
         <SidePanel
           activeItem={activeItem}
           setActiveItem={setActiveItem}
           menuItems={menuItems}
         />
-        <div className="flex-1 rounded-[10px] w-full border border-gray-100 shadow-lg bg-white p-4 mb-[10px]">
-          {activeItem === "New Job" && <NewJob />}
-        </div>
       </div>
     </div>
   );
 };
 
-export default PostAJob;
+export default FindJobs;
