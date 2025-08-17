@@ -7,26 +7,25 @@ import NewJob from "./main-panel/new-job";
 import { Briefcase, FileUser } from "lucide-react";
 import SidePanel from "../common/side-panel";
 
-
 const PostAJob = () => {
- const [activeItem, setActiveItem] = useQueryState(
-   "activeItem",
-   parseAsString.withDefault("New Job")
- );
+  const [activeItem, setActiveItem] = useQueryState(
+    "activeItem",
+    parseAsString.withDefault("New Job")
+  );
 
- const menuItems = [
-   {
-     title: "New Job",
-     icon: <Briefcase size={18} />,
-     description: "Create a new job posting",
-   },
-   {
-     title: "Applications",
-     icon: <FileUser size={18} />,
-     description: "Manage job applications",
-   },
-   
- ];
+  const menuItems = [
+    {
+      title: "New Job",
+      icon: <Briefcase size={18} />,
+      description: "Create a new job posting",
+    },
+    {
+      title: "Applications",
+      icon: <FileUser size={18} />,
+      description: "Manage job applications",
+    },
+  ];
+  
   return (
     <div className="w-full gap-4 mb-[20px] flex flex-col xl:px-[10vw] px-[5vw]">
       <PostAJobHeader />

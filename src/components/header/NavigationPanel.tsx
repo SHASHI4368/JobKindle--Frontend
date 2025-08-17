@@ -81,7 +81,10 @@ const NavigationPanel = () => {
           label="Find Jobs"
           icon={<ScanSearch size={18} />}
           isActive={activeItem === "Find Jobs"}
-          onClick={() => handleNavClick("Find Jobs")}
+          onClick={() => {
+            handleNavClick("Find Jobs");
+            router.push("/find-jobs");
+          }}
         />
 
         <div className="h-[20px] w-[0.5px] bg-gray-300 mx-2"></div>
