@@ -11,7 +11,7 @@ import Avatar from './Avatar';
 
 const Header = () => {
   const dispatch = useDispatch();
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const openAuthenticationDialog = () => {
     dispatch(setLoginDialogOpen(true));
@@ -27,7 +27,7 @@ const Header = () => {
             JobKindle
           </div>
         </div>
-        <NavigationPanel />
+        {isLoggedIn && <NavigationPanel />}
         {isLoggedIn ? (
           <Avatar />
         ) : (

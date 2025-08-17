@@ -5,6 +5,7 @@ import FindJobsHeader from "./header";
 import { parseAsString, useQueryState } from "nuqs";
 import { Bot, FileSearch2, FileUser } from "lucide-react";
 import SidePanel from "../common/side-panel";
+import JobSearch from "./main-panel/job-search";
 
 const FindJobs = () => {
   const [activeItem, setActiveItem] = useQueryState(
@@ -16,7 +17,7 @@ const FindJobs = () => {
     {
       title: "Job Search",
       icon: <FileSearch2 size={18} />,
-      description: "Create a new job posting",
+      description: "Search for jobs based on your preferences",
     },
     {
       title: "Applied Jobs",
@@ -38,6 +39,12 @@ const FindJobs = () => {
           setActiveItem={setActiveItem}
           menuItems={menuItems}
         />
+        <div className="flex-1 flex-col">
+          <div className="rounded-[10px] w-full pl-4 mb-[10px]">
+            {activeItem === "Job Search" && <JobSearch />}
+            
+          </div>
+        </div>
       </div>
     </div>
   );
