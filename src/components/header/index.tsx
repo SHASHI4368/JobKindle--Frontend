@@ -11,7 +11,7 @@ import Avatar from './Avatar';
 
 const Header = () => {
   const dispatch = useDispatch();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   const openAuthenticationDialog = () => {
     dispatch(setLoginDialogOpen(true));
