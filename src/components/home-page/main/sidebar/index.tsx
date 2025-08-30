@@ -167,7 +167,7 @@ const SideBar = () => {
 
   return (
     <Drawer direction="top" open={isOpen} onOpenChange={setIsOpen}>
-      <DrawerTrigger className="md:hidden relative group">
+      <DrawerTrigger className="lg:hidden relative group">
         <div className="p-2 rounded-lg hover:bg-gray-100 transition-all duration-200 active:scale-95">
           <AlignJustify
             size={20}

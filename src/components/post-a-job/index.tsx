@@ -28,8 +28,8 @@ const PostAJob = () => {
   
   return (
     <div className="w-full gap-4 mb-[20px] flex flex-col xl:px-[10vw] px-[5vw]">
-      <PostAJobHeader />
-      <div className="flex-1 gap-5 flex flex-row">
+      {/* <PostAJobHeader /> */}
+      <div className="flex-1 gap-5 mt-[20px] flex flex-col md:flex-row">
         <SidePanel
           activeItem={activeItem}
           setActiveItem={setActiveItem}

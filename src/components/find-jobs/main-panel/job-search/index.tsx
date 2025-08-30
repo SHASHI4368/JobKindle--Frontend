@@ -132,7 +132,7 @@ const JobSearch = () => {
   };
   return (
     <div className="w-full flex flex-col gap-4">
-      <div className="flex w-full flex-row items-center justify-between">
+      <div className="flex w-full md:flex-row flex-col md:items-center justify-between">
         <div className="flex items-center space-x-3">
           {/* Icon */}
           <div
@@ -164,7 +164,7 @@ const JobSearch = () => {
             </span>
           </div>
         </div>
-        <div className="w-[16%]">
+        <div className="md:w-[16%] w-full">
           <NormalSelector
             label=""
             value={sortBy}

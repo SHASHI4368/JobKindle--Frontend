@@ -30,7 +30,7 @@ const NormalSelector = ({
       </Label>
       <div className="">
         <Select value={value} onValueChange={onChange}>
-          <SelectTrigger className="w-full  min-h-[45px]">
+          <SelectTrigger className="w-full  md:min-h-[45px] min-h-[40px]">
             <SelectValue
               className="sm:text-[18px]  text-[14px] md:h-[60px] h-[40px]"
               placeholder={placeholder}

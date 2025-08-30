@@ -78,7 +78,7 @@ const Avatar = ({
   return (
     <div className="relative" ref={dropdownRef}>
       <div
-        className="md:flex hidden items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-all duration-200 cursor-pointer group"
+        className="lg:flex hidden items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-all duration-200 cursor-pointer group"
         onClick={toggleDropdown}
       >
         {/* Avatar Circle */}

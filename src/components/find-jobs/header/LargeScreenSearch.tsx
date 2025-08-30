@@ -7,91 +7,30 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Search, X } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
 import React, { useState } from "react";
+import { searchProps } from "./searchProps";
 
-const FindJobsHeader = () => {
-  const [searchTerm, setSearchTerm] = useQueryState("searchTerm");
-  const [location, setLocation] = useQueryState("location");
-  const [datePosted, setDatePosted] = useQueryState(
-    "datePosted",
-    parseAsString.withDefault("")
-  );
-  const [experienceLevel, setExperienceLevel] = useQueryState(
-    "experienceLevel",
-    parseAsString.withDefault("")
-  );
-  const [workType, setWorkType] = useQueryState(
-    "workType",
-    parseAsString.withDefault("")
-  );
-  const [loading, setLoading] = useState(false);
-  const [loadingCompleted, setLoadingCompleted] = useState(false);
-  const [resultsCount, setResultsCount] = useState(0);
-
-  const dateOptions = [
-    { label: "Anytime", value: "anytime" },
-    { label: "Past 24 hours", value: "24h" },
-    { label: "Past 3 days", value: "3d" },
-    { label: "Past week", value: "7d" },
-    { label: "Past month", value: "30d" },
-  ];
-
-  const experienceOptions = [
-    { label: "Any", value: "any" },
-    { label: "Entry Level", value: "entry" },
-    { label: "Mid Level", value: "mid" },
-    { label: "Senior Level", value: "senior" },
-    { label: "Executive", value: "executive" },
-  ];
-
-  const workTypeOptions = [
-    { label: "Any", value: "any" },
-    { label: "Remote", value: "remote" },
-    { label: "Onsite", value: "onsite" },
-    { label: "Hybrid", value: "hybrid" },
-  ];
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLocation(event.target.value);
-  };
-
-  const handleDatePostedChange = (value: string) => {
-    setDatePosted(value);
-  };
-
-  const handleExperienceLevelChange = (value: string) => {
-    setExperienceLevel(value);
-  };
-
-  const handleWorkTypeChange = (value: string) => {
-    setWorkType(value);
-  };
-
-  const handleClearFilters = () => {
-    setSearchTerm("");
-    setLocation("");
-    setDatePosted("");
-    setExperienceLevel("");
-    setWorkType("");
-    setLoading(false);
-    setLoadingCompleted(false);
-    setResultsCount(0);
-  };
-
-  const handleJobSearch = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setLoadingCompleted(true);
-      setResultsCount(10); // Simulate 10 results found
-    }, 2000);
-  };
+const LargeScreenSearch = ({ searchProps }: { searchProps: searchProps }) => {
+  const {
+    searchTerm,
+    location,
+    datePosted,
+    experienceLevel,
+    workType,
+    setLocation,
+    dateOptions,
+    experienceOptions,
+    workTypeOptions,
+    handleClearFilters,
+    handleJobSearch,
+    handleDatePostedChange,
+    handleExperienceLevelChange,
+    handleWorkTypeChange,
+    handleSearchChange,
+    handleLocationChange,
+  } = searchProps;
 
   return (
-    <div className="w-full gap-2 flex flex-col  relative mt-[20px]  min-h-[20vh]  ">
+    <div className="w-full gap-2 lg:flex hidden flex-col  relative mt-[20px]  min-h-[20vh]  ">
       <div className="flex w-full flex-row items-end gap-[1%]">
         <div className="w-[59%] ">
           <InputWithIcon
@@ -165,4 +104,4 @@ const FindJobsHeader = () => {
   );
 };
 
-export default FindJobsHeader;
+export default LargeScreenSearch;

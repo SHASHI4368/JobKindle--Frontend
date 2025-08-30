@@ -99,7 +99,7 @@ const BasicInfo = () => {
           Basic Information
         </h1>
       </div>
-      <div className="flex w-full flex-row gap-4 items-center">
+      <div className="flex w-full md:flex-row flex-col gap-4 items-center">
         <NormalInput
           label="Job Title"
           placeholder="Eg: Software Engineer"
@@ -114,7 +114,7 @@ const BasicInfo = () => {
           placeholder="Eg: TechCorp Inc."
         />
       </div>
-      <div className="flex w-full flex-row gap-4 items-center">
+      <div className="flex w-full md:flex-row flex-col gap-4 items-center">
         <LocationInput
           icon={<MapPin size={18} className="text-gray-400" />}
           label="Location"
@@ -135,7 +135,7 @@ const BasicInfo = () => {
           placeholder="Select work type"
         />
       </div>
-      <div className="flex w-full flex-row gap-4 items-center">
+      <div className="flex w-full md:flex-row flex-col gap-4 items-center">
         <NormalSelector
           label="Experience Level"
           items={experienceLevels}
@@ -151,7 +151,7 @@ const BasicInfo = () => {
           placeholder="Select employment type"
         />
       </div>
-      <div className="flex w-full flex-row gap-4 items-center">
+      <div className="flex w-full md:flex-row flex-col gap-4 items-center">
         <CurrencyInput
           label="Currency"
           placeholder="Enter Currency"

@@ -15,7 +15,7 @@ const Organizations = () => {
   return (
     <div className="w-full gap-5  flex flex-col xl:px-[10vw] px-[5vw]">
       <OrganizationHeader />
-      <div className="flex flex-row gap-5">
+      <div className="flex lg:flex-row flex-col gap-5">
         <SidePanel />
         <div className="flex-1 p-4 min-h-[500px] border border-gray-200 bg-white shadow-lg mb-[20px] rounded-[10px]">
           {/* Main content area */}

@@ -36,15 +36,8 @@ const SidePanel = ({ activeItem, setActiveItem, menuItems }: SidePanelProps) => 
   
 
   return (
-    <div className="relative w-[25%]">
-      {/* Loading overlay for transitions */}
-      {/* {isAnimating && (
-        <div className="absolute inset-0 bg-white/70 backdrop-blur-sm rounded-[10px] z-10 flex items-center justify-center">
-          <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
-        </div>
-      )} */}
-
-      {/* Main panel */}
+    <div className="relative w-full lg:w-[25%]">
+      
       <div
         className={`
         w-full rounded-[10px] shadow-lg flex flex-col p-6 bg-gradient-to-br from-gray-50 to-white border border-gray-200

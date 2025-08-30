@@ -48,7 +48,7 @@ const Skills = () => {
           placeholder="Add a skill"
         />
         <Button
-          className="h-[45px] text-primary cursor-pointer "
+          className="md:h-[45px] h-[40px] text-primary cursor-pointer "
           variant={"outline"}
           onClick={handleAddSkill}
         >

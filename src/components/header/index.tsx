@@ -31,7 +31,7 @@ const Header = () => {
         {isLoggedIn ? (
           <Avatar />
         ) : (
-          <div className="md:flex text-[50px] space-x-2 text-gray-700 hidden justify-end items-center w-full">
+          <div className="lg:flex text-[50px] space-x-2 text-gray-700 hidden justify-end items-center w-full">
             <Button
               onClick={openAuthenticationDialog}
               size={"home"}

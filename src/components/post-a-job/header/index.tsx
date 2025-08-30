@@ -19,14 +19,7 @@ const PostAJobHeader = () => {
           </p>
         </div>
       </div>
-      <Button
-        variant={"outline"}
-        className="cursor-pointer"
-      >
-        {/* You can add an icon here if needed */}
-        <Eye className="text-primary" />
-        <span className="text-[14px] text-primary font-semibold">Preview</span>
-      </Button>
+      
     </div>
   );
 }
