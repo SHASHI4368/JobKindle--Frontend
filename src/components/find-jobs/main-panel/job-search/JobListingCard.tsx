@@ -68,33 +68,40 @@ const JobListingCard = ({ jobData }: JobListingCardProps) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+    <div className="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
       {/* Header Section */}
-      <div className="p-6">
-        <div className="flex items-start justify-between">
-          <div className="flex items-start space-x-4">
-            <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
-              <Building2 className="w-6 h-6 text-white" />
+      <div className="p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-4 sm:space-y-0">
+          <div className="flex items-start space-x-3 sm:space-x-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+              <Building2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <div className="flex-1">
-              <h1 className="text-2xl font-raleway font-[700] text-gray-900 mb-1">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-raleway font-[700] text-gray-900 mb-1 leading-tight">
                 {basicInformation.jobTitle}
               </h1>
-              <div className="flex items-center space-x-4 text-gray-600 mb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 text-gray-600 mb-3">
                 <div className="flex items-center space-x-1">
-                  <Building2 className="w-4 h-4" />
-                  <span>{basicInformation.companyName}</span>
+                  <Building2 className="w-4 h-4 flex-shrink-0" />
+                  <span className="text-sm sm:text-base truncate">
+                    {basicInformation.companyName}
+                  </span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <MapPin className="w-4 h-4" />
-                  <span>{basicInformation.location}</span>
+                  <MapPin className="w-4 h-4 flex-shrink-0" />
+                  <span className="text-sm sm:text-base truncate">
+                    {basicInformation.location}
+                  </span>
                 </div>
-                <span className="font-[600] py-1 border rounded-l-full rounded-r-full px-3 text-[13px]">
+              </div>
+
+              <div className="mb-3">
+                <span className="inline-block font-[600] py-1 border rounded-full px-3 text-xs sm:text-[13px]">
                   {getWorkTypeDisplay(basicInformation.workType)}
                 </span>
               </div>
 
-              <div className="flex items-center space-x-6 text-sm text-gray-500">
+              <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-6 text-sm text-gray-500">
                 <div className="flex items-center space-x-1">
                   <Clock className="w-4 h-4" />
                   <span>{getDaysAgo(deadline)}</span>
@@ -104,7 +111,8 @@ const JobListingCard = ({ jobData }: JobListingCardProps) => {
                   <span>45 applicants</span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <span className="font-semibold text-green-600">
+                  <DollarSign className="w-4 h-4" />
+                  <span className="font-semibold text-green-600 text-sm sm:text-base">
                     {formatSalary(
                       basicInformation.salary,
                       basicInformation.currency
@@ -115,14 +123,17 @@ const JobListingCard = ({ jobData }: JobListingCardProps) => {
             </div>
           </div>
 
-          <Button variant={"outline"} className="cursor-pointer">
+          <Button
+            variant={"outline"}
+            className="cursor-pointer w-full sm:w-auto mt-4 sm:mt-0"
+          >
             Save
           </Button>
         </div>
 
         {/* Job Description Preview */}
         <div className="mt-4">
-          <p className="text-gray-700 line-clamp-2">
+          <p className="text-gray-700 text-sm sm:text-base leading-relaxed line-clamp-2 sm:line-clamp-2">
             {jobDetails.jobDescription}
           </p>
         </div>
@@ -132,30 +143,33 @@ const JobListingCard = ({ jobData }: JobListingCardProps) => {
           {skills.slice(0, 4).map((skill, index) => (
             <span
               key={index}
-              className="px-3 font-[500] border py-1 bg-gray-100 text-gray-700 rounded-full text-[13px]"
+              className="px-2 sm:px-3 font-[500] border py-1 bg-gray-100 text-gray-700 rounded-full text-xs sm:text-[13px]"
             >
               {skill}
             </span>
           ))}
           {skills.length > 4 && (
-            <span className="px-3 py-1 bg-gray-100 font-[500] border text-gray-500 rounded-full text-[13px]">
+            <span className="px-2 sm:px-3 py-1 bg-gray-100 font-[500] border text-gray-500 rounded-full text-xs sm:text-[13px]">
               +{skills.length - 4} more
             </span>
           )}
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-6 flex items-center justify-between">
-          <Button variant={"default"} className="h-[40px] cursor-pointer">
+        <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+          <Button
+            variant={"default"}
+            className="h-[40px] sm:h-[40px] cursor-pointer w-full sm:w-auto"
+          >
             Apply Now
           </Button>
 
           <Button
             variant={"ghost"}
             onClick={() => setShowDetails(!showDetails)}
-            className="flex cursor-pointer h-[45px] items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors"
+            className="flex cursor-pointer h-[40px] sm:h-[45px] items-center justify-center sm:justify-start space-x-2 text-blue-600 hover:text-blue-800 transition-colors w-full sm:w-auto"
           >
-            <span className="font-raleway font-[500] ">
+            <span className="font-raleway font-[500] text-sm sm:text-base">
               {showDetails ? "Hide Details" : "View Full Details"}
             </span>
             {showDetails ? (
@@ -170,13 +184,13 @@ const JobListingCard = ({ jobData }: JobListingCardProps) => {
       {/* Expandable Details Section */}
       {showDetails && (
         <div className="border-t border-gray-200 bg-gray-50">
-          <div className="p-6 space-y-6">
+          <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
             {/* Full Job Description */}
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Job Description
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-gray-700 text-sm sm:text-base leading-relaxed">
                 {jobDetails.jobDescription}
               </p>
             </div>
@@ -190,7 +204,9 @@ const JobListingCard = ({ jobData }: JobListingCardProps) => {
                 {jobDetails.requirements.map((requirement, index) => (
                   <li key={index} className="flex items-start space-x-2">
                     <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-gray-700">{requirement}</span>
+                    <span className="text-gray-700 text-sm sm:text-base">
+                      {requirement}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -205,7 +221,9 @@ const JobListingCard = ({ jobData }: JobListingCardProps) => {
                 {jobDetails.benifits.map((benefit, index) => (
                   <li key={index} className="flex items-start space-x-2">
                     <div className="w-2 h-2 bg-green-600 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-gray-700">{benefit}</span>
+                    <span className="text-gray-700 text-sm sm:text-base">
+                      {benefit}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -220,7 +238,7 @@ const JobListingCard = ({ jobData }: JobListingCardProps) => {
                 {skills.map((skill, index) => (
                   <span
                     key={index}
-                    className="px-3 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
+                    className="px-2 sm:px-3 py-1 sm:py-2 bg-blue-100 text-blue-800 rounded-full text-xs sm:text-sm font-medium"
                   >
                     {skill}
                   </span>
@@ -229,9 +247,9 @@ const JobListingCard = ({ jobData }: JobListingCardProps) => {
             </div>
 
             {/* Application Deadline */}
-            <div className="flex items-center space-x-2 text-gray-600">
-              <Calendar className="w-5 h-5" />
-              <span>
+            <div className="flex items-start sm:items-center space-x-2 text-gray-600">
+              <Calendar className="w-5 h-5 flex-shrink-0 mt-0.5 sm:mt-0" />
+              <span className="text-sm sm:text-base">
                 Application Deadline:{" "}
                 {new Date(deadline).toLocaleDateString("en-US", {
                   year: "numeric",
@@ -243,7 +261,10 @@ const JobListingCard = ({ jobData }: JobListingCardProps) => {
 
             {/* Additional Apply Button */}
             <div className="pt-4 border-t border-gray-200">
-              <Button variant={'default'}  className="h-[45px] w-full cursor-pointer text-[14px] font-raleway font-[600]">
+              <Button
+                variant={"default"}
+                className="h-[40px] sm:h-[45px] w-full cursor-pointer text-sm sm:text-[14px] font-raleway font-[600]"
+              >
                 Apply for this Position
               </Button>
             </div>

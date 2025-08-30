@@ -1,6 +1,15 @@
 "use client";
 
-import { Building2, Globe, Mail, MapPin, Pencil, Phone, Trash, Trash2 } from "lucide-react";
+import {
+  Building2,
+  Globe,
+  Mail,
+  MapPin,
+  Pencil,
+  Phone,
+  Trash,
+  Trash2,
+} from "lucide-react";
 import React, { useState } from "react";
 import CompanyLogo from "./CompanyLogo";
 import NormalInput from "@/components/common/input-fields/normal-input";
@@ -110,7 +119,7 @@ const ViewOrganization = () => {
 
   return (
     <div className="w-full flex flex-col gap-4">
-      <div className="flex items-center justify-between flex-row">
+      <div className="md:flex hidden items-center justify-between flex-row">
         <div className="flex items-center space-x-3">
           {/* Icon */}
           <div
@@ -143,18 +152,61 @@ const ViewOrganization = () => {
           </div>
         </div>
         <div className="flex justify-end gap-4">
-          <Button variant="outline" >
+          <Button variant="outline">
             <Pencil size={16} className="mr-1" />
             <span className="text-gray-600">Edit</span>
           </Button>
-          <Button variant="outline" >
+          <Button variant="outline">
+            <Trash2 size={16} className="mr-1 text-red-500" />
+            <span className="text-red-500">Delete</span>
+          </Button>
+        </div>
+      </div>
+      <div className="flex items-center justify-between flex-col gap-4">
+        <div className="flex items-center space-x-3">
+          {/* Icon */}
+          <div
+            className={`
+          flex-shrink-0 p-2 rounded-lg transition-all duration-300
+          bg-gray-100 text-gray-600 group-hover:bg-primary/10 group-hover:text-primary
+        `}
+          >
+            <Building2 />
+          </div>
+
+          {/* Text content */}
+          <div className="flex flex-col">
+            <span
+              className={`
+            font-semibold text-[18px] transition-colors duration-300 text-gray-800 group-hover:text-primary
+            
+          `}
+            >
+              Create Organization
+            </span>
+            <span
+              className={`
+              text-xs mt-1 transition-colors duration-300 text-gray-500 group-hover:text-gray-600
+              
+            `}
+            >
+              Fill in the details to create your organization
+            </span>
+          </div>
+        </div>
+        <div className="flex w-full flex-col justify-end gap-2">
+          <Button className="w-full" variant="outline">
+            <Pencil size={16} className="mr-1" />
+            <span className="text-gray-600">Edit</span>
+          </Button>
+          <Button className="w-full" variant="outline">
             <Trash2 size={16} className="mr-1 text-red-500" />
             <span className="text-red-500">Delete</span>
           </Button>
         </div>
       </div>
       <CompanyLogo />
-      <div className="flex flex-row w-full gap-4 mt-[10px] items-center">
+      <div className="flex md:flex-row flex-col w-full gap-4 mt-[10px] items-center">
         <NormalInput
           label="Organization Name*"
           placeholder="Enter your organization name"
@@ -176,7 +228,7 @@ const ViewOrganization = () => {
         onChange={handleDescriptionChange}
         rows={4}
       />
-      <div className="flex flex-row gap-4 items-center">
+      <div className="flex md:flex-row flex-col gap-4 items-center">
         <NormalSelector
           label="Company Size*"
           placeholder="Select company size"
@@ -192,7 +244,7 @@ const ViewOrganization = () => {
           type="number"
         />
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex md:flex-row flex-col items-center gap-4">
         <InputWithIcon
           icon={<Mail size={18} className="text-gray-400" />}
           label="Email*"
@@ -208,7 +260,7 @@ const ViewOrganization = () => {
           onChange={handlePhoneChange}
         />
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex md:flex-row flex-col items-center gap-4">
         <LocationInput
           icon={<MapPin size={18} className="text-gray-400" />}
           label="Location"
@@ -229,14 +281,22 @@ const ViewOrganization = () => {
           onChange={handleWebsiteChange}
         />
       </div>
-      {/* <div className="flex justify-between items-center py-[20px]">
+      <div className="sm:flex hidden justify-between items-center py-[20px]">
         <Button variant="outline" onClick={handleCancel}>
           Cancel
         </Button>
         <Button variant="default" onClick={handleSubmit}>
-          Create Organization
+          Update Organization
         </Button>
-      </div> */}
+      </div>
+      <div className="sm:hidden flex gap-2 flex-col justify-between items-center py-[20px]">
+        <Button className="w-full" variant="default" onClick={handleSubmit}>
+          Update Organization
+        </Button>
+        <Button className="w-full" variant="outline" onClick={handleCancel}>
+          Cancel
+        </Button>
+      </div>
     </div>
   );
 };

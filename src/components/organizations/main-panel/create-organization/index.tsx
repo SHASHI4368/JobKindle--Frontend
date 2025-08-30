@@ -142,7 +142,7 @@ const CreateOrganization = () => {
         </div>
       </div>
       <CompanyLogo />
-      <div className="flex flex-row w-full gap-4 mt-[10px] items-center">
+      <div className="flex md:flex-row flex-col w-full gap-4 mt-[10px] items-center">
         <NormalInput
           label="Organization Name*"
           placeholder="Enter your organization name"
@@ -164,7 +164,7 @@ const CreateOrganization = () => {
         onChange={handleDescriptionChange}
         rows={4}
       />
-      <div className="flex flex-row gap-4 items-center">
+      <div className="flex md:flex-row flex-col gap-4 items-center">
         <NormalSelector
           label="Company Size*"
           placeholder="Select company size"
@@ -180,7 +180,7 @@ const CreateOrganization = () => {
           type="number"
         />
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex md:flex-row flex-col items-center gap-4">
         <InputWithIcon
           icon={<Mail size={18} className="text-gray-400" />}
           label="Email*"
@@ -196,7 +196,7 @@ const CreateOrganization = () => {
           onChange={handlePhoneChange}
         />
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex md:flex-row flex-col items-center gap-4">
         <LocationInput
           icon={<MapPin size={18} className="text-gray-400" />}
           label="Location"
@@ -217,12 +217,20 @@ const CreateOrganization = () => {
           onChange={handleWebsiteChange}
         />
       </div>
-      <div className="flex justify-between items-center py-[20px]">
+      <div className="sm:flex hidden justify-between items-center py-[20px]">
         <Button variant="outline" onClick={handleCancel}>
           Cancel
         </Button>
         <Button variant="default" onClick={handleSubmit}>
           Create Organization
+        </Button>
+      </div>
+      <div className="sm:hidden flex gap-2 flex-col justify-between items-center py-[20px]">
+        <Button className="w-full" variant="default" onClick={handleSubmit}>
+          Create Organization
+        </Button>
+        <Button className="w-full" variant="outline" onClick={handleCancel}>
+          Cancel
         </Button>
       </div>
     </div>

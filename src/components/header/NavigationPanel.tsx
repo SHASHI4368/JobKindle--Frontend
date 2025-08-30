@@ -50,7 +50,7 @@ const NavigationPanel = () => {
 
       {/* Navigation Panel - positioned absolutely within header context */}
       <div
-        className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 md:flex hidden flex-row items-center justify-center gap-1 bg-white/80 backdrop-blur-sm rounded-2xl p-2 shadow-lg border border-gray-100 transition-all duration-300 ${
+        className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 lg:flex hidden flex-row items-center justify-center gap-1 bg-white/80 backdrop-blur-sm rounded-2xl p-2 shadow-lg border border-gray-100 transition-all duration-300 ${
           isTransitioning ? "scale-95 opacity-75" : "scale-100 opacity-100"
         }`}
       >
