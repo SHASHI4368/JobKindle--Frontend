@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "@/redux/provider";
 import Header from "@/components/header";
 import { NuqsAdapter } from "nuqs/adapters/next";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,7 @@ export default function RootLayout({
           <NuqsAdapter>
             <div className="w-full min-h-full h-full flex flex-col">
               <Header />
+              <Toaster className="font-geist-sans" richColors />
               {children}
             </div>
           </NuqsAdapter>

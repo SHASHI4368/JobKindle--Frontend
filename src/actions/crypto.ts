@@ -1,0 +1,15 @@
+import CryptoES from "crypto-es";
+
+const SECRET_KEY = process.env.SECRET_KEY;
+
+export const encrypt = (value: any, secret: string) => {
+   return CryptoES.AES.encrypt(JSON.stringify(value), secret).toString();
+};
+
+export const decrypt = (value: any) => {
+  if (value === undefined) return null;
+  if (SECRET_KEY) {
+    const bytes = CryptoES.AES.decrypt(value, SECRET_KEY);
+    return JSON.parse(bytes.toString(CryptoES.enc.Utf8));
+  }
+};

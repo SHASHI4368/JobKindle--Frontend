@@ -1,21 +1,37 @@
 "use client";
 
 import { Button } from '@/components/ui/button';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux';
-import { setLoginDialogOpen } from '@/redux/features/authSlice';
+import { setLogin, setLoginDialogOpen } from '@/redux/features/authSlice';
 import Authentication from '../home-page/authentication';
 import SideBar from '../home-page/main/sidebar';
 import NavigationPanel from './NavigationPanel';
 import Avatar from './Avatar';
+import Cookies from "js-cookie";
 
 const Header = () => {
   const dispatch = useDispatch();
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const openAuthenticationDialog = () => {
+  const openAuthenticationDialog = (isLogin: boolean) => {
+    dispatch(setLogin(isLogin));
     dispatch(setLoginDialogOpen(true));
   }
+
+  useEffect(() => {
+    const checkLoginStatus = () => {
+      const token = Cookies.get("jwt");
+      if (token) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
+
   return (
     <div className="bg-white font-raleway sticky top-0 z-[100]  shadow-2xs text-2xl h-[10vh] xl:px-[10vw] px-[5vw] flex flex-row justify-between items-center w-full">
       <div className="flex relative flex-row justify-between items-center w-full">
@@ -33,14 +49,14 @@ const Header = () => {
         ) : (
           <div className="lg:flex text-[50px] space-x-2 text-gray-700 hidden justify-end items-center w-full">
             <Button
-              onClick={openAuthenticationDialog}
+              onClick={() => openAuthenticationDialog(true)}
               size={"home"}
               variant={"ghost"}
             >
               Login
             </Button>
             <Button
-              onClick={openAuthenticationDialog}
+              onClick={() => openAuthenticationDialog(false)}
               className="text-white"
               size={"home"}
               variant={"default"}

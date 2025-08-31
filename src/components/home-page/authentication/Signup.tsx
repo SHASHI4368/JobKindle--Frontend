@@ -9,12 +9,15 @@ import { Lock, Mail, Check, X } from "lucide-react";
 import React, { useState, useMemo, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import EmailVerificationMessage from "./EmailVerificationMessage";
+import { signup } from "@/actions/authAction";
+import { toast } from "sonner";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [verificationSent, setVerificationSent] = useState(false);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   // Password strength calculation
@@ -82,36 +85,42 @@ const Signup = () => {
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    console.log(e.target.value);
+    
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-    console.log(e.target.value);
+    
   };
 
   const handleConfirmPasswordChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     setConfirmPassword(e.target.value);
-    console.log(e.target.value);
+    
   };
 
   const changeView = () => {
     dispatch(setLogin(true));
   };
 
-  const handleSignup = () => {
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
-    setVerificationSent(true);
+  const handleSignup = async () => {
+    try {
+      setLoading(true);
+      const response = await signup(email, password);
+      setVerificationSent(true);
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      console.log(response);
+    } catch (err:any) {
+      toast.error(err.message);
+    }finally{
+      setLoading(false);
+    }
   };
 
-  useEffect(() => {
-    dispatch(setLogin(true));
-  }, []);
-
+  
   return (
     <div className="w-full font-raleway h-full flex flex-col ">
       <div className="flex cursor-pointer text-[22px] font-raleway flex-row items-center justify-center space-x-3 w-full">
@@ -244,10 +253,19 @@ const Signup = () => {
               className="text-white h-[45px]"
               size={"home"}
               variant={"default"}
-              disabled={passwordStrength.score < 3 || !passwordsMatch}
+              disabled={
+                passwordStrength.score < 3 || !passwordsMatch || loading
+              }
               onClick={handleSignup}
             >
-              Sign Up
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  Signing Up...
+                </div>
+              ) : (
+                "Sign Up"
+              )}
             </Button>
 
             <div className="w-full flex flex-row items-center gap-3">

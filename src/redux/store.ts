@@ -5,11 +5,13 @@ import authReducer from "./features/authSlice";
 import accountReducer from "./features/accountSlice";
 import organizationReducer from "./features/organizationSlice";
 import findJobsReducer from "./features/findJobsSlice";
+import profileReducer from "./features/profileSlice";
 
 
 const rootReducer = combineReducers({
   auth: authReducer,
   account: accountReducer,
+  profile: profileReducer,
   findJobs: findJobsReducer,
   organization: organizationReducer,
 });
