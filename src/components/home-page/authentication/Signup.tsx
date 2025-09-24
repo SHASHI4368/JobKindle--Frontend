@@ -10,7 +10,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import EmailVerificationMessage from "./EmailVerificationMessage";
 import { signup } from "@/actions/authAction";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 const Signup = () => {
   const [email, setEmail] = useState("");

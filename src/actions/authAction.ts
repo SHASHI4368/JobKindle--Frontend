@@ -17,7 +17,7 @@ export const signup = async (
     const response = await axios.post(url, body);
     return response.data;
   } catch (err: any) {
-    throw new Error(err.response?.data?.message || "Sign up failed");
+    console.log(err);
   }
 };
 
@@ -31,10 +31,11 @@ export const login = async (
       email: email,
       password: password,
     };
-    const url = `${Base_URL}:9090/auth/login`;
+    const url = `${Base_URL}:8080/auth/login`;
     const response = await axios.post(url, body);
+    console.log("response", response);
     return response.data;
   } catch (err: any) {
-    throw new Error(err.response?.data?.message || "Login failed");
+    console.log(err);
   }
 };

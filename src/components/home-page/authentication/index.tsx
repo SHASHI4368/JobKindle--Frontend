@@ -27,7 +27,7 @@ const Authentication = () => {
   return (
     <>
       <Dialog open={auth.dialogOpen} onOpenChange={handleClose}>
-        <DialogContent className="z-[500] xl:w-[30%] md:w-[50%] w-[95%] min-h-[95vh] max-h-[95vh] p-0 overflow-hidden">
+        <DialogContent className="z-[500] xl:w-[30%] md:w-[50%] w-[95%]  p-0 overflow-hidden">
           <div className="custom-scrollbar h-full max-h-[95vh] px-6 py-4">
             <DialogHeader>
               <DialogTitle></DialogTitle>

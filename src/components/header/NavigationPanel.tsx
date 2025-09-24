@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Home, Briefcase, User, Building2, ScanSearch } from "lucide-react";
 import NavigationItem from "./NavigationItem";
 import { useRouter } from "next/navigation";
+import { Router } from "next/router";
 
 const NavigationPanel = () => {
   const [activeItem, setActiveItem] = useState("Home");
@@ -10,13 +11,13 @@ const NavigationPanel = () => {
 
   const handleNavClick = (item: string) => {
     if (item === activeItem || isTransitioning) return;
+    setActiveItem(item);
 
     // Start transition
     setIsTransitioning(true);
 
     // Add a visible delay to show the transition
     setTimeout(() => {
-      setActiveItem(item);
       console.log(`${item} clicked`);
 
       // End transition after content change
@@ -26,28 +27,16 @@ const NavigationPanel = () => {
     }, 150);
   };
 
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+    if (currentPath === "/") setActiveItem("Home");
+    if (currentPath === "/post-a-job") setActiveItem("Post a Job");
+    if (currentPath === "/find-jobs") setActiveItem("Find Jobs");
+    if (currentPath === "/organizations") setActiveItem("Organizations");
+  }, []);
+
   return (
     <>
-      {/* Transition overlay - positioned relative to viewport */}
-      {isTransitioning && (
-        <div className="fixed inset-0 bg-white/60 backdrop-blur-sm z-[200] flex items-center justify-center">
-          <div className="flex flex-col items-center space-y-4">
-            {/* Loading spinner */}
-            <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-
-            {/* Transition text */}
-            <div className="text-primary font-semibold text-lg animate-pulse">
-              Loading {activeItem}...
-            </div>
-
-            {/* Progress bar */}
-            <div className="w-48 h-1 bg-gray-200 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-primary to-secondary rounded-full animate-pulse"></div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Navigation Panel - positioned absolutely within header context */}
       <div
         className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 lg:flex hidden flex-row items-center justify-center gap-1 bg-white/80 backdrop-blur-sm rounded-2xl p-2 shadow-lg border border-gray-100 transition-all duration-300 ${

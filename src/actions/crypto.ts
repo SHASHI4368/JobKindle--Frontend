@@ -6,10 +6,8 @@ export const encrypt = (value: any, secret: string) => {
    return CryptoES.AES.encrypt(JSON.stringify(value), secret).toString();
 };
 
-export const decrypt = (value: any) => {
+export const decrypt = (value: any, secret: string) => {
   if (value === undefined) return null;
-  if (SECRET_KEY) {
-    const bytes = CryptoES.AES.decrypt(value, SECRET_KEY);
-    return JSON.parse(bytes.toString(CryptoES.enc.Utf8));
-  }
+  const bytes = CryptoES.AES.decrypt(value, secret);
+  return JSON.parse(bytes.toString(CryptoES.enc.Utf8));
 };

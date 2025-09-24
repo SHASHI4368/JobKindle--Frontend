@@ -1,3 +1,4 @@
+import { decrypt } from "@/actions/crypto";
 import {
   User,
   ChevronDown,
@@ -8,16 +9,15 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
+import Cookies from "js-cookie";
 
 type AvatarSize = "small" | "default" | "large";
 
 interface AvatarProps {
   username?: string;
-  email?: string;
   avatarUrl?: string | null;
   showDropdown?: boolean;
   size?: AvatarSize;
-  onLogout?: () => void;
   onProfile?: () => void;
   onSettings?: () => void;
   onNotifications?: () => void;
@@ -25,16 +25,15 @@ interface AvatarProps {
 
 const Avatar = ({
   username = "John Doe",
-  email = "john.doe@example.com",
   avatarUrl = null,
   showDropdown = true,
   size = "default",
-  onLogout = () => console.log("Logout clicked"),
   onProfile = () => console.log("Profile clicked"),
   onSettings = () => console.log("Settings clicked"),
   onNotifications = () => console.log("Notifications clicked"),
 }: AvatarProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [email, setEmail] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -64,6 +63,17 @@ const Avatar = ({
     };
   }, []);
 
+  useEffect(() => {
+    const getEmail = () => {
+      const encryptedEmail = Cookies.get("profileEmail");
+      if (encryptedEmail) {
+        const email = decrypt(encryptedEmail, process.env.SECRET_KEY || "");
+        setEmail(email);
+      }
+    };
+    getEmail();
+  }, []);
+
   const toggleDropdown = () => {
     if (showDropdown) {
       setIsDropdownOpen(!isDropdownOpen);
@@ -73,6 +83,12 @@ const Avatar = ({
   const handleMenuItemClick = (path:string) => {
     router.push(path);
     setIsDropdownOpen(false);
+  };
+
+  const handleSignOut = () => {
+    Cookies.remove("profileEmail");
+    Cookies.remove("jwt");
+    window.location.replace("/");
   };
 
   return (
@@ -162,7 +178,7 @@ const Avatar = ({
 
             {/* Logout */}
             <button
-              onClick={() => handleMenuItemClick("/logout")}
+              onClick={handleSignOut}
               className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors duration-150"
             >
               <LogOut size={16} className="mr-3 text-red-500" />

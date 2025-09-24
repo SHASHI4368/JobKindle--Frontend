@@ -11,8 +11,8 @@ import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
 import { login } from "@/actions/authAction";
 import { setProfileEmail } from "@/redux/features/profileSlice";
-import { toast } from "sonner";
 import { encrypt } from "@/actions/crypto";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -39,6 +39,7 @@ const Login = () => {
     try {
       setLoading(true);
       const response = await login(email, password);
+      console.log(response)
       if (response.success) {
         dispatch(setProfileEmail(response.data.email));
         const secret = process.env.SECRET_KEY || "";
@@ -49,9 +50,10 @@ const Login = () => {
         });
         window.location.reload();        
       } else {
-        toast.error(response.data.message);
+        toast.error(response.message);
       }
     } catch (error) {
+      toast.error("Login failed");
       console.error("Login failed", error);
     }finally {
       setLoading(false);
