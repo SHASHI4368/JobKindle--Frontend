@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import InputWithIcon from "@/components/common/input-fields/input-with-icon";
 import PasswordWithIcon from "@/components/common/input-fields/password-with-icon";
@@ -8,10 +8,17 @@ import { setLogin } from "@/redux/features/authSlice";
 import { Lock, Mail } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import Cookies from "js-cookie";
+import { login } from "@/actions/authAction";
+import { setProfileEmail } from "@/redux/features/profileSlice";
+import { encrypt } from "@/actions/crypto";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const dispatch = useDispatch();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,11 +35,30 @@ const Login = () => {
     dispatch(setLogin(false));
   };
 
-  useEffect(() => {
-    dispatch(setLogin(false));
-
-  },[]);
-
+  const handleLogin = async () => {
+    try {
+      setLoading(true);
+      const response = await login(email, password);
+      console.log(response)
+      if (response.success) {
+        dispatch(setProfileEmail(response.data.email));
+        const secret = process.env.SECRET_KEY || "";
+        Cookies.set("profileEmail", encrypt(response.data.email, secret));
+        Cookies.set("jwt", response.data.token, {
+          expires: 1,
+          path: "/",
+        });
+        window.location.reload();        
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error) {
+      toast.error("Login failed");
+      console.error("Login failed", error);
+    }finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="w-full font-raleway h-full flex flex-col">
@@ -85,9 +111,17 @@ const Login = () => {
           className="text-white h-[45px]"
           size={"home"}
           variant={"default"}
-          disabled={!email || !password}
+          disabled={!email || !password || loading}
+          onClick={handleLogin}
         >
-          Sign In
+          {loading ? (
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              Signing In...
+            </div>
+          ) : (
+            "Sign In"
+          )}
         </Button>
         <div className="w-full flex flex-row items-center gap-3">
           <div className="w-full h-[0.5px] bg-gray-300"></div>

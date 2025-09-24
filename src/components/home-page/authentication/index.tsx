@@ -10,8 +10,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import Content from "./Login";
-import Content2 from "./Signup";
+import Login from "./Login";
+import Signup from "./Signup";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoginDialogOpen } from "@/redux/features/authSlice";
 
@@ -23,10 +23,11 @@ const Authentication = () => {
     dispatch(setLoginDialogOpen(false));
   };
 
+  
   return (
     <>
       <Dialog open={auth.dialogOpen} onOpenChange={handleClose}>
-        <DialogContent className="z-[500] xl:w-[30%] md:w-[50%] w-[95%] min-h-[95vh] max-h-[95vh] p-0 overflow-hidden">
+        <DialogContent className="z-[500] xl:w-[30%] md:w-[50%] w-[95%]  p-0 overflow-hidden">
           <div className="custom-scrollbar h-full max-h-[95vh] px-6 py-4">
             <DialogHeader>
               <DialogTitle></DialogTitle>
@@ -41,7 +42,7 @@ const Authentication = () => {
                       : "opacity-0 -translate-x-full absolute top-0 left-0 w-full"
                   }`}
                 >
-                  <Content />
+                  <Login />
                 </div>
 
                 {/* Content 2 */}
@@ -52,7 +53,7 @@ const Authentication = () => {
                       : "opacity-0 translate-x-full absolute top-0 left-0 w-full"
                   }`}
                 >
-                  <Content2 />
+                  <Signup />
                 </div>
               </div>
             </DialogHeader>
