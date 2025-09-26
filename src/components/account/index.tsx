@@ -42,20 +42,19 @@ const Account = () => {
   return (
     <div className="w-full gap-5  flex flex-col xl:px-[10vw] px-[5vw]">
       <AccountHeader />
-      <div className="flex-1 gap-5 flex flex-row">
+      <div className="flex-1 gap-5 flex flex-col lg:flex-row">
         <SidePanel
           activeItem={activeItem}
           setActiveItem={setActiveItem}
           menuItems={menuItems}
         />
         <div className="flex-1 rounded-[10px] w-full border border-gray-100 shadow-lg bg-white p-4 mb-[10px]">
-         {activeItem === "Profile" && <Profile />}
-         {activeItem === "Professional" && <Professional />}
-         {activeItem === "Documents" && <Documents />}
-         {activeItem === "Organization" && <Organizations />}
+          {activeItem === "Profile" && <Profile />}
+          {activeItem === "Professional" && <Professional />}
+          {activeItem === "Documents" && <Documents />}
+          {activeItem === "Organization" && <Organizations />}
         </div>
       </div>
-      
     </div>
   ); 
 }

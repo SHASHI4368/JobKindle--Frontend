@@ -30,9 +30,9 @@ const NormalSelector = ({
       </Label>
       <div className="">
         <Select value={value} onValueChange={onChange}>
-          <SelectTrigger className="w-full  md:min-h-[45px] min-h-[40px]">
+          <SelectTrigger className="w-full md:text-[16px] text-[14px] md:min-h-[45px] min-h-[40px]">
             <SelectValue
-              className="sm:text-[18px]  text-[14px] md:h-[60px] h-[40px]"
+              className="md:text-[16px] text-[14px] md:h-[60px] h-[40px]"
               placeholder={placeholder}
             />
           </SelectTrigger>
@@ -41,7 +41,7 @@ const NormalSelector = ({
               <SelectItem
                 key={index}
                 value={item.value}
-                className="sm:text-[14px]  text-gray-500 font-raleway text-[14px] min-h-[45px]"
+                className=" text-gray-500 font-raleway md:text-[16px] text-[14px] min-h-[45px]"
               >
                 {item.label}
               </SelectItem>

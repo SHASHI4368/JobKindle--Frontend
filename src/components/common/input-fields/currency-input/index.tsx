@@ -378,7 +378,7 @@ const CurrencyInput = ({
           ref={inputRef}
           className={` ${
             value ? "pr-[70px]" : "pr-3"
-          } md:h-[45px] h-[40px] sm:text-[18px] text-[14px]`}
+          } md:h-[45px] h-[40px]  md:text-[16px] text-[14px]`}
           placeholder={placeholder}
           type="text"
           value={value ?? ""}

@@ -97,7 +97,7 @@ const MoneyInput = ({
               </span>
             )}
             <Input
-              className={`md:h-[45px] h-[40px] sm:text-[18px] text-[14px] ${
+              className={`md:h-[45px] h-[40px]  md:text-[16px] text-[14px] ${
                 currencySymbol ? "pl-12" : ""
               }`}
               placeholder={minPlaceholder}
@@ -118,7 +118,7 @@ const MoneyInput = ({
               </span>
             )}
             <Input
-              className={`md:h-[45px] h-[40px] sm:text-[18px] text-[14px] ${
+              className={`md:h-[45px] h-[40px]  md:text-[16px] text-[14px]${
                 currencySymbol ? "pl-12" : ""
               }`}
               placeholder={maxPlaceholder}
@@ -128,8 +128,6 @@ const MoneyInput = ({
             />
           </div>
         </div>
-
-        
       </div>
     );
   }

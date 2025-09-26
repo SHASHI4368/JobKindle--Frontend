@@ -158,7 +158,7 @@ const SchoolInput = ({
           ref={inputRef}
           className={`${icon ? "pl-[40px]" : "pl-3"} ${
             isSchoolSearch && value ? "pr-[70px]" : "pr-3"
-          } md:h-[45px] h-[40px] sm:text-[18px] text-[14px]`}
+          } md:h-[45px] h-[40px] md:text-[16px] text-[14px]`}
           placeholder={placeholder}
           type={type}
           value={value ?? ""}

@@ -37,7 +37,7 @@ const PasswordWithIcon = ({
           </span>
         )}
         <Input
-          className="pl-[40px] md:h-[45px] h-[40px] sm:text-[18px] text-[14px]"
+          className="pl-[40px] md:h-[45px] h-[40px] md:text-[16px] text-[14px]"
           placeholder={placeholder}
           type={showPassword ? "text" : "password"}
           value={value ?? ""} // ensure it's never undefined
@@ -45,9 +45,17 @@ const PasswordWithIcon = ({
         />
         <span className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer">
           {showPassword ? (
-            <EyeOff size={18} className="text-gray-500" onClick={togglePasswordVisibility} />
+            <EyeOff
+              size={18}
+              className="text-gray-500"
+              onClick={togglePasswordVisibility}
+            />
           ) : (
-            <Eye size={18} className="text-gray-500" onClick={togglePasswordVisibility} />
+            <Eye
+              size={18}
+              className="text-gray-500"
+              onClick={togglePasswordVisibility}
+            />
           )}
         </span>
       </div>

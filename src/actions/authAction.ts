@@ -13,7 +13,7 @@ export const signup = async (
       email: email,
       password: password,
     };
-    const url = `${Base_URL}:9090/auth/register`;
+    const url = `${Base_URL}:9095/auth/register`;
     const response = await axios.post(url, body);
     return response.data;
   } catch (err: any) {
@@ -31,7 +31,7 @@ export const login = async (
       email: email,
       password: password,
     };
-    const url = `${Base_URL}:8080/auth/login`;
+    const url = `${Base_URL}:9095/auth/login`;
     const response = await axios.post(url, body);
     console.log("response", response);
     return response.data;

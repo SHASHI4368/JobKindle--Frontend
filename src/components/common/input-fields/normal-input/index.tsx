@@ -8,6 +8,7 @@ type NormalInputProps = {
   type?: string;
   value: any;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isDisabled?: boolean;
 };
 
 const NormalInput = ({
@@ -16,19 +17,21 @@ const NormalInput = ({
   type = "text",
   value = "",
   onChange = () => {},
+  isDisabled = false,
 }: NormalInputProps) => {
   return (
     <div className="flex flex-col w-full gap-2 font-raleway">
       <Label className="sm:text-[14px] text-[12px] text-gray-700">
         {label}
       </Label>
-      <div >
+      <div>
         <Input
-          className=" md:h-[45px] h-[40px] sm:text-[18px] text-[14px]"
+          className=" md:h-[45px] h-[40px]   md:text-[16px] text-[14px]"
           placeholder={placeholder}
           type={type}
-          value={value ?? ""} 
+          value={value ?? ""}
           onChange={onChange}
+          disabled={isDisabled}
         />
       </div>
     </div>

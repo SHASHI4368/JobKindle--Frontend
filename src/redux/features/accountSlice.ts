@@ -3,6 +3,7 @@ import { Account } from "@/types/account";
 
 const initialState: Account = {
   imageUploadDialogOpen: false,
+  isProfileEditing: false,
 };
 
 export const accountSlice = createSlice({
@@ -13,8 +14,11 @@ export const accountSlice = createSlice({
     setAccountImageUploadDialogOpen: (state, action) => {
       state.imageUploadDialogOpen = action.payload;
     },
+    setIsProfileEditing: (state, action) => {
+      state.isProfileEditing = action.payload;
+    }
   },
 });
 
-export const { setAccountImageUploadDialogOpen } = accountSlice.actions;
+export const { setAccountImageUploadDialogOpen, setIsProfileEditing } = accountSlice.actions;
 export default accountSlice.reducer;

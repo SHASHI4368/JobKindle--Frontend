@@ -41,7 +41,7 @@ const Picture = () => {
   };
 
   return (
-    <div className="flex h-full items-center flex-row gap-3">
+    <div className="flex h-full items-center md:flex-row flex-col gap-3">
       <div className="w-[110px] h-[110px] bg-blue-100 rounded-full p-[5px] relative">
         <div className="w-full  h-full bg-gradient-to-br from-primary to-primary/90 rounded-full justify-center flex items-center">
           <span className="text-white text-[25px] font-bold">JD</span>
@@ -53,7 +53,7 @@ const Picture = () => {
           <Camera className="text-white" size={15} />
         </div>
       </div>
-      <div className="flex flex-col  justify-center-safe  h-full">
+      <div className="flex flex-col  justify-center-safe md:items-start items-center  h-full">
         <h1 className="text-[30px]  font-bold">John Doe</h1>
         <h2 className="text-[17px] text-gray-500">Software Engineer</h2>
         <div className="flex flex-row gap-1 items-center">
