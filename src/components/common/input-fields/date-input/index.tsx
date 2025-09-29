@@ -50,7 +50,7 @@ const CalendarInput = ({ label, placeholder, date, onDateChange }: CalendarInput
         <Input
           value={value}
           placeholder={placeholder}
-          className="md:h-[45px] h-[40px] sm:text-[18px] text-[14px]"
+          className="md:h-[45px] h-[40px] md:text-[16px] text-[14px]"
           disabled
           onKeyDown={(e) => {
             if (e.key === "ArrowDown") {
@@ -80,7 +80,6 @@ const CalendarInput = ({ label, placeholder, date, onDateChange }: CalendarInput
               mode="single"
               selected={date}
               captionLayout="dropdown"
-              
               month={month}
               onMonthChange={setMonth}
               onSelect={(date) => {

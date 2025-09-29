@@ -10,6 +10,7 @@ type NormalTextAreaProps = {
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   rows: number;
   cols?: number;
+  isDisabled?: boolean;
 };
 
 const NormalTextArea = ({
@@ -19,6 +20,7 @@ const NormalTextArea = ({
   onChange = () => {},
   rows,
   cols = 50,
+  isDisabled = false,
 }: NormalTextAreaProps) => {
   return (
     <div className="flex flex-col w-full gap-2 font-raleway">
@@ -27,12 +29,13 @@ const NormalTextArea = ({
       </Label>
       <div >
         <Textarea
-          className="md:h-[100px] min-h-[40px] sm:text-[18px] text-[14px]"
+          className="md:h-[100px] min-h-[40px] md:text-[16px] text-[14px]"
           placeholder={placeholder}
           value={value ?? ""} 
           onChange={onChange}
           rows={rows}
           cols={cols}
+          disabled={isDisabled}
         />
       </div>
     </div>

@@ -19,6 +19,7 @@ type LocationInputProps = {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isLocationSearch?: boolean;
   onLocationSelect?: (location: LocationResult) => void;
+  isDisabled?: boolean;
 };
 
 const LocationInput = ({
@@ -30,6 +31,7 @@ const LocationInput = ({
   onChange = () => {},
   isLocationSearch = false,
   onLocationSelect = () => {},
+  isDisabled = false,
 }: LocationInputProps) => {
   const [searchResults, setSearchResults] = useState<LocationResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -158,12 +160,13 @@ const LocationInput = ({
           ref={inputRef}
           className={`${icon ? "pl-[40px]" : "pl-3"} ${
             isLocationSearch && value ? "pr-[70px]" : "pr-3"
-          } md:h-[45px] h-[40px] sm:text-[18px] text-[14px]`}
+          } md:h-[45px] h-[40px]  md:text-[16px] text-[14px]`}
           placeholder={placeholder}
           type={type}
           value={value ?? ""}
           onChange={handleInputChange}
           autoComplete={isLocationSearch ? "off" : "on"}
+          disabled={isDisabled}
         />
 
         {/* Loading spinner and clear button for location search */}
@@ -177,6 +180,7 @@ const LocationInput = ({
                 type="button"
                 onClick={clearSearch}
                 className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                disabled={isDisabled}
               >
                 <X size={14} className="text-gray-400 hover:text-gray-600" />
               </button>

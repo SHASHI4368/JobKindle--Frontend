@@ -9,6 +9,7 @@ type InputWithIconProps = {
   type?: string;
   value: any;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isDisabled?: boolean;
 };
 
 const InputWithIcon = ({
@@ -18,6 +19,7 @@ const InputWithIcon = ({
   type = "text",
   value = "",
   onChange = () => {},
+  isDisabled = false,
 }: InputWithIconProps) => {
   return (
     <div className="flex flex-col w-full gap-2 font-raleway">
@@ -31,11 +33,12 @@ const InputWithIcon = ({
           </span>
         )}
         <Input
-          className="pl-[40px] md:h-[45px] h-[40px] sm:text-[18px] text-[14px]"
+          className="pl-[40px] md:h-[45px] h-[40px] md:text-[16px] text-[14px]"
           placeholder={placeholder}
           type={type}
           value={value ?? ""} // ensure it's never undefined
           onChange={onChange}
+          disabled={isDisabled}
         />
       </div>
     </div>
