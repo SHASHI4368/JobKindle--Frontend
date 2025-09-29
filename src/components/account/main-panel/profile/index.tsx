@@ -7,10 +7,7 @@ import { Mail, MapPin, Phone, User } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ProfileUpdateDialog from "../../dialogs/ProfileUpdateDialog";
-import axios from "axios";
-import Cookies from "js-cookie";
-import { fetchProfileData } from "@/actions/profileActions";
-const Base_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
 
 const Profile = () => {
   const [location, setLocation] = useState("");
@@ -23,50 +20,16 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const jwt = Cookies.get("jwt");
-      if (jwt) {
-        try {
-          setLoading(true);
-          const data = await fetchProfileData(jwt);
-          if (data.success) {
-            console.log(data.data);
-            setFirstName(data.data.firstname || "");
-            setLastName(data.data.lastname || "");
-            setEmail(data.data.email || "");
-            setPhone(data.data.phone || "");
-            setLocation(data.data.location || "");
-          }
-        } catch (err) {
-          console.log(err);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-    fetchData();
-  }, []);
+    setFirstName(account.profile.firstname || "");
+    setLastName(account.profile.lastname || "");
+    setEmail(account.profile.email || "");
+    setPhone(account.profile.phone || "");
+    setLocation(account.profile.location || "");
+  }, [account.profile]);
 
   return (
     <>
-      {loading && (
-        <div className="fixed inset-0 bg-white/60 backdrop-blur-sm z-[200] flex items-center justify-center">
-          <div className="flex flex-col items-center space-y-4">
-            {/* Loading spinner */}
-            <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-
-            {/* Transition text */}
-            <div className="text-primary font-semibold text-lg animate-pulse">
-              Loading ...
-            </div>
-
-            {/* Progress bar */}
-            <div className="w-48 h-1 bg-gray-200 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-primary to-secondary rounded-full animate-pulse"></div>
-            </div>
-          </div>
-        </div>
-      )}
+      
       <div className="w-full flex flex-col gap-4">
         <div className="flex items-center space-x-3">
           {/* Icon */}

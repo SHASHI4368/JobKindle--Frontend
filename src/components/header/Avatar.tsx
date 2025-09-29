@@ -10,12 +10,11 @@ import {
 import { useRouter } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
 import Cookies from "js-cookie";
+import { useDispatch, useSelector } from "react-redux";
 
 type AvatarSize = "small" | "default" | "large";
 
 interface AvatarProps {
-  username?: string;
-  avatarUrl?: string | null;
   showDropdown?: boolean;
   size?: AvatarSize;
   onProfile?: () => void;
@@ -24,8 +23,6 @@ interface AvatarProps {
 }
 
 const Avatar = ({
-  username = "John Doe",
-  avatarUrl = null,
   showDropdown = true,
   size = "default",
   onProfile = () => console.log("Profile clicked"),
@@ -36,6 +33,10 @@ const Avatar = ({
   const [email, setEmail] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const account = useSelector((state: any) => state.account);
+  const dispatch = useDispatch();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [username, setUsername] = useState("John Doe");
 
   const sizeClasses = {
     small: "w-[32px] h-[32px]",
@@ -73,6 +74,19 @@ const Avatar = ({
     };
     getEmail();
   }, []);
+
+  useEffect(() => {
+    if(account.profile.profilePic) {
+      setAvatarUrl(account.profile.profilePic);
+    }
+    if(account.profile.firstname || account.profile.lastname) {
+      setUsername(
+        `${account.profile.firstname || ""} ${account.profile.lastname || ""}`.trim()
+      );
+    }
+  }, [account.profile]);
+
+  
 
   const toggleDropdown = () => {
     if (showDropdown) {

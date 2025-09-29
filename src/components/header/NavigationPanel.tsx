@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Home, Briefcase, User, Building2, ScanSearch } from "lucide-react";
 import NavigationItem from "./NavigationItem";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Router } from "next/router";
 
 const NavigationPanel = () => {
   const [activeItem, setActiveItem] = useState("Home");
+  const pathname = usePathname();
   const [isTransitioning, setIsTransitioning] = useState(false);
   const router = useRouter();
 
@@ -28,12 +29,12 @@ const NavigationPanel = () => {
   };
 
   useEffect(() => {
-    const currentPath = window.location.pathname;
-    if (currentPath === "/") setActiveItem("Home");
-    if (currentPath === "/post-a-job") setActiveItem("Post a Job");
-    if (currentPath === "/find-jobs") setActiveItem("Find Jobs");
-    if (currentPath === "/organizations") setActiveItem("Organizations");
-  }, []);
+    if (pathname === "/") setActiveItem("Home");
+    else if (pathname === "/post-a-job") setActiveItem("Post a Job");
+    else if (pathname === "/find-jobs") setActiveItem("Find Jobs");
+    else if (pathname === "/organizations") setActiveItem("Organizations");
+    else if (pathname === "/account") setActiveItem("");
+  }, [pathname]);
 
   return (
     <>

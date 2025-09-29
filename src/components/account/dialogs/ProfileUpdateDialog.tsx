@@ -17,7 +17,7 @@ import { updatePersonalInfo } from "@/actions/profileActions";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { setIsProfileEditing } from "@/redux/features/accountSlice";
+import { setIsProfileEditing, setProfileDetails } from "@/redux/features/accountSlice";
 
 type ProfileUpdateDialogProps = {
   location?: string;
@@ -25,6 +25,12 @@ type ProfileUpdateDialogProps = {
   lastName?: string;
   email?: string;
   phone?: string;
+  jobTitle?: string;
+  bio?: string;
+  experience?: string;
+  education?: string;
+  linkedin?: string;
+  website?: string;
 };
 
 const ProfileUpdateDialog = ({
@@ -33,29 +39,63 @@ const ProfileUpdateDialog = ({
   lastName,
   email,
   phone,
+  jobTitle,
+  bio,
+  experience,
+  education,
+  linkedin,
+  website,
 }: ProfileUpdateDialogProps) => {
- const [isLoading, setIsLoading] = useState(false);
-const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
   const handleSaveChanges = async () => {
     try {
       setIsLoading(true);
-      const message = await updatePersonalInfo(
-        Cookies.get("jwt") || "",
+      const message = await updatePersonalInfo(Cookies.get("jwt") || "", {
         firstName,
         lastName,
         email,
         phone,
-        location
-      );
+        location,
+        jobTitle,
+        bio,
+        experience,
+        education,
+        linkedin,
+        website,
+      });
       toast.success(message || "Profile updated successfully");
+      const details = {
+        firstname: firstName,
+        lastname: lastName,
+        email: email,
+        phone: phone,
+        location: location,
+        jobTitle: jobTitle,
+        bio: bio,
+        linkedin: linkedin,
+        experience: experience,
+        education: education,
+        website: website,
+      };
+
+      // Remove null or undefined values
+      const filteredDetails = Object.fromEntries(
+        Object.entries(details).filter(([_, v]) => v != null)
+      );
+
+      // Dispatch only the non-null fields
+      dispatch(setProfileDetails(filteredDetails));
+
       dispatch(setIsProfileEditing(false));
       sessionStorage.setItem("isEditing", JSON.stringify(false));
     } catch (error) {
       console.error("Error saving changes:", error);
-    }finally{
-      setIsLoading(false); 
+    } finally {
+      setIsLoading(false);
     }
   };
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -70,7 +110,12 @@ const dispatch = useDispatch();
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleSaveChanges}>
+          <AlertDialogAction
+            onClick={async (e) => {
+              e.preventDefault(); // 🚀 prevents auto-close
+              await handleSaveChanges();
+            }}
+          >
             {isLoading ? "Saving..." : "Continue"}
           </AlertDialogAction>
         </AlertDialogFooter>

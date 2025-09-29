@@ -19,6 +19,7 @@ type SchoolInputProps = {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isSchoolSearch?: boolean;
   onSchoolSelect?: (school: SchoolResult) => void;
+  isDisabled?: boolean;
 };
 
 const SchoolInput = ({
@@ -30,6 +31,7 @@ const SchoolInput = ({
   onChange = () => {},
   isSchoolSearch = false,
   onSchoolSelect = () => {},
+  isDisabled = false,
 }: SchoolInputProps) => {
   const [searchResults, setSearchResults] = useState<SchoolResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -164,6 +166,7 @@ const SchoolInput = ({
           value={value ?? ""}
           onChange={handleInputChange}
           autoComplete={isSchoolSearch ? "off" : "on"}
+          disabled={isDisabled}
         />
 
         {/* Loading spinner and clear button for location search */}
@@ -177,6 +180,7 @@ const SchoolInput = ({
                 type="button"
                 onClick={clearSearch}
                 className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                disabled={isDisabled}
               >
                 <X size={14} className="text-gray-400 hover:text-gray-600" />
               </button>
