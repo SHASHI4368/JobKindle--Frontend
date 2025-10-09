@@ -7,7 +7,12 @@ import { Building2 } from "lucide-react";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-const CompanyLogo = () => {
+type Props = {
+  logoUrl: string;
+  setLogoUrl: (url: string) => void;
+};
+
+const CompanyLogo = ({ logoUrl, setLogoUrl }: Props) => {
  const dispatch = useDispatch();
 
  const handleImageUploadDialog = () => {
@@ -21,6 +26,7 @@ const CompanyLogo = () => {
 
  const handleUploadSuccess = (response: any) => {
    setFileUrl(response.url);
+    setLogoUrl(response.url);
    console.log("File uploaded successfully:", response);
  };
 
@@ -41,11 +47,24 @@ const CompanyLogo = () => {
  };
   return (
     <div className="flex w-full flex-row gap-4 mt-[20px] items-center">
-      <div className="h-[100px] w-[100px] justify-center items-center flex border-dashed border-[2px] rounded-[10px] p-4 border-primary/40 ">
-        <Building2 size={50} className="text-primary" />
+      <div className="h-[100px] w-[100px] flex justify-center items-center border-dashed border-[2px] rounded-[10px] p-4 border-primary/40">
+        {logoUrl ? (
+          <img
+            src={logoUrl}
+            alt="Company Logo"
+            className="h-full w-full object-contain rounded-[8px]"
+          />
+        ) : (
+          <Building2 size={50} className="text-primary" />
+        )}
       </div>
+
       <div className="flex flex-col gap-3 justify-items-center-safe">
-        <Button onClick={handleImageUploadDialog} variant={"outline"} className="cursor-pointer">
+        <Button
+          onClick={handleImageUploadDialog}
+          variant={"outline"}
+          className="cursor-pointer"
+        >
           Upload Logo
         </Button>
         <p className="font-raleway text-gray-500 text-[12px] ">

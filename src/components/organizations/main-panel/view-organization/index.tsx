@@ -10,25 +10,50 @@ import {
   Trash,
   Trash2,
 } from "lucide-react";
-import React, { useState } from "react";
-import CompanyLogo from "./CompanyLogo";
+import React, { useEffect, useState } from "react";
 import NormalInput from "@/components/common/input-fields/normal-input";
 import NormalSelector from "@/components/common/selectors/normal-selector";
 import NormalTextArea from "@/components/common/text-areas/normal-textarea";
 import InputWithIcon from "@/components/common/input-fields/input-with-icon";
 import LocationInput from "@/components/common/input-fields/location-input";
 import { Button } from "@/components/ui/button";
+import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
+import CompanyLogo from "../create-organization/CompanyLogo";
 
 const ViewOrganization = () => {
-  const [organizationName, setOrganizationName] = useState("");
-  const [industry, setIndustry] = useState("");
-  const [description, setDescription] = useState("");
-  const [companySize, setCompanySize] = useState("");
-  const [foundedYear, setFoundedYear] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [location, setLocation] = useState("");
-  const [website, setWebsite] = useState("");
+  const [organizationData, setOrganizationData] = useState({
+    organizationName: "",
+    industry: "",
+    description: "",
+    companySize: "",
+    foundedYear: "",
+    email: "",
+    phone: "",
+    location: "",
+    website: "",
+    logoUrl: "",
+  });
+  const organization = useSelector((state: any) => state.organization);
+
+  useEffect(() => {
+    if (organization.selectedOrganization) {
+      setOrganizationData({
+        organizationName: organization.selectedOrganization.organizationName,
+        industry: organization.selectedOrganization.industry,
+        description: organization.selectedOrganization.description,
+        companySize: organization.selectedOrganization.companySize,
+        foundedYear: organization.selectedOrganization.foundedYear,
+        email: organization.selectedOrganization.companyEmail,
+        phone: organization.selectedOrganization.companyPhone,
+        location: organization.selectedOrganization.companyLocation,
+        website: organization.selectedOrganization.companyWebsite,
+        logoUrl: organization.selectedOrganization.organizationLogo,
+      });
+    }
+  }, [organization.selectedOrganization]);
+
+  
 
   const industries = [
     { value: "Technology", label: "Technology" },
@@ -48,74 +73,60 @@ const ViewOrganization = () => {
     { value: "501+", label: "501+" },
   ];
 
-  const handleOrganizationNameChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setOrganizationName(e.target.value);
-  };
-
-  const handleIndustryChange = (value: string) => {
-    setIndustry(value);
-  };
-
-  const handleDescriptionChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    setDescription(e.target.value);
-  };
-
-  const handleCompanySizeChange = (value: string) => {
-    setCompanySize(value);
-  };
-
-  const handleFoundedYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFoundedYear(e.target.value);
-  };
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPhone(e.target.value);
-  };
-
-  const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocation(e.target.value);
-  };
-
-  const handleWebsiteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setWebsite(e.target.value);
-  };
-
   const handleCancel = () => {
-    // Logic to handle cancel action, e.g., reset form or navigate away
-    setOrganizationName("");
-    setIndustry("");
-    setDescription("");
-    setCompanySize("");
-    setFoundedYear("");
-    setEmail("");
-    setPhone("");
-    setLocation("");
-    setWebsite("");
+    setOrganizationData({
+      organizationName: "",
+      industry: "",
+      description: "",
+      companySize: "",
+      foundedYear: "",
+      email: "",
+      phone: "",
+      location: "",
+      website: "",
+      logoUrl: "",
+    });
   };
 
-  const handleSubmit = () => {
-    // Logic to handle form submission
-    console.log("Organization Created", {
-      organizationName,
-      industry,
-      description,
-      companySize,
-      foundedYear,
-      email,
-      phone,
-      location,
-      website,
-    });
-    handleCancel(); // Reset form after submission
+  const handleSubmit = async () => {
+    const jwt = Cookies.get("jwt") || "";
+    const body = {
+      companyEmail: organizationData.email,
+      organizationName: organizationData.organizationName,
+      organizationLogo: organizationData.logoUrl,
+      industry: organizationData.industry,
+      description: organizationData.description,
+      companySize: organizationData.companySize,
+      foundedYear: organizationData.foundedYear,
+      companyPhone: organizationData.phone,
+      companyLocation: organizationData.location,
+      companyWebsite: organizationData.website,
+    };
+    console.log(body);
+    // try {
+    //   const response = await createOrganization(jwt, body);
+    //   if (response.success) {
+    //     toast.success("Organization created successfully!");
+    //     handleCancel();
+    //     const org = {
+    //       orgId: response.data.orgId,
+    //       organizationName: response.data.organizationName,
+    //       organizationLogo: response.data.organizationLogo,
+    //       industry: response.data.industry,
+    //     };
+    //     dispatch(addOrganization(org));
+    //     setSubmitDialogOpen(false);
+    //   } else {
+    //     toast.error(
+    //       response.message || "Failed to create organization. Please try again."
+    //     );
+    //   }
+    // } catch (error) {
+    //   console.error("Error creating organization:", error);
+    //   toast.error("Failed to create organization. Please try again.");
+    // }
   };
+
 
   return (
     <div className="w-full flex flex-col gap-4">
@@ -162,7 +173,7 @@ const ViewOrganization = () => {
           </Button>
         </div>
       </div>
-      <div className="flex items-center justify-between flex-col gap-4">
+      <div className="md:hidden flex items-center justify-between flex-col gap-4">
         <div className="flex items-center space-x-3">
           {/* Icon */}
           <div
@@ -205,27 +216,40 @@ const ViewOrganization = () => {
           </Button>
         </div>
       </div>
-      <CompanyLogo />
+      <CompanyLogo logoUrl={organizationData.logoUrl} setLogoUrl={(url) => setOrganizationData({ ...organizationData, logoUrl: url })} />
       <div className="flex md:flex-row flex-col w-full gap-4 mt-[10px] items-center">
         <NormalInput
+        
           label="Organization Name*"
           placeholder="Enter your organization name"
-          value={organizationName}
-          onChange={handleOrganizationNameChange}
+          value={organizationData.organizationName}
+          onChange={(e) =>
+            setOrganizationData({
+              ...organizationData,
+              organizationName: e.target.value,
+            })
+          }
         />
         <NormalSelector
           label="Industry*"
           placeholder="Select an industry"
           items={industries}
-          value={industry}
-          onChange={handleIndustryChange}
+          value={organizationData.industry}
+          onChange={(val) =>
+            setOrganizationData({ ...organizationData, industry: val })
+          }
         />
       </div>
       <NormalTextArea
         label="Description*"
         placeholder="Enter a brief description of your organization"
-        value={description}
-        onChange={handleDescriptionChange}
+        value={organizationData.description}
+        onChange={(e) =>
+          setOrganizationData({
+            ...organizationData,
+            description: e.target.value,
+          })
+        }
         rows={4}
       />
       <div className="flex md:flex-row flex-col gap-4 items-center">
@@ -233,14 +257,21 @@ const ViewOrganization = () => {
           label="Company Size*"
           placeholder="Select company size"
           items={companySizes}
-          value={companySize}
-          onChange={handleCompanySizeChange}
+          value={organizationData.companySize}
+          onChange={(val) =>
+            setOrganizationData({ ...organizationData, companySize: val })
+          }
         />
         <NormalInput
           label="Founded Year*"
           placeholder="Enter the year your organization was founded"
-          value={foundedYear}
-          onChange={handleFoundedYearChange}
+          value={organizationData.foundedYear}
+          onChange={(e) =>
+            setOrganizationData({
+              ...organizationData,
+              foundedYear: e.target.value,
+            })
+          }
           type="number"
         />
       </div>
@@ -249,15 +280,19 @@ const ViewOrganization = () => {
           icon={<Mail size={18} className="text-gray-400" />}
           label="Email*"
           placeholder="Enter your organization email"
-          value={email}
-          onChange={handleEmailChange}
+          value={organizationData.email}
+          onChange={(e) =>
+            setOrganizationData({ ...organizationData, email: e.target.value })
+          }
         />
         <InputWithIcon
           icon={<Phone size={18} className="text-gray-400" />}
           label="Phone*"
           placeholder="Enter your organization phone number"
-          value={phone}
-          onChange={handlePhoneChange}
+          value={organizationData.phone}
+          onChange={(e) =>
+            setOrganizationData({ ...organizationData, phone: e.target.value })
+          }
         />
       </div>
       <div className="flex md:flex-row flex-col items-center gap-4">
@@ -265,8 +300,13 @@ const ViewOrganization = () => {
           icon={<MapPin size={18} className="text-gray-400" />}
           label="Location"
           placeholder="Enter your location"
-          value={location}
-          onChange={handleLocationChange}
+          value={organizationData.location}
+          onChange={(e) =>
+            setOrganizationData({
+              ...organizationData,
+              location: e.target.value,
+            })
+          }
           isLocationSearch={true}
           onLocationSelect={(selectedLocation) => {
             console.log("Selected:", selectedLocation);
@@ -277,8 +317,13 @@ const ViewOrganization = () => {
           icon={<Globe size={18} className="text-gray-400" />}
           label="Website*"
           placeholder="Enter your organization website"
-          value={website}
-          onChange={handleWebsiteChange}
+          value={organizationData.website}
+          onChange={(e) =>
+            setOrganizationData({
+              ...organizationData,
+              website: e.target.value,
+            })
+          }
         />
       </div>
       <div className="sm:flex hidden justify-between items-center py-[20px]">
