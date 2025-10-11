@@ -1,9 +1,11 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
+const Base_URL_users = process.env.Base_URL_users;
 
 const getUser = async (jwt: string) => {
   try {
-    const response = await axios.get(`${process.env.Base_URL}:8085/users/me`, {
+    const url = `${Base_URL_users}/users/me`;
+    const response = await axios.get(url, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
@@ -34,5 +36,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/account"],
+  matcher: ["/account", "/organizations"],
 };

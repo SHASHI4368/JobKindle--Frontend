@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import AccountHeader from './header';
 import Profile from './main-panel/profile';
 import { parseAsString, useQueryState } from 'nuqs';
@@ -19,7 +19,7 @@ const Account = () => {
     "activeItem",
     parseAsString.withDefault("Profile")
   );
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
   const account = useSelector((state: any) => state.account);
   const dispatch = useDispatch();
 
