@@ -10,41 +10,42 @@ import { useDispatch, useSelector } from "react-redux";
 type Props = {
   logoUrl: string;
   setLogoUrl: (url: string) => void;
+  isDisabled?: boolean;
 };
 
-const CompanyLogo = ({ logoUrl, setLogoUrl }: Props) => {
- const dispatch = useDispatch();
+const CompanyLogo = ({ logoUrl, setLogoUrl, isDisabled = false }: Props) => {
+  const dispatch = useDispatch();
 
- const handleImageUploadDialog = () => {
-   dispatch(setOrganizationImageUploadDialogOpen(true));
- };
+  const handleImageUploadDialog = () => {
+    dispatch(setOrganizationImageUploadDialogOpen(true));
+  };
 
- const organization = useSelector((state: any) => state.organization);
- const [upload, setUpload] = useState(false);
- const [selectedFile, setSelectedFile] = useState<File | null>(null);
- const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const organization = useSelector((state: any) => state.organization);
+  const [upload, setUpload] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
 
- const handleUploadSuccess = (response: any) => {
-   setFileUrl(response.url);
+  const handleUploadSuccess = (response: any) => {
+    setFileUrl(response.url);
     setLogoUrl(response.url);
-   console.log("File uploaded successfully:", response);
- };
+    console.log("File uploaded successfully:", response);
+  };
 
- const handleSubmit = async (e: React.FormEvent) => {
-   if (!selectedFile) {
-     alert("Please select a file to upload.");
-     return;
-   }
-   e.preventDefault();
-   setUpload(true);
- };
+  const handleSubmit = async (e: React.FormEvent) => {
+    if (!selectedFile) {
+      alert("Please select a file to upload.");
+      return;
+    }
+    e.preventDefault();
+    setUpload(true);
+  };
 
- const handleClose = () => {
-   dispatch(setOrganizationImageUploadDialogOpen(false));
-   setSelectedFile(null); // Reset selected file on close
-   setFileUrl(null); // Reset file URL on close
-   setUpload(false); // Reset upload state on close
- };
+  const handleClose = () => {
+    dispatch(setOrganizationImageUploadDialogOpen(false));
+    setSelectedFile(null); // Reset selected file on close
+    setFileUrl(null); // Reset file URL on close
+    setUpload(false); // Reset upload state on close
+  };
   return (
     <div className="flex w-full flex-row gap-4 mt-[20px] items-center">
       <div className="h-[100px] w-[100px] flex justify-center items-center border-dashed border-[2px] rounded-[10px] p-4 border-primary/40">
@@ -64,6 +65,7 @@ const CompanyLogo = ({ logoUrl, setLogoUrl }: Props) => {
           onClick={handleImageUploadDialog}
           variant={"outline"}
           className="cursor-pointer"
+          disabled={isDisabled}
         >
           Upload Logo
         </Button>

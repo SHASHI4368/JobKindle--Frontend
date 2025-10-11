@@ -2,7 +2,7 @@
 
 import { Building2, Globe, Mail, MapPin, Phone } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import CompanyLogo from "./CompanyLogo";
+import CompanyLogo from "../CompanyLogo";
 import NormalInput from "@/components/common/input-fields/normal-input";
 import NormalSelector from "@/components/common/selectors/normal-selector";
 import NormalTextArea from "@/components/common/text-areas/normal-textarea";
@@ -105,11 +105,13 @@ const CreateOrganization = () => {
           organizationName: response.data.organizationName,
           organizationLogo: response.data.organizationLogo,
           industry: response.data.industry,
-        }
+        };
         dispatch(addOrganization(org));
         setSubmitDialogOpen(false);
-      }else{
-        toast.error(response.message || "Failed to create organization. Please try again.");
+      } else {
+        toast.error(
+          response.message || "Failed to create organization. Please try again."
+        );
       }
     } catch (error) {
       console.error("Error creating organization:", error);
