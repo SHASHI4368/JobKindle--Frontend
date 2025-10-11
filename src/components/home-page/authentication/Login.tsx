@@ -23,12 +23,10 @@ const Login = () => {
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    console.log(e.target.value); // Log the email value to the console
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-    console.log(e.target.value); // Log the password value to the console
   };
 
   const changeView = () => {

@@ -1,11 +1,11 @@
 "use server";
 
 import axios from "axios";
-const Base_URL = process.env.Base_URL;
+const Base_URL_users = process.env.Base_URL_users;
 
 export const fetchProfileData = async (jwt: string) => {
   "use server";
-  const url = `${Base_URL}:8085/users/me`;
+  const url = `${Base_URL_users}/users/me`;
   try {
     const response = await axios.get(url, {
       headers: {
@@ -51,7 +51,7 @@ export const updatePersonalInfo = async (
   }
 ) => {
   "use server";
-  const url = `${Base_URL}:8085/users/me`;
+  const url = `${Base_URL_users}/users/me`;
   try {
     const body: any = {};
     if (firstName) body.firstname = firstName;
@@ -82,7 +82,7 @@ export const updatePersonalInfo = async (
 
 export const deleteResume = async (jwt: string) => {
   "use server";
-  const url = `${Base_URL}:8085/users/me`;
+  const url = `${Base_URL_users}/users/me`;
   const body = {
     resume: null,
   };

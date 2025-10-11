@@ -1,7 +1,11 @@
 import React from "react";
 import SidePanelItem from "./SidePanelItem";
+import { OrgProps } from "@/types/organization";
+import { useDispatch, useSelector } from "react-redux";
 
 const SidePanel = () => {
+  const organization = useSelector((state: any) => state.organization);
+  const dispatch = useDispatch();
   return (
     <div className="flex h-fit flex-col gap-4 p-4 lg:w-[30%] w-full border border-gray-200 bg-white shadow-lg rounded-[10px]">
       <div className="flex flex-col justify-items-center-safe">
@@ -13,12 +17,16 @@ const SidePanel = () => {
         </p>
       </div>
       <div className="flex flex-col gap-2">
-        {/* Example items, replace with dynamic data */}
-        <SidePanelItem
-          imageUrl="/images/company-logo-1.png"
-          organizationName="Tech Innovators"
-          industry="Technology"
-        />
+        {organization.myOrganizations &&
+          organization.myOrganizations.map((org: OrgProps) => (
+            <SidePanelItem
+              key={org.orgId}
+              orgId={org.orgId}
+              imageUrl={org.organizationLogo}
+              organizationName={org.organizationName}
+              industry={org.industry}
+            />
+          ))}
       </div>
     </div>
   );
