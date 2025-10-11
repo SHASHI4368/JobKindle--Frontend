@@ -97,7 +97,7 @@ const CreateOrganization = () => {
     console.log(body);
     try {
       const response = await createOrganization(jwt, body);
-      if (response.success) {
+      if (response && response.success) {
         toast.success("Organization created successfully!");
         handleCancel();
         const org = {
