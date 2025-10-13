@@ -6,31 +6,36 @@ import { Plus, Tag } from "lucide-react";
 import React, { useState } from "react";
 import SkillTag from "./SkillTag";
 import CalendarInput from "@/components/common/input-fields/date-input";
+import { NewJobType } from "../types";
 
-const Skills = () => {
+const Skills = ({
+  jobData,
+  setJobData,
+}: {
+  jobData: NewJobType;
+  setJobData: React.Dispatch<React.SetStateAction<NewJobType>>;
+}) => {
   const [skill, setSkill] = useState("");
-  const [skills, setSkills] = useState<string[]>([]);
-  const [deadline, setDeadline] = useState<Date | undefined>(undefined);
 
   const handleSkillChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSkill(e.target.value);
   };
 
   const handleAddSkill = () => {
-    if (skill.trim() && !skills.includes(skill.trim())) {
-      setSkills([...skills, skill.trim()]);
+    if (skill.trim() && !jobData.skills.includes(skill.trim())) {
+      setJobData({ ...jobData, skills: [...jobData.skills, skill.trim()] });
       setSkill("");
     }
   };
 
   // Add this function to handle skill deletion
   const handleDeleteSkill = (skillToDelete: string) => {
-    setSkills(skills.filter((s) => s !== skillToDelete));
+    setJobData({
+      ...jobData,
+      skills: jobData.skills.filter((s) => s !== skillToDelete),
+    });
   };
 
-  const handleDeadlineChange = (date: Date | undefined) => {
-    setDeadline(date);
-  };
 
   return (
     <div className="w-full px-[20px] flex flex-col gap-4 justify-between mt-[20px] border border-gray-200 bg-white  rounded-[10px] p-4 ">
@@ -57,7 +62,7 @@ const Skills = () => {
         </Button>
       </div>
       <div className="w-full flex-wrap gap-2 justify-center flex flex-row">
-        {skills.map((skill, index) => (
+        {jobData.skills.map((skill, index) => (
           <SkillTag
             key={index}
             skill={skill}
@@ -68,8 +73,8 @@ const Skills = () => {
       <CalendarInput
         label="Application Deadline"
         placeholder="Select a deadline"
-        date={deadline}
-        onDateChange={handleDeadlineChange}
+        date={jobData.deadline}
+        onDateChange={(date) => setJobData({ ...jobData, deadline: date })}
       />
     </div>
   );
