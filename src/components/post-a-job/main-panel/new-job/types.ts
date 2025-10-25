@@ -13,7 +13,6 @@ export type NewJobType = {
     symbol: string;
   }
 
-  salary: number;
   minSalary?: number;
   maxSalary?: number;
   jobDescription: string; 

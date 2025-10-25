@@ -8,7 +8,6 @@ import NormalSelector from "@/components/common/selectors/normal-selector";
 import NormalTextArea from "@/components/common/text-areas/normal-textarea";
 import InputWithIcon from "@/components/common/input-fields/input-with-icon";
 import LocationInput from "@/components/common/input-fields/location-input";
-import { Button } from "@/components/ui/button";
 import SubmitDialog from "@/components/common/dialogs/submit-dialog";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";

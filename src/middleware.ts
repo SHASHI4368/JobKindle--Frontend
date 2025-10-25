@@ -10,7 +10,6 @@ const getUser = async (jwt: string) => {
         Authorization: `Bearer ${jwt}`,
       },
     });
-
     return response.data.success;
   } catch (error: any) {
     console.error("Error getting user:", error.message);
