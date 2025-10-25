@@ -4,8 +4,9 @@ import React from "react";
 import PostAJobHeader from "./header";
 import { parseAsString, useQueryState } from "nuqs";
 import NewJob from "./main-panel/new-job";
-import { Briefcase, FileUser } from "lucide-react";
+import { Briefcase, Check, FileUser } from "lucide-react";
 import SidePanel from "../common/side-panel";
+import ViewPosts from "./main-panel/view-posts";
 
 const PostAJob = () => {
   const [activeItem, setActiveItem] = useQueryState(
@@ -20,10 +21,16 @@ const PostAJob = () => {
       description: "Create a new job posting",
     },
     {
+      title: "Created Posts",
+      icon: <Check size={18} />,
+      description: "View and manage your created job posts",
+    },
+    {
       title: "Applications",
       icon: <FileUser size={18} />,
       description: "Manage job applications",
     },
+    
   ];
   
   return (
@@ -37,6 +44,7 @@ const PostAJob = () => {
         />
         <div className="flex-1 rounded-[10px] w-full border border-gray-100 shadow-lg bg-white p-4 mb-[10px]">
           {activeItem === "New Job" && <NewJob />}
+          {activeItem === "Created Posts" && <ViewPosts />}
         </div>
       </div>
     </div>

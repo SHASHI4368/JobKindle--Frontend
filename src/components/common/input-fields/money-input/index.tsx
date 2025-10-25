@@ -1,7 +1,6 @@
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { separateThousandsByComma } from "@/utils/number-formatters/numberFormatters";
-import React from "react";
 
 type MoneyInputProps = {
   label: string;
@@ -34,52 +33,89 @@ const MoneyInput = ({
   minPlaceholder = "Min amount",
   maxPlaceholder = "Max amount",
 }: MoneyInputProps) => {
-  const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value.replace(/,/g, ""); // Remove existing commas
-    const numericValue = inputValue.replace(/[^0-9.]/g, ""); // Only allow numbers and decimal
 
-    if (numericValue === "" || !isNaN(Number(numericValue))) {
-      const formattedValue = numericValue
-        ? separateThousandsByComma(Number(numericValue))
-        : "";
-      const syntheticEvent = {
+  const formatNumberWithCommas = (value: string | number): string => {
+    // Handle nullish or invalid inputs
+    if (value === null || value === undefined || value === "") return "0";
+
+    // Convert safely to number
+    const numericValue = Number(String(value).replace(/,/g, ""));
+
+    // If conversion fails, default to 0
+    if (isNaN(numericValue)) return "0";
+
+    const [integerPart, decimalPart] = String(value).split(".");
+
+    // Format only the integer part
+    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    return decimalPart
+      ? `${formattedInteger}.${decimalPart}`
+      : formattedInteger;
+  };
+
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    callback: (e: React.ChangeEvent<HTMLInputElement>) => void
+  ) => {
+    let inputValue = e.target.value;
+
+    // Remove all commas first
+    inputValue = inputValue.replace(/,/g, "");
+
+    // Allow empty string
+    if (inputValue === "") {
+      const newEvent = {
         ...e,
-        target: { ...e.target, value: formattedValue },
-      };
-      onMinChange(syntheticEvent);
+        target: {
+          ...e.target,
+          value: "",
+        },
+      } as React.ChangeEvent<HTMLInputElement>;
+      callback(newEvent);
+      return;
     }
+
+    // Only allow numbers and one decimal point
+    // Remove any non-numeric characters except decimal point
+    const cleanValue = inputValue.replace(/[^0-9.]/g, "");
+
+    // Ensure only one decimal point
+    const decimalCount = (cleanValue.match(/\./g) || []).length;
+    let finalValue = cleanValue;
+
+    if (decimalCount > 1) {
+      // Keep only the first decimal point
+      const firstDecimalIndex = cleanValue.indexOf(".");
+      finalValue =
+        cleanValue.slice(0, firstDecimalIndex + 1) +
+        cleanValue.slice(firstDecimalIndex + 1).replace(/\./g, "");
+    }
+
+    // Don't format while typing (to avoid cursor jumping)
+    // Just pass the clean numeric value
+    const newEvent = {
+      ...e,
+      target: {
+        ...e.target,
+        value: finalValue,
+      },
+    } as React.ChangeEvent<HTMLInputElement>;
+
+    callback(newEvent);
+  };
+
+  const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleInputChange(e, onMinChange);
   };
 
   const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value.replace(/,/g, ""); // Remove existing commas
-    const numericValue = inputValue.replace(/[^0-9.]/g, ""); // Only allow numbers and decimal
-
-    if (numericValue === "" || !isNaN(Number(numericValue))) {
-      const formattedValue = numericValue
-        ? separateThousandsByComma(Number(numericValue))
-        : "";
-      const syntheticEvent = {
-        ...e,
-        target: { ...e.target, value: formattedValue },
-      };
-      onMaxChange(syntheticEvent);
-    }
+    handleInputChange(e, onMaxChange);
   };
 
   const handleSingleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value.replace(/,/g, ""); // Remove existing commas
-    const numericValue = inputValue.replace(/[^0-9.]/g, ""); // Only allow numbers and decimal
-
-    if (numericValue === "" || !isNaN(Number(numericValue))) {
-      const formattedValue = numericValue
-        ? separateThousandsByComma(Number(numericValue))
-        : "";
-      const syntheticEvent = {
-        ...e,
-        target: { ...e.target, value: formattedValue },
-      };
-      onChange(syntheticEvent);
-    }
+    handleInputChange(e, onChange);
   };
 
   if (isRange) {
@@ -92,17 +128,17 @@ const MoneyInput = ({
           {/* Min Input */}
           <div className="flex-1 relative">
             {currencySymbol && (
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 font-medium z-10 bg-white">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 font-medium z-10 bg-white pointer-events-none">
                 {currencySymbol}
               </span>
             )}
             <Input
-              className={`md:h-[45px] h-[40px]  md:text-[16px] text-[14px] ${
+              className={`md:h-[45px] h-[40px] md:text-[16px] text-[14px] ${
                 currencySymbol ? "pl-12" : ""
               }`}
               placeholder={minPlaceholder}
               type="text"
-              value={minValue}
+              value={formatNumberWithCommas(minValue)}
               onChange={handleMinChange}
             />
           </div>
@@ -113,17 +149,17 @@ const MoneyInput = ({
           {/* Max Input */}
           <div className="flex-1 relative">
             {currencySymbol && (
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 font-medium z-10 bg-white">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 font-medium z-10 bg-white pointer-events-none">
                 {currencySymbol}
               </span>
             )}
             <Input
-              className={`md:h-[45px] h-[40px]  md:text-[16px] text-[14px]${
+              className={`md:h-[45px] h-[40px] md:text-[16px] text-[14px] ${
                 currencySymbol ? "pl-12" : ""
               }`}
               placeholder={maxPlaceholder}
               type="text"
-              value={maxValue}
+              value={formatNumberWithCommas(maxValue)}
               onChange={handleMaxChange}
             />
           </div>
@@ -140,7 +176,7 @@ const MoneyInput = ({
       </Label>
       <div className="relative">
         {currencySymbol && (
-          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 font-medium z-10 bg-white">
+          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 font-medium z-10 bg-white pointer-events-none">
             {currencySymbol}
           </span>
         )}
@@ -150,7 +186,7 @@ const MoneyInput = ({
           }`}
           placeholder={placeholder}
           type={type}
-          value={value}
+          value={formatNumberWithCommas(value)}
           onChange={handleSingleChange}
         />
       </div>
