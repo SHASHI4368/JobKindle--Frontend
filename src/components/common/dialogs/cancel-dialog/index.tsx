@@ -13,13 +13,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { deleteResume, updatePersonalInfo } from "@/actions/profileActions";
-import Cookies from "js-cookie";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
-import { setIsProfileEditing } from "@/redux/features/accountSlice";
-import { Trash2 } from "lucide-react";
-import { deleteImage } from "@/actions/imagekit";
 
 type Props = {
   screenSize: string;
@@ -33,7 +27,9 @@ const CancelDialog = ({ screenSize, handleCancel }: Props) => {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button className={`${screenSize}`} variant="outline">Cancel</Button>
+        <Button className={`${screenSize}`} variant="outline">
+          Cancel
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -50,7 +46,7 @@ const CancelDialog = ({ screenSize, handleCancel }: Props) => {
               setIsLoading(true);
               handleCancel();
               setIsLoading(false);
-              toast.success("All changes discarded");
+              toast.success("All unsaved changes discarded");
               setOpen(false);
             }}
           >

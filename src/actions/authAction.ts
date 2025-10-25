@@ -34,7 +34,6 @@ export const login = async (
     };
     const url = `${Base_URL_auth}/auth/login`;
     const response = await axios.post(url, body);
-    console.log("response", response);
     return response.data;
   } catch (err: any) {
     if(err.response && err.response.data){

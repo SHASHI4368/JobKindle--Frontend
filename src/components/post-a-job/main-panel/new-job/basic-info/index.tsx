@@ -9,88 +9,70 @@ import NormalInput from "@/components/common/input-fields/normal-input";
 import NormalSelector from "@/components/common/selectors/normal-selector";
 import { DollarSign, MapPin, SquareLibrary } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { NewJobType } from "../types";
+import Cookies from "js-cookie";
+import { getAllOrganizations } from "@/actions/organizationActions";
 
-const BasicInfo = () => {
-  const [jobTitle, setJobTitle] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [location, setLocation] = useState("");
-  const [workType, setWorkType] = useState("");
-  const [experienceLevel, setExperienceLevel] = useState("");
-  const [employmentType, setEmploymentType] = useState("");
-  const [currency, setCurrency] = useState("");
-  const [currencySymbol, setCurrencySymbol] = useState("");
-  const [minSalary, setMinSalary] = useState("");
-  const [maxSalary, setMaxSalary] = useState("");
-  const [salary, setSalary] = useState("");
+const BasicInfo = ({
+  jobData,
+  setJobData,
+}: {
+  jobData: NewJobType;
+  setJobData: React.Dispatch<React.SetStateAction<NewJobType>>;
+}) => {
+  const [myOrganizations, setMyOrganizations] = useState<{ label: string; value: string }[]>([]);
 
-  const companies = [
-    { label: "TechCorp Inc.", value: "TechCorp Inc." },
-    { label: "Innovatech Solutions", value: "Innovatech Solutions" },
-    { label: "Global Tech Industries", value: "Global Tech Industries" },
-  ];
+  const getMyOrgs = async () => {
+    const jwt = Cookies.get("jwt");
+    try {
+      if (jwt) {
+        const data = await getAllOrganizations(jwt);
+        console.log(data);
+        if (data.success) {
+          const formattedOrgs = data.data.map((org: any) => ({
+            label: org.organizationName,
+            value: org.orgId,
+          }));
+          console.log(formattedOrgs);
+          setMyOrganizations(formattedOrgs);
+        }
+      }
+    } catch (error) {
+      console.log("Error fetching organizations:", error);
+    }
+  };
+
+  useEffect(() => {
+    getMyOrgs();
+  }, []);
 
   const workTypes = [
-    { label: "Remote", value: "remote" },
-    { label: "Onsite", value: "onsite" },
-    { label: "Hybrid", value: "hybrid" },
+    { label: "Remote", value: "Remote" },
+    { label: "Onsite", value: "On-site" },
+    { label: "Hybrid", value: "Hybrid" },
   ];
 
   const experienceLevels = [
-    { label: "Entry Level", value: "entry" },
-    { label: "Mid Level", value: "mid" },
-    { label: "Senior Level", value: "senior" },
-    { label: "Executive", value: "executive" },
+    { label: "Entry Level", value: "Entry" },
+    { label: "Mid Level", value: "Mid" },
+    { label: "Senior Level", value: "Senior" },
+    { label: "Executive", value: "Executive" },
   ];
 
   const employmentTypes = [
-    { label: "Full-time", value: "full-time" },
-    { label: "Part-time", value: "part-time" },
-    { label: "Contract", value: "contract" },
-    { label: "Internship", value: "internship" },
+    { label: "Full-time", value: "Full-time" },
+    { label: "Part-time", value: "Part-time" },
+    { label: "Contract", value: "Contract" },
+    { label: "Internship", value: "Internship" },
   ];
 
-  const handleJobTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setJobTitle(e.target.value);
-  };
-
-  const handleCompanyNameChange = (value: string) => {
-    setCompanyName(value);
-  };
-
-  const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocation(e.target.value);
-  };
-
-  const handleWorkTypeChange = (value: string) => {
-    setWorkType(value);
-  };
-
-  const handleExperienceLevelChange = (value: string) => {
-    setExperienceLevel(value);
-  };
-
-  const handleEmploymentTypeChange = (value: string) => {
-    setEmploymentType(value);
-  };
-
-  const handleCurrencyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrency(e.target.value);
-  };
-
   const handleCurrencySelect = (currencyResult: CurrencyResult) => {
-    setCurrency(currencyResult.name);
-    setCurrencySymbol(currencyResult.symbol);
+    setJobData({
+      ...jobData,
+      currency: { name: currencyResult.name, symbol: currencyResult.symbol },
+    });
   };
 
-  const handleMinSalaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMinSalary(e.target.value);
-  };
-
-  const handleMaxSalaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMaxSalary(e.target.value);
-  };
-
- 
   return (
     <div className="w-full px-[20px] flex flex-col gap-4 justify-between mt-[20px] border border-gray-200 bg-white  rounded-[10px] p-4 ">
       <div className="flex flex-row items-center w-fit justify-start gap-2">
@@ -103,14 +85,27 @@ const BasicInfo = () => {
         <NormalInput
           label="Job Title"
           placeholder="Eg: Software Engineer"
-          value={jobTitle}
-          onChange={handleJobTitleChange}
+          value={jobData.title}
+          onChange={(e) => setJobData({ ...jobData, title: e.target.value })}
         />
         <NormalSelector
           label="Company Name"
-          items={companies}
-          value={companyName}
-          onChange={handleCompanyNameChange}
+          items={myOrganizations}
+          value={jobData.company.orgId}
+          onChange={(value) => {
+            setJobData({
+              ...jobData,
+              company: { ...jobData.company, orgId: parseInt(value) },
+            });
+            const selectedOrg = myOrganizations.find((org:any) => org.value === parseInt(value))
+            if (selectedOrg) {
+              setJobData({
+                ...jobData,
+                company: { ...jobData.company, name: selectedOrg.label, orgId: parseInt(value) },
+              });
+            }
+            
+          }}
           placeholder="Eg: TechCorp Inc."
         />
       </div>
@@ -119,8 +114,8 @@ const BasicInfo = () => {
           icon={<MapPin size={18} className="text-gray-400" />}
           label="Location"
           placeholder="Enter your location"
-          value={location}
-          onChange={handleLocationChange}
+          value={jobData.location}
+          onChange={(e) => setJobData({ ...jobData, location: e.target.value })}
           isLocationSearch={true}
           onLocationSelect={(selectedLocation) => {
             console.log("Selected:", selectedLocation);
@@ -130,8 +125,8 @@ const BasicInfo = () => {
         <NormalSelector
           label="Work Type"
           items={workTypes}
-          value={workType}
-          onChange={handleWorkTypeChange}
+          value={jobData.workType}
+          onChange={(value) => setJobData({ ...jobData, workType: value })}
           placeholder="Select work type"
         />
       </div>
@@ -139,15 +134,19 @@ const BasicInfo = () => {
         <NormalSelector
           label="Experience Level"
           items={experienceLevels}
-          value={experienceLevel}
-          onChange={handleExperienceLevelChange}
+          value={jobData.experienceLevel}
+          onChange={(value) =>
+            setJobData({ ...jobData, experienceLevel: value })
+          }
           placeholder="Select experience level"
         />
         <NormalSelector
           label="Employment Type"
           items={employmentTypes}
-          value={employmentType}
-          onChange={handleEmploymentTypeChange}
+          value={jobData.employmentType}
+          onChange={(value) =>
+            setJobData({ ...jobData, employmentType: value })
+          }
           placeholder="Select employment type"
         />
       </div>
@@ -155,22 +154,31 @@ const BasicInfo = () => {
         <CurrencyInput
           label="Currency"
           placeholder="Enter Currency"
-          value={currency}
-          onChange={handleCurrencyChange}
+          value={jobData.currency.name}
+          onChange={(e) =>
+            setJobData({
+              ...jobData,
+              currency: { ...jobData.currency, name: e.target.value },
+            })
+          }
           onCurrencySelect={handleCurrencySelect}
         />
         <MoneyInput
-          value={salary}
+          value={jobData.salary}
           label="Salary"
           placeholder="Enter salary"
           isRange={true}
-          minValue={minSalary}
-          maxValue={maxSalary}
-          onMinChange={handleMinSalaryChange}
-          onMaxChange={handleMaxSalaryChange}
+          minValue={jobData.minSalary}
+          maxValue={jobData.maxSalary}
+          onMinChange={(e) =>
+            setJobData({ ...jobData, minSalary: parseFloat(e.target.value) })
+          }
+          onMaxChange={(e) =>
+            setJobData({ ...jobData, maxSalary: parseFloat(e.target.value) })
+          }
           minPlaceholder="Min Salary"
           maxPlaceholder="Max Salary"
-          currencySymbol={currencySymbol}
+          currencySymbol={jobData.currency.symbol}
           type="string"
         />
       </div>

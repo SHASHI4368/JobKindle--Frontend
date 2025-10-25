@@ -27,11 +27,12 @@ type Props = {
   submitText: string;
   submitLoadingText: string;
   description: string;
-  toastText: string;
+  toastText?: string;
   open: boolean;
   setOpen: (open: boolean) => void;
   disabled: boolean;
   onTriggerClick: (e:any) => void;
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | undefined;
 };
 
 const SubmitDialog = ({
@@ -45,13 +46,14 @@ const SubmitDialog = ({
   setOpen,
   disabled,
   onTriggerClick,
+  variant = "default",
 }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button onClick={onTriggerClick} disabled={disabled} className={`${screenSize}`} variant="default">
+        <Button onClick={onTriggerClick} disabled={disabled} className={`${screenSize}`} variant={variant}>
           {`${submitText}`}
         </Button>
       </AlertDialogTrigger>
