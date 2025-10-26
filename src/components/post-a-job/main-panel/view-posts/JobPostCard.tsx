@@ -27,14 +27,13 @@ import { useDispatch } from "react-redux";
 import { setCreateJobPostsData } from "@/redux/features/createJobPostsSlice";
 import { ViewPostsProps } from ".";
 
-
-const JobPostCard = ({ jobData }: ViewPostData) => {
+const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
   const [showDetails, setShowDetails] = useState(false);
   const dispatch = useDispatch();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [jobPostId, setJobPostId] = useQueryState("jobPostId", parseAsInteger);
 
-  const { basicInformation, jobDetails, skills, deadline } = jobData;
+  const { basicInformation, jobDetails, skills, deadline } = jobData.jobData;
 
   // Calculate days ago from deadline (mock calculation)
   const getDaysAgo = (deadlineDate: string): string => {
@@ -60,14 +59,14 @@ const JobPostCard = ({ jobData }: ViewPostData) => {
   };
 
   const handleDeletePost = async () => {
-    try{
+    try {
       const jwt = Cookies.get("jwt") || "";
       if (!jwt) {
         console.error("JWT token not found");
         return;
       }
       const response = await deleteJobPost(jwt, basicInformation.id || 0);
-      if(response.success){
+      if (response.success) {
         toast.success("Job post deleted successfully");
         await getCreatedPosts();
       } else {
@@ -76,7 +75,7 @@ const JobPostCard = ({ jobData }: ViewPostData) => {
     } catch (error) {
       toast.error("An unexpected error occurred");
     }
-  }
+  };
 
   const getCreatedPosts = async () => {
     const jwt = Cookies.get("jwt") || "";
@@ -89,27 +88,29 @@ const JobPostCard = ({ jobData }: ViewPostData) => {
       if (response.success) {
         console.log("Fetched job posts:", response.data);
         response.jobPosts = response.data.map((post: ViewPostsProps) => ({
-          basicInformation: {
-            id: post.postId,
-            jobTitle: post.title,
-            companyName: post.companyName,
-            companyLogo: post.companyLogo,
-            location: post.location,
-            workType: post.workType,
-            experienceLevel: post.experienceLevel,
-            employmentType: post.employmentType,
-            currency: post.currency,
-            salary: { min: post.minSalary, max: post.maxSalary },
+          jobData: {
+            basicInformation: {
+              id: post.postId,
+              jobTitle: post.title,
+              companyName: post.companyName,
+              companyLogo: post.companyLogo,
+              location: post.location,
+              workType: post.workType,
+              experienceLevel: post.experienceLevel,
+              employmentType: post.employmentType,
+              currency: post.currency,
+              salary: { min: post.minSalary, max: post.maxSalary },
+            },
+            jobDetails: {
+              jobDescription: post.description,
+              requirements: post.requirements || [],
+              benefits: post.benefits,
+            },
+            skills: post.skills
+              ? post.skills.flat().map((skill) => skill.name)
+              : [],
+            deadline: post.deadline,
           },
-          jobDetails: {
-            jobDescription: post.description,
-            requirements: post.requirements || [],
-            // benefits: post.benefits || [],
-          },
-          skills: post.skills
-            ? post.skills.flat().map((skill) => skill.name)
-            : [],
-          deadline: post.deadline,
         }));
         dispatch(setCreateJobPostsData(response.jobPosts || []));
       }
@@ -285,7 +286,7 @@ const JobPostCard = ({ jobData }: ViewPostData) => {
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Benefits
               </h3>
-              {/* <ul className="space-y-2">{jobDetails.benefits}</ul> */}
+              <p className="">{jobDetails.benefits}</p>
             </div>
 
             {/* All Skills */}

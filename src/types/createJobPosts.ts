@@ -22,7 +22,7 @@ export type ViewPostData = {
     jobDetails: {
       jobDescription: string;
       requirements: string[];
-      // benefits: post.benefits || [];
+      benefits: string;
     };
     skills: string[];
     deadline: string;

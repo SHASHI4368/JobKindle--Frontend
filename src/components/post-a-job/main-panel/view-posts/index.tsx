@@ -24,6 +24,7 @@ export type ViewPostsProps = {
   requirements: string;
   createdAt: string;
   deadline: string;
+  benefits: string;
   skills: [
     {
       id: number;
@@ -56,6 +57,7 @@ const ViewPosts = () => {
       if(response.success){
         console.log("Fetched job posts:", response.data);
         response.jobPosts = response.data.map((post: ViewPostsProps) => ({
+          jobData: {
           basicInformation: {
             id: post.postId,
             jobTitle: post.title,
@@ -70,12 +72,14 @@ const ViewPosts = () => {
           },
           jobDetails: {
             jobDescription: post.description,
-            requirements: post.requirements || [],
-            // benefits: post.benefits || [],
+            requirements: post.requirements,
+            benefits: post.benefits,
           },
-          skills: post.skills ? post.skills.flat().map((skill) => skill.name) : [],
+          skills: post.skills
+            ? post.skills.flat().map((skill) => skill.name)
+            : [],
           deadline: post.deadline,
-
+        }
         }));
         dispatch(setCreateJobPostsData(response.jobPosts || []));
       }
