@@ -3,42 +3,11 @@
 import { Briefcase } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { getJobPosts } from "@/actions/jobPostActions";
+import { getMyJobPosts } from "@/actions/jobPostActions";
 import JobPostCard from "./JobPostCard";
-import { ViewPostData } from "@/types/createJobPosts";
+import { ViewPostData, ViewPostsProps } from "@/types/jobPosts";
 import { useDispatch, useSelector } from "react-redux";
 import { setCreateJobPostsData } from "@/redux/features/createJobPostsSlice";
-
-export type ViewPostsProps = {
-  postId: number;
-  companyName: string;
-  companyLogo: null;
-  location: string;
-  workType: string;
-  experienceLevel: string;
-  employmentType: string;
-  minSalary: number;
-  maxSalary: number;
-  title: string;
-  description: string;
-  requirements: string;
-  createdAt: string;
-  deadline: string;
-  benefits: string;
-  skills: [
-    {
-      id: number;
-      name: string;
-    }[]
-  ];
-  orgId: number;
-  createdBy: string;
-  currency: string;
-  active: boolean;
-  draft: false;
-};
-
-
 
 const ViewPosts = () => {
   const [loading, setLoading] = useState(false);
@@ -53,33 +22,33 @@ const ViewPosts = () => {
     }
     try {
       setLoading(true);
-      const response = await getJobPosts(jwt);
-      if(response.success){
+      const response = await getMyJobPosts(jwt);
+      if (response.success) {
         console.log("Fetched job posts:", response.data);
         response.jobPosts = response.data.map((post: ViewPostsProps) => ({
           jobData: {
-          basicInformation: {
-            id: post.postId,
-            jobTitle: post.title,
-            companyName: post.companyName,
-            companyLogo: post.companyLogo,
-            location: post.location,
-            workType: post.workType,
-            experienceLevel: post.experienceLevel,
-            employmentType: post.employmentType,
-            currency: post.currency,
-            salary: { min: post.minSalary, max: post.maxSalary },
+            basicInformation: {
+              id: post.postId,
+              jobTitle: post.title,
+              companyName: post.companyName,
+              companyLogo: post.companyLogo,
+              location: post.location,
+              workType: post.workType,
+              experienceLevel: post.experienceLevel,
+              employmentType: post.employmentType,
+              currency: post.currency,
+              salary: { min: post.minSalary, max: post.maxSalary },
+            },
+            jobDetails: {
+              jobDescription: post.description,
+              requirements: post.requirements,
+              benefits: post.benefits,
+            },
+            skills: post.skills
+              ? post.skills.flat().map((skill) => skill.name)
+              : [],
+            deadline: post.deadline,
           },
-          jobDetails: {
-            jobDescription: post.description,
-            requirements: post.requirements,
-            benefits: post.benefits,
-          },
-          skills: post.skills
-            ? post.skills.flat().map((skill) => skill.name)
-            : [],
-          deadline: post.deadline,
-        }
         }));
         dispatch(setCreateJobPostsData(response.jobPosts || []));
       }

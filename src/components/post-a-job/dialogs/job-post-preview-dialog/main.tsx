@@ -10,7 +10,7 @@ import {
   Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { JobPostPreviewMainProps, Salary } from "./types";
+import { JobPostPreviewMainProps, Salary } from "@/types/jobPosts";
 
 
 

@@ -1,8 +1,9 @@
+import { FindJobs } from "@/types/jobPosts";
 import { createSlice } from "@reduxjs/toolkit";
-import { FindJobs } from "@/types/findJobs";
 
 const initialState: FindJobs = {
   jobSearchDialogOpen: false,
+  jobPosts: [],
 };
 
 export const findJobsSlice = createSlice({
@@ -13,8 +14,11 @@ export const findJobsSlice = createSlice({
     setJobSearchDialogOpen: (state, action) => {
       state.jobSearchDialogOpen = action.payload;
     },
+    setFindJobsPostsData: (state, action) => {
+      state.jobPosts = action.payload;
+    }
   },
 });
 
-export const { setJobSearchDialogOpen } = findJobsSlice.actions;
+export const { setJobSearchDialogOpen, setFindJobsPostsData } = findJobsSlice.actions;
 export default findJobsSlice.reducer;

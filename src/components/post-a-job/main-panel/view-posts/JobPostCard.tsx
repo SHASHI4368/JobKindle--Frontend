@@ -12,20 +12,15 @@ import {
   Trash,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  JobPostPreviewMainProps,
-  Salary,
-} from "../../dialogs/job-post-preview-dialog/types";
 import AskDialog from "@/components/common/dialogs/ask-dialog";
 import { parseAsInteger, useQueryState } from "nuqs";
 import EditJobPostDialog from "../edit-job-post";
-import { ViewPostData } from "@/types/createJobPosts";
+import { Salary, ViewPostData, ViewPostsProps } from "@/types/jobPosts";
 import Cookies from "js-cookie";
-import { deleteJobPost, getJobPosts } from "@/actions/jobPostActions";
+import { deleteJobPost, getMyJobPosts } from "@/actions/jobPostActions";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setCreateJobPostsData } from "@/redux/features/createJobPostsSlice";
-import { ViewPostsProps } from ".";
 
 const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -84,7 +79,7 @@ const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
       return;
     }
     try {
-      const response = await getJobPosts(jwt);
+      const response = await getMyJobPosts(jwt);
       if (response.success) {
         console.log("Fetched job posts:", response.data);
         response.jobPosts = response.data.map((post: ViewPostsProps) => ({

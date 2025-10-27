@@ -279,10 +279,93 @@
 /* Remove spinner buttons for all browsers */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 input[type="number"] {
-    -moz-appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+/* Remove spinner buttons for all browsers */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Beautiful scrollbar styles */
+.beautiful-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.beautiful-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+  margin: 4px;
+}
+
+.beautiful-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, hsl(221, 83%, 53%), hsl(225, 71%, 42%));
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.beautiful-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, hsl(221, 83%, 48%), hsl(225, 71%, 37%));
+  border-color: transparent;
+}
+
+.beautiful-scrollbar::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, hsl(221, 83%, 43%), hsl(225, 71%, 32%));
+}
+
+/* Remove scrollbar arrows/buttons */
+.beautiful-scrollbar::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* Firefox scrollbar */
+.beautiful-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(221, 83%, 53%) transparent;
+}
+
+/* Dark mode scrollbar */
+.dark .beautiful-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dark .beautiful-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    oklch(0.488 0.243 264.376),
+    oklch(0.551 0.027 264.364)
+  );
+  border-color: transparent;
+}
+
+.dark .beautiful-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    oklch(0.551 0.027 264.364),
+    oklch(0.488 0.243 264.376)
+  );
+  border-color: transparent;
+}
+
+.dark .beautiful-scrollbar {
+  scrollbar-color: oklch(0.488 0.243 264.376) transparent;
+}
+
+/* Smooth scrolling */
+.beautiful-scrollbar {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }

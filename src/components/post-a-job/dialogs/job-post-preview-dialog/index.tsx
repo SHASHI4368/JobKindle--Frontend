@@ -9,9 +9,9 @@ import {
 import JobPostPreviewMain from "./main";
 
 import React from "react";
-import { JobPostPreviewMainProps } from "./types";
 import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
+import { JobPostPreviewMainProps } from "@/types/jobPosts";
 
 const JobPostPreviewDialog = ({ jobData }: JobPostPreviewMainProps) => {
   return (

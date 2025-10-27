@@ -7,9 +7,9 @@ import toast from "react-hot-toast";
 import {
   createJobPost,
   createJobPostDraft,
-  getJobDrafts,
+  getMyJobDrafts,
   getJobPostById,
-  getJobPosts,
+  getMyJobPosts,
   updateJobPost,
   updateJobPostDraft,
 } from "@/actions/jobPostActions";
@@ -97,7 +97,7 @@ const EditJobPostMain = ({ open, setOpen }: EditJobPostDialogProps) => {
     }
     try {
       setLoading(true);
-      const response = await getJobPosts(jwt);
+      const response = await getMyJobPosts(jwt);
       if (response.success) {
         console.log("Fetched job posts:", response.data);
         response.jobPosts = response.data.map((post: ViewPostsProps) => ({
