@@ -11,15 +11,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Eye, Mail } from "lucide-react";
+import { Application } from "@/types/application";
+import CandidateProfileDialog from "./candidate-profile-dialog";
 
-type Application = {
-  id: number;
-  email: string;
-  fullName: string;
-  status: string;
-  resumeScore: number;
-  interviewScore: number | null;
-};
+
 
 type ApplicationsTableProps = {
   applications: Application[];
@@ -53,7 +48,7 @@ const ApplicationsTable = ({
   };
 
   return (
-    <div className="border rounded-lg overflow-hidden flex-1 overflow-y-auto beautiful-scrollbar">
+    <div className="border rounded-lg overflow-hidden ">
       <Table className="font-geist-sans">
         <TableHeader>
           <TableRow className="bg-gray-50 hover:bg-gray-50">
@@ -74,24 +69,24 @@ const ApplicationsTable = ({
         </TableHeader>
         <TableBody>
           {applications.map((application, index) => (
-            <TableRow key={application.id} className="hover:bg-gray-50">
+            <TableRow key={application.applicationId} className="hover:bg-gray-50">
               <TableCell>
                 <Checkbox
-                  checked={selectedCandidates.includes(application.id)}
-                  onCheckedChange={() => onToggleCandidate(application.id)}
+                  checked={selectedCandidates.includes(application.applicationId)}
+                  onCheckedChange={() => onToggleCandidate(application.applicationId)}
                 />
               </TableCell>
               <TableCell className="font-medium">{index + 1}</TableCell>
               <TableCell className="font-medium">
-                {application.fullName}
+                {`${application.firstName} ${application.lastName}`}
               </TableCell>
               <TableCell className="text-gray-600">
-                {application.email}
+                {application.userEmail}
               </TableCell>
               <TableCell className="">{getStatusBadge(application.status)}</TableCell>
               <TableCell className="text-center">
                 <span className="inline-flex items-center justify-center w-12 h-8 bg-blue-100 border border-blue-200 text-blue-800 rounded-md font-semibold text-sm">
-                  {application.resumeScore}
+                  {application.resumeScore || "N/A"}
                 </span>
               </TableCell>
               <TableCell className="text-center">
@@ -105,14 +100,7 @@ const ApplicationsTable = ({
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-8 px-2"
-                    title="View Resume"
-                  >
-                    <Eye className="w-3.5 h-3.5" />
-                  </Button>
+                  <CandidateProfileDialog application={application} />
                   <Button
                     variant="outline"
                     size="sm"

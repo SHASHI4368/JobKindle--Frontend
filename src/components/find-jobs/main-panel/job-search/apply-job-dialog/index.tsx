@@ -68,7 +68,6 @@ const ApplyJobDialog = ({
       const response = await applyToJobPost(
         jwt,
         jobData.jobData.basicInformation.id,
-        account.profile.id,
         [resume, coverLetter]
       );
       if (response.success) {

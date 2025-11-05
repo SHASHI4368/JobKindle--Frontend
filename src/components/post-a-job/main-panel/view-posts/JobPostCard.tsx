@@ -10,6 +10,7 @@ import {
   Building2,
   Pencil,
   Trash,
+  FileUser,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AskDialog from "@/components/common/dialogs/ask-dialog";
@@ -22,9 +23,11 @@ import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setCreateJobPostsData } from "@/redux/features/createJobPostsSlice";
 import ViewApplicationsDialog from "../applications";
+import { useRouter } from "next/navigation";
 
 const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const router = useRouter();
   const dispatch = useDispatch();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [jobPostId, setJobPostId] = useQueryState("jobPostId", parseAsInteger);
@@ -180,7 +183,7 @@ const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
           </div>
 
           <div className="flex flex-row gap-2 items-center">
-            <ViewApplicationsDialog jobData={jobData} />
+            {/* <ViewApplicationsDialog jobData={jobData} /> */}
 
             <AskDialog
               confirmAction={handleEditDialogOpen}
@@ -238,8 +241,21 @@ const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-          <div className=""></div>
+        <div className="mt-6 flex flex-col items-center sm:flex-row sm:justify-between space-y-3 sm:space-y-0">
+          <Button
+            variant={"default"}
+            className="cursor-pointer transition-all duration-150 w-full sm:w-auto h-[40px] sm:h-[45px]"
+            title="View Job Applications"
+            onClick={() =>
+              router.push(
+                `/post-a-job/applications/${jobData.jobData.basicInformation.id}`
+              )
+            }
+          >
+            <span className="font-geist-sans font-[500] ">View Applications</span>
+            <FileUser className="w-4 h-4" />
+              
+          </Button>
           <Button
             variant={"ghost"}
             onClick={() => setShowDetails(!showDetails)}

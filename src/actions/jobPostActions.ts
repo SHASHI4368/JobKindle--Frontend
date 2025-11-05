@@ -363,7 +363,6 @@ export const getAllActiveJobPosts = async (jwt: string) => {
 export const applyToJobPost = async (
   jwt: string,
   postId: number,
-  userId: number,
   documentList: ApplicationDocument[]
 ) => {
   "use server";
@@ -371,17 +370,16 @@ export const applyToJobPost = async (
   try {
     const body = {
       postId,
-      userId,
       documentList
     };
     console.log(body);
-    // const response = await axios.post(url, body, {
-    //   headers: {
-    //     Authorization: `Bearer ${jwt}`,
-    //     "Content-Type": "application/json",
-    //   },
-    // });
-    // return response.data;
+    const response = await axios.post(url, body, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
   } catch (error: any) {
     if (error.response && error.response.data) {
       console.log("error", error.response.data);
