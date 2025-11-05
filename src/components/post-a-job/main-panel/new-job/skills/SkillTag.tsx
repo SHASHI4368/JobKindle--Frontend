@@ -86,7 +86,7 @@ const SkillTag = ({
 
   return (
     <div
-      className={`${selectedColor.bg} border ${selectedColor.border} font-raleway ${selectedColor.text} text-sm font-medium mr-2 px-2.5 py-1 rounded-l-full rounded-r-full flex items-center gap-2 group hover:opacity-80 transition-opacity`}
+      className={`${selectedColor.bg} border ${selectedColor.border} font-geist-sans ${selectedColor.text} text-sm font-medium mr-2 px-2.5 py-1 rounded-l-full rounded-r-full flex items-center gap-2 group hover:opacity-80 transition-opacity`}
     >
       <span>{skill}</span>
       {onDelete && (

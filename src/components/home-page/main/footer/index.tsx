@@ -3,10 +3,10 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <div className="w-full text-gray-300 py-[80px] flex font-raleway flex-col bg-footer-blue">
+    <div className="w-full text-gray-300 py-[80px] flex font-geist-sans flex-col bg-footer-blue">
       <div className="flex w-full sm:flex-row flex-col  px-[10vw]">
         <div className="sm:w-[38%] w-full sm:pr-[10px] flex flex-col gap-6 ">
-          <div className="flex text-[30px] font-raleway flex-row items-center justify-start space-x-3 w-full">
+          <div className="flex text-[30px] font-geist-sans flex-row items-center justify-start space-x-3 w-full">
             <div className="font-[700]  text-[20px] py-2 px-[15px] text-white rounded-[10px] bg-gradient-to-br from-primary to-secondary    ">
               Jo
             </div>
@@ -140,7 +140,7 @@ const Footer = () => {
       </div>
       <div className="mt-[50px] text-[16px] w-full bottom-0 flex flex-col">
         <div className="h-[2px] bg-gray-600" />
-        <div className="flex px-[10vw] mt-[50px] font-raleway sm:flex-row flex-col items-center justify-between">
+        <div className="flex px-[10vw] mt-[50px] font-geist-sans sm:flex-row flex-col items-center justify-between">
           <p className="">© 2025 HireMe. All rights reserved.</p>
           <div className="flex sm:flex-row flex-col sm:mt-0 mt-[20px]  items-center text-gray-400 sm:gap-5 gap-1">
             <p className="cursor-pointer hover:text-gray-200 transition-all duration-300 ">

@@ -48,7 +48,7 @@
 
 @theme {
   --font-geist-sans: var(--geist-sans);
-  --font-raleway: var(--raleway);
+  --font-geist-sans: var(--raleway);
   --font-geist-mono: var(--geist-mono);
 }
 

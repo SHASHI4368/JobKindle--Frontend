@@ -37,7 +37,7 @@ const Login = () => {
     try {
       setLoading(true);
       const response = await login(email, password);
-      console.log(response)
+      console.log(response);
       if (response.success) {
         dispatch(setProfileEmail(response.data.email));
         const secret = process.env.SECRET_KEY || "";
@@ -46,21 +46,21 @@ const Login = () => {
           expires: 1,
           path: "/",
         });
-        window.location.reload();        
+        window.location.reload();
       } else {
         toast.error(response.message);
       }
     } catch (error) {
       toast.error("Login failed");
       console.error("Login failed", error);
-    }finally {
+    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="w-full font-raleway h-full flex flex-col">
-      <div className="flex cursor-pointer text-[22px] font-raleway flex-row items-center justify-center space-x-3 w-full">
+    <div className="w-full font-geist-sans h-full flex flex-col">
+      <div className="flex cursor-pointer text-[22px] font-geist-sans flex-row items-center justify-center space-x-3 w-full">
         <div className="font-[700]  text-[18px] py-1 px-[8px] text-white rounded-[10px] bg-gradient-to-br from-primary to-secondary    ">
           Jo
         </div>

@@ -49,6 +49,7 @@ export interface Salary {
 }
 
 export interface BasicInformation {
+  id: number;
   jobTitle: string;
   companyName: string;
   companyLogo?: string;

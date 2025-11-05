@@ -21,6 +21,7 @@ import { deleteJobPost, getMyJobPosts } from "@/actions/jobPostActions";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setCreateJobPostsData } from "@/redux/features/createJobPostsSlice";
+import ViewApplicationsDialog from "../applications";
 
 const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -116,7 +117,7 @@ const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
   };
 
   return (
-    <div className="w-full mx-auto bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+    <div className="w-full mx-auto font-geist-sans bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
       {/* Header Section */}
       <div className="p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-4 sm:space-y-0">
@@ -133,7 +134,7 @@ const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl font-raleway font-[700] text-gray-900 mb-1 leading-tight">
+              <h1 className="text-xl sm:text-2xl font-geist-sans font-[700] text-gray-900 mb-1 leading-tight">
                 {basicInformation.jobTitle}
               </h1>
               <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 text-gray-600 mb-3">
@@ -179,6 +180,8 @@ const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
           </div>
 
           <div className="flex flex-row gap-2 items-center">
+            <ViewApplicationsDialog jobData={jobData} />
+
             <AskDialog
               confirmAction={handleEditDialogOpen}
               button={
@@ -242,7 +245,7 @@ const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
             onClick={() => setShowDetails(!showDetails)}
             className="flex cursor-pointer h-[40px] sm:h-[45px] items-center justify-center sm:justify-start space-x-2 text-blue-600 hover:text-blue-800 transition-colors w-full sm:w-auto"
           >
-            <span className="font-raleway font-[500] text-sm sm:text-base">
+            <span className="font-geist-sans font-[500] text-sm sm:text-base">
               {showDetails ? "Hide Details" : "View Full Details"}
             </span>
             {showDetails ? (
@@ -318,7 +321,7 @@ const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
             {/* <div className="pt-4 border-t border-gray-200">
               <Button
                 variant={"default"}
-                className="h-[40px] sm:h-[45px] w-full cursor-pointer text-sm sm:text-[14px] font-raleway font-[600]"
+                className="h-[40px] sm:h-[45px] w-full cursor-pointer text-sm sm:text-[14px] font-geist-sans font-[600]"
               >
                 Apply for this Position
               </Button>

@@ -1,8 +1,15 @@
-import { Brain, ChartColumn, MessageCircle, Shield, Sparkles, Target } from 'lucide-react';
-import React from 'react'
-import OfferCard from './OfferCard';
-import { item } from './type';
-import { Button } from '@/components/ui/button';
+import {
+  Brain,
+  ChartColumn,
+  MessageCircle,
+  Shield,
+  Sparkles,
+  Target,
+} from "lucide-react";
+import React from "react";
+import OfferCard from "./OfferCard";
+import { item } from "./type";
+import { Button } from "@/components/ui/button";
 
 const items: item[] = [
   {
@@ -64,10 +71,10 @@ const items: item[] = [
 const Offer = () => {
   return (
     <div className="w-full flex py-[20px] pt-[50px] bg-gradient-to-r from-[#F1F7FF] to-white items-center justify-start flex-col">
-      <h1 className="font-raleway font-[700] md:text-[60px] sm:text-[50px] text-[40px] text-center sm:leading-[60px] leading-[45px] bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+      <h1 className="font-geist-sans font-[700] md:text-[60px] sm:text-[50px] text-[40px] text-center sm:leading-[60px] leading-[45px] bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
         What We Offer for Recruitment
       </h1>
-      <p className="text-gray-600 font-raleway md:text-[23px] sm:text-[20px] text-[18px] mt-[40px] md:max-w-[50vw] max-w-[90vw] text-center">
+      <p className="text-gray-600 font-geist-sans md:text-[23px] sm:text-[20px] text-[18px] mt-[40px] md:max-w-[50vw] max-w-[90vw] text-center">
         Experience the future of hiring with our cutting-edge AI technologies
         that streamline recruitment, reduce bias, and find the perfect
         candidate-job matches.
@@ -79,17 +86,17 @@ const Offer = () => {
       </div>
       <div className="w-full sm:px-[10vw] px-[5vw] pt-[50px]">
         <div className="w-full bg-gradient-to-r rounded-[10px] shadow-lg p-5 from-primary to-secondary flex flex-col items-center justify-center ">
-          <h1 className="font-raleway font-[700] text-center md:text-[45px] sm:text-[43px] text-[35px] sm:leading-[60px] leading-[40px] text-white ">
+          <h1 className="font-geist-sans font-[700] text-center md:text-[45px] sm:text-[43px] text-[35px] sm:leading-[60px] leading-[40px] text-white ">
             Ready to Transform Your Hiring Process?
           </h1>
-          <p className="md:text-[20px] sm:text-[20px] text-[16px] text-center font-raleway font-[400] text-white mt-[20px]">
+          <p className="md:text-[20px] sm:text-[20px] text-[16px] text-center font-geist-sans font-[400] text-white mt-[20px]">
             Join thousands of companies already using AI to find the perfect
             candidates
           </p>
           <div className="flex w-full sm:flex-row flex-col mt-[30px] items-center justify-center gap-[20px]">
             <Button
               size={"card"}
-              className="bg-white sm:w-fit w-full text-primary hover:bg-white hover:opacity-90 hover:scale-[1.03] transition-all duration-300 font-raleway shadow-2xs  "
+              className="bg-white sm:w-fit w-full text-primary hover:bg-white hover:opacity-90 hover:scale-[1.03] transition-all duration-300 font-geist-sans shadow-2xs  "
             >
               Start Free Trial
             </Button>
@@ -105,6 +112,6 @@ const Offer = () => {
       </div>
     </div>
   );
-}
+};
 
-export default Offer
+export default Offer;

@@ -16,7 +16,10 @@ const Header = () => {
   const dispatch = useDispatch();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(true);
-  const [error, setError] = useQueryState("error", parseAsString.withDefault(""));
+  const [error, setError] = useQueryState(
+    "error",
+    parseAsString.withDefault("")
+  );
 
   const openAuthenticationDialog = (isLogin: boolean) => {
     dispatch(setLogin(isLogin));
@@ -66,11 +69,14 @@ const Header = () => {
           </div>
         </div>
       )}
-      <div className="bg-white font-raleway sticky top-0 z-[100]  shadow-2xs text-2xl h-[10vh] xl:px-[10vw] px-[5vw] flex flex-row justify-between items-center w-full">
+      <div className="bg-white font-geist-sans sticky top-0 z-[100]  shadow-2xs text-2xl h-[10vh] xl:px-[10vw] px-[5vw] flex flex-row justify-between items-center w-full">
         <div className="flex relative flex-row justify-between items-center w-full">
-          <div className="flex cursor-pointer text-[22px] font-raleway flex-row items-center justify-start space-x-3 w-full" onClick={() => {
-            toast.success("You must be logged in to access this feature.");
-          }}>
+          <div
+            className="flex cursor-pointer text-[22px] font-geist-sans flex-row items-center justify-start space-x-3 w-full"
+            onClick={() => {
+              toast.success("You must be logged in to access this feature.");
+            }}
+          >
             <div className="font-[700]  text-[18px] py-1 px-[8px] text-white rounded-[10px] bg-gradient-to-br from-primary to-secondary    ">
               Jo
             </div>

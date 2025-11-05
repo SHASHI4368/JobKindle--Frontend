@@ -20,7 +20,9 @@ const BasicInfo = ({
   jobData: NewJobType;
   setJobData: React.Dispatch<React.SetStateAction<NewJobType>>;
 }) => {
-  const [myOrganizations, setMyOrganizations] = useState<{ label: string; value: string }[]>([]);
+  const [myOrganizations, setMyOrganizations] = useState<
+    { label: string; value: string }[]
+  >([]);
 
   const getMyOrgs = async () => {
     const jwt = Cookies.get("jwt");
@@ -77,7 +79,7 @@ const BasicInfo = ({
     <div className="w-full px-[20px] flex flex-col gap-4 justify-between mt-[20px] border border-gray-200 bg-white  rounded-[10px] p-4 ">
       <div className="flex flex-row items-center w-fit justify-start gap-2">
         <SquareLibrary size={25} className="text-blue-600" />
-        <h1 className="font-raleway font-[600] text-[20px] ">
+        <h1 className="font-geist-sans font-[600] text-[20px] ">
           Basic Information
         </h1>
       </div>
@@ -97,14 +99,19 @@ const BasicInfo = ({
               ...jobData,
               company: { ...jobData.company, orgId: parseInt(value) },
             });
-            const selectedOrg = myOrganizations.find((org:any) => org.value === parseInt(value))
+            const selectedOrg = myOrganizations.find(
+              (org: any) => org.value === parseInt(value)
+            );
             if (selectedOrg) {
               setJobData({
                 ...jobData,
-                company: { ...jobData.company, name: selectedOrg.label, orgId: parseInt(value) },
+                company: {
+                  ...jobData.company,
+                  name: selectedOrg.label,
+                  orgId: parseInt(value),
+                },
               });
             }
-            
           }}
           placeholder="Eg: TechCorp Inc."
         />

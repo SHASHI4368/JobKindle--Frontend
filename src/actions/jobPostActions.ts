@@ -363,6 +363,7 @@ export const getAllActiveJobPosts = async (jwt: string) => {
 export const applyToJobPost = async (
   jwt: string,
   postId: number,
+  userId: number,
   documentList: ApplicationDocument[]
 ) => {
   "use server";
@@ -370,6 +371,7 @@ export const applyToJobPost = async (
   try {
     const body = {
       postId,
+      userId,
       documentList
     };
     console.log(body);

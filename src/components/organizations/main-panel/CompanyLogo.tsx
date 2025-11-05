@@ -69,7 +69,7 @@ const CompanyLogo = ({ logoUrl, setLogoUrl, isDisabled = false }: Props) => {
         >
           Upload Logo
         </Button>
-        <p className="font-raleway text-gray-500 text-[12px] ">
+        <p className="font-geist-sans text-gray-500 text-[12px] ">
           PNG, JPG or SVG. Max size 10MB.
         </p>
       </div>

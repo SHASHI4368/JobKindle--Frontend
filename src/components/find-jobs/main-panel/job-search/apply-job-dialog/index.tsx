@@ -23,6 +23,7 @@ import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { applyToJobPost } from "@/actions/jobPostActions";
 import AskDialog from "@/components/common/dialogs/ask-dialog";
+import { useSelector } from "react-redux";
 
 type ApplyJobDialogProps = {
   dialogOpen: boolean;
@@ -41,6 +42,7 @@ const ApplyJobDialog = ({
   const [coverLetter, setCoverLetter] = useState<ApplicationDocument>(
     {} as ApplicationDocument
   );
+  const account = useSelector((state: any) => state.account);
 
   const [resumeUpload, setResumeUpload] = useState(false);
   const [coverLetterUpload, setCoverLetterUpload] = useState(false);
@@ -51,8 +53,10 @@ const ApplyJobDialog = ({
   };
 
   const handleApplyJobPost = async () => {
-    if(resumeUpload || coverLetterUpload) {
-      toast.error("Please upload the documents before submitting the application");
+    if (resumeUpload || coverLetterUpload) {
+      toast.error(
+        "Please upload the documents before submitting the application"
+      );
       return;
     }
     const jwt = Cookies.get("jwt");
@@ -64,6 +68,7 @@ const ApplyJobDialog = ({
       const response = await applyToJobPost(
         jwt,
         jobData.jobData.basicInformation.id,
+        account.profile.id,
         [resume, coverLetter]
       );
       if (response.success) {
@@ -185,7 +190,7 @@ const ApplyJobDialog = ({
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2 sm:pt-4">
             <Button
               variant="outline"
-              className="flex-1 h-[40px] sm:h-[45px] text-sm sm:text-[14px] font-raleway font-[600]"
+              className="flex-1 h-[40px] sm:h-[45px] text-sm sm:text-[14px] font-geist-sans font-[600]"
               onClick={() => handleOpenChange(false)}
             >
               Cancel
@@ -195,18 +200,18 @@ const ApplyJobDialog = ({
               description="Are you sure you want to submit your application for this job?"
               button={
                 <Button
-                onClick={(e) => {
-                  // continue only if resumeUpload and coverLetterUpload is false
-                  if (coverLetterUpload || resumeUpload) {
-                    e.preventDefault();
-                    toast.error(
-                      "Please upload the documents before submitting the application"
-                    );
-                    return;
-                  }
-                }}
+                  onClick={(e) => {
+                    // continue only if resumeUpload and coverLetterUpload is false
+                    if (coverLetterUpload || resumeUpload) {
+                      e.preventDefault();
+                      toast.error(
+                        "Please upload the documents before submitting the application"
+                      );
+                      return;
+                    }
+                  }}
                   disabled={resume.id === undefined || resume.id === ""}
-                  className="flex-1 h-[40px] sm:h-[45px]  text-sm sm:text-[14px] font-raleway font-[600]"
+                  className="flex-1 h-[40px] sm:h-[45px]  text-sm sm:text-[14px] font-geist-sans font-[600]"
                 >
                   Submit Application
                 </Button>
