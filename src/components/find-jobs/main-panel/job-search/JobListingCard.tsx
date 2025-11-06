@@ -10,44 +10,15 @@ import {
   Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Salary, ViewPostData } from "@/types/jobPosts";
+import AskDialog from "@/components/common/dialogs/ask-dialog";
+import ApplyJobDialog from "./apply-job-dialog";
 
-interface Salary {
-  min: number;
-  max: number;
-}
-
-interface BasicInformation {
-  jobTitle: string;
-  companyName: string;
-  location: string;
-  workType: string;
-  experienceLevel: string;
-  employmentType: string;
-  currency: string;
-  salary: Salary;
-}
-
-interface JobDetails {
-  jobDescription: string;
-  requirements: string[];
-  benifits: string[];
-}
-
-interface JobData {
-  basicInformation: BasicInformation;
-  jobDetails: JobDetails;
-  skills: string[];
-  deadline: string;
-}
-
-interface JobListingCardProps {
-  jobData: JobData;
-}
-
-const JobListingCard = ({ jobData }: JobListingCardProps) => {
+const JobListingCard = ({ jobData }: { jobData: ViewPostData }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const [applyDialogOpen, setApplyDialogOpen] = useState(false);
 
-  const { basicInformation, jobDetails, skills, deadline } = jobData;
+  const { basicInformation, jobDetails, skills, deadline } = jobData.jobData;
 
   // Calculate days ago from deadline (mock calculation)
   const getDaysAgo = (deadlineDate: string): string => {
@@ -68,8 +39,13 @@ const JobListingCard = ({ jobData }: JobListingCardProps) => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+    <div className="w-full  mx-auto bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
       {/* Header Section */}
+      <ApplyJobDialog
+        dialogOpen={applyDialogOpen}
+        handleOpenChange={setApplyDialogOpen}
+        jobData={jobData}
+      />
       <div className="p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-4 sm:space-y-0">
           <div className="flex items-start space-x-3 sm:space-x-4">
@@ -77,7 +53,7 @@ const JobListingCard = ({ jobData }: JobListingCardProps) => {
               <Building2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl font-raleway font-[700] text-gray-900 mb-1 leading-tight">
+              <h1 className="text-xl sm:text-2xl font-geist-sans font-[700] text-gray-900 mb-1 leading-tight">
                 {basicInformation.jobTitle}
               </h1>
               <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 text-gray-600 mb-3">
@@ -111,7 +87,6 @@ const JobListingCard = ({ jobData }: JobListingCardProps) => {
                   <span>45 applicants</span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <DollarSign className="w-4 h-4" />
                   <span className="font-semibold text-green-600 text-sm sm:text-base">
                     {formatSalary(
                       basicInformation.salary,
@@ -157,19 +132,25 @@ const JobListingCard = ({ jobData }: JobListingCardProps) => {
 
         {/* Action Buttons */}
         <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-          <Button
-            variant={"default"}
-            className="h-[40px] sm:h-[40px] cursor-pointer w-full sm:w-auto"
-          >
-            Apply Now
-          </Button>
+          <AskDialog
+            confirmAction={() => setApplyDialogOpen(true)}
+            button={
+              <Button
+                variant={"default"}
+                className="h-[40px] sm:h-[40px] cursor-pointer w-full sm:w-auto"
+              >
+                Apply Now
+              </Button>
+            }
+            description="Are you sure you want to apply for this job?"
+          />
 
           <Button
             variant={"ghost"}
             onClick={() => setShowDetails(!showDetails)}
             className="flex cursor-pointer h-[40px] sm:h-[45px] items-center justify-center sm:justify-start space-x-2 text-blue-600 hover:text-blue-800 transition-colors w-full sm:w-auto"
           >
-            <span className="font-raleway font-[500] text-sm sm:text-base">
+            <span className="font-geist-sans font-[500] text-sm sm:text-base">
               {showDetails ? "Hide Details" : "View Full Details"}
             </span>
             {showDetails ? (
@@ -200,16 +181,7 @@ const JobListingCard = ({ jobData }: JobListingCardProps) => {
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Requirements
               </h3>
-              <ul className="space-y-2">
-                {jobDetails.requirements.map((requirement, index) => (
-                  <li key={index} className="flex items-start space-x-2">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-gray-700 text-sm sm:text-base">
-                      {requirement}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <ul className="space-y-2">{jobDetails.requirements}</ul>
             </div>
 
             {/* Benefits */}
@@ -217,16 +189,7 @@ const JobListingCard = ({ jobData }: JobListingCardProps) => {
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Benefits
               </h3>
-              <ul className="space-y-2">
-                {jobDetails.benifits.map((benefit, index) => (
-                  <li key={index} className="flex items-start space-x-2">
-                    <div className="w-2 h-2 bg-green-600 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-gray-700 text-sm sm:text-base">
-                      {benefit}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <p className="">{jobDetails.benefits}</p>
             </div>
 
             {/* All Skills */}
@@ -263,7 +226,7 @@ const JobListingCard = ({ jobData }: JobListingCardProps) => {
             <div className="pt-4 border-t border-gray-200">
               <Button
                 variant={"default"}
-                className="h-[40px] sm:h-[45px] w-full cursor-pointer text-sm sm:text-[14px] font-raleway font-[600]"
+                className="h-[40px] sm:h-[45px] w-full cursor-pointer text-sm sm:text-[14px] font-geist-sans font-[600]"
               >
                 Apply for this Position
               </Button>

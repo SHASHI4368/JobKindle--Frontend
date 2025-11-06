@@ -26,7 +26,7 @@ const PasswordWithIcon = ({
     setShowPassword(!showPassword);
   };
   return (
-    <div className="flex flex-col w-full gap-2 font-raleway">
+    <div className="flex flex-col w-full gap-2 font-geist-sans">
       <Label className="sm:text-[14px] text-[12px] text-gray-700">
         {label}
       </Label>
@@ -62,6 +62,5 @@ const PasswordWithIcon = ({
     </div>
   );
 };
-
 
 export default PasswordWithIcon;

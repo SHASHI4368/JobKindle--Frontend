@@ -3,7 +3,7 @@ import { item } from "./type";
 
 const OfferCard = ({ item }: { item: item }) => {
   return (
-    <div className="group relative sm:w-[380px] w-[90vw] h-[400px] rounded-[10px] hover:translate-y-[-5px] transition-transform duration-500 shadow-xl grid grid-rows-[1fr_200px] font-raleway overflow-hidden">
+    <div className="group relative sm:w-[380px] w-[90vw] h-[400px] rounded-[10px] hover:translate-y-[-5px] transition-transform duration-500 shadow-xl grid grid-rows-[1fr_200px] font-geist-sans overflow-hidden">
       {/* Background overlay */}
       <div
         className="absolute inset-0 transition-all duration-300 opacity-0 group-hover:opacity-5"
@@ -11,7 +11,7 @@ const OfferCard = ({ item }: { item: item }) => {
       ></div>
 
       {/* Content here, stays fully visible */}
-      <div className="flex w-full font-raleway  p-7 flex-col">
+      <div className="flex w-full font-geist-sans  p-7 flex-col">
         <div
           className="flex items-center justify-center rounded-[12px] w-[60px] h-[60px]"
           style={{

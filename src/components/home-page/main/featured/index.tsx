@@ -69,10 +69,10 @@ const advertisements: advertisement[] = [
 const Featured = () => {
   return (
     <div className="w-full flex py-[20px] bg-gray-white items-center justify-start flex-col">
-      <h1 className="font-raleway font-[700] md:text-[60px] sm:text-[50px] text-[40px] bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+      <h1 className="font-geist-sans font-[700] md:text-[60px] sm:text-[50px] text-[40px] bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
         Featured Jobs
       </h1>
-      <p className="text-gray-600 font-raleway md:text-[23px] sm:text-[20px] text-[18px] sm:mt-[40px] mt-[20px] md:max-w-[50vw] max-w-[90vw] text-center">
+      <p className="text-gray-600 font-geist-sans md:text-[23px] sm:text-[20px] text-[18px] sm:mt-[40px] mt-[20px] md:max-w-[50vw] max-w-[90vw] text-center">
         Discover hand-picked opportunities from top companies, matched by our AI
         to your skills and preferences
       </p>

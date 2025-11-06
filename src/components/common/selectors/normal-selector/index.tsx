@@ -26,13 +26,16 @@ const NormalSelector = ({
   isDisabled = false,
 }: NormalSelectorProps) => {
   return (
-    <div className="flex flex-col w-full  gap-2 font-raleway">
+    <div className="flex flex-col w-full  gap-2 font-geist-sans">
       <Label className="sm:text-[14px] text-[12px] text-gray-700">
         {label}
       </Label>
       <div className="">
         <Select value={value} onValueChange={onChange}>
-          <SelectTrigger disabled={isDisabled} className="w-full md:text-[16px] text-[14px] md:min-h-[45px] min-h-[40px]">
+          <SelectTrigger
+            disabled={isDisabled}
+            className="w-full md:text-[16px] text-[14px] md:min-h-[45px] min-h-[40px]"
+          >
             <SelectValue
               className="md:text-[16px] text-[14px] md:h-[60px] h-[40px]"
               placeholder={placeholder}
@@ -43,7 +46,7 @@ const NormalSelector = ({
               <SelectItem
                 key={index}
                 value={item.value}
-                className=" text-gray-500 font-raleway md:text-[16px] text-[14px] min-h-[45px]"
+                className=" text-gray-500 font-geist-sans md:text-[16px] text-[14px] min-h-[45px]"
               >
                 {item.label}
               </SelectItem>

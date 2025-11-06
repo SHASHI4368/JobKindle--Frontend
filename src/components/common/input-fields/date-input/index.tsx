@@ -23,8 +23,6 @@ const formatDate = (date: Date | undefined) => {
   });
 };
 
-
-
 type CalendarInputProps = {
   label: string;
   placeholder?: string;
@@ -32,14 +30,18 @@ type CalendarInputProps = {
   onDateChange?: (date: Date | undefined) => void;
 };
 
-
-const CalendarInput = ({ label, placeholder, date, onDateChange }: CalendarInputProps) => {
+const CalendarInput = ({
+  label,
+  placeholder,
+  date,
+  onDateChange,
+}: CalendarInputProps) => {
   const [open, setOpen] = useState(false);
   const [month, setMonth] = useState<Date | undefined>(date);
   const [value, setValue] = useState(formatDate(date));
 
   return (
-    <div className="flex flex-col w-full gap-2 font-raleway">
+    <div className="flex flex-col w-full gap-2 font-geist-sans">
       <Label
         htmlFor="date"
         className="sm:text-[14px] text-[12px] text-gray-700"

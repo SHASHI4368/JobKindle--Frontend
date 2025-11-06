@@ -7,9 +7,9 @@ import toast from "react-hot-toast";
 import {
   createJobPost,
   createJobPostDraft,
-  getJobDrafts,
+  getMyJobDrafts,
   getJobPostById,
-  getJobPosts,
+  getMyJobPosts,
   updateJobPost,
   updateJobPostDraft,
 } from "@/actions/jobPostActions";
@@ -30,29 +30,28 @@ const EditJobPostMain = ({ open, setOpen }: EditJobPostDialogProps) => {
   const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
   const [jobPostId, setJobPostId] = useQueryState("jobPostId", parseAsInteger);
   const [jobData, setJobData] = useState<NewJobType>({
-    title: '',
+    title: "",
     company: {
-      name: '',
-      orgId: 0
+      name: "",
+      orgId: 0,
     },
-    jobDescription : '',
-    location: '',
-    workType: '',
-    experienceLevel: '',
-    employmentType: '',
+    jobDescription: "",
+    location: "",
+    workType: "",
+    experienceLevel: "",
+    employmentType: "",
     currency: {
-      name: '',
-      symbol: ''
+      name: "",
+      symbol: "",
     },
     minSalary: 0,
     maxSalary: 0,
 
-    requirements: '',
-    benefits: '',
+    requirements: "",
+    benefits: "",
     skills: [] as string[],
     deadline: new Date(),
-  }); 
-       
+  });
 
   const handleJobPostUpdate = async () => {
     const jwt = Cookies.get("jwt");
@@ -98,32 +97,35 @@ const EditJobPostMain = ({ open, setOpen }: EditJobPostDialogProps) => {
     }
     try {
       setLoading(true);
-      const response = await getJobPosts(jwt);
+      const response = await getMyJobPosts(jwt);
       if (response.success) {
         console.log("Fetched job posts:", response.data);
         response.jobPosts = response.data.map((post: ViewPostsProps) => ({
-          basicInformation: {
-            id: post.postId,
-            jobTitle: post.title,
-            companyName: post.companyName,
-            companyLogo: post.companyLogo,
-            location: post.location,
-            workType: post.workType,
-            experienceLevel: post.experienceLevel,
-            employmentType: post.employmentType,
-            currency: post.currency,
-            salary: { min: post.minSalary, max: post.maxSalary },
+          jobData: {
+            basicInformation: {
+              id: post.postId,
+              jobTitle: post.title,
+              companyName: post.companyName,
+              companyLogo: post.companyLogo,
+              location: post.location,
+              workType: post.workType,
+              experienceLevel: post.experienceLevel,
+              employmentType: post.employmentType,
+              currency: post.currency,
+              salary: { min: post.minSalary, max: post.maxSalary },
+            },
+            jobDetails: {
+              jobDescription: post.description,
+              requirements: post.requirements || [],
+              benefits: post.benefits,
+            },
+            skills: post.skills
+              ? post.skills.flat().map((skill) => skill.name)
+              : [],
+            deadline: post.deadline,
           },
-          jobDetails: {
-            jobDescription: post.description,
-            requirements: post.requirements || [],
-            // benefits: post.benefits || [],
-          },
-          skills: post.skills
-            ? post.skills.flat().map((skill) => skill.name)
-            : [],
-          deadline: post.deadline,
         }));
+
         dispatch(setCreateJobPostsData(response.jobPosts || []));
       }
     } catch (error) {
@@ -132,7 +134,6 @@ const EditJobPostMain = ({ open, setOpen }: EditJobPostDialogProps) => {
       setLoading(false);
     }
   };
-
 
   const getJobPostData = async () => {
     const jwt = Cookies.get("jwt");

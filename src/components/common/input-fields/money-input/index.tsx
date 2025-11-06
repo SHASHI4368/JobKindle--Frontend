@@ -33,7 +33,6 @@ const MoneyInput = ({
   minPlaceholder = "Min amount",
   maxPlaceholder = "Max amount",
 }: MoneyInputProps) => {
-
   const formatNumberWithCommas = (value: string | number): string => {
     // Handle nullish or invalid inputs
     if (value === null || value === undefined || value === "") return "0";
@@ -53,7 +52,6 @@ const MoneyInput = ({
       ? `${formattedInteger}.${decimalPart}`
       : formattedInteger;
   };
-
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -120,7 +118,7 @@ const MoneyInput = ({
 
   if (isRange) {
     return (
-      <div className="flex flex-col w-full gap-2 font-raleway">
+      <div className="flex flex-col w-full gap-2 font-geist-sans">
         <Label className="sm:text-[14px] text-[12px] text-gray-700">
           {label}
         </Label>
@@ -170,7 +168,7 @@ const MoneyInput = ({
 
   // Single input mode
   return (
-    <div className="flex flex-col w-full gap-2 font-raleway">
+    <div className="flex flex-col w-full gap-2 font-geist-sans">
       <Label className="sm:text-[14px] text-[12px] text-gray-700">
         {label}
       </Label>

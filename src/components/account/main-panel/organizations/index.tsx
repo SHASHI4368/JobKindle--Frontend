@@ -39,17 +39,21 @@ const Organizations = () => {
             </span>
           </div>
         </div>
-        <Button onClick={() => router.push("/organizations")} variant="outline" className="ml-4">
+        <Button
+          onClick={() => router.push("/organizations")}
+          variant="outline"
+          className="ml-4"
+        >
           Manage Organizations
         </Button>
       </div>
       <div className="flex w-full rounded-[10px] p-4 bg-primary/10 border border-primary flex-row gap-4 items-center ">
         <BellRing size={20} className="text-primary ml-2" />
         <div className="flex flex-col w-full justify-items-center-safe">
-          <h1 className="text-primary text-[14px] font-raleway font-[500] ">
+          <h1 className="text-primary text-[14px] font-geist-sans font-[500] ">
             Organization Required for Job Posting
           </h1>
-          <p className="text-primary/80 text-[12px] font-raleway font-[400]">
+          <p className="text-primary/80 text-[12px] font-geist-sans font-[400]">
             To post jobs, you need to have a verified organization with complete
             details. Create your organization profile to start hiring.
           </p>

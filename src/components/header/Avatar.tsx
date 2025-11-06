@@ -11,6 +11,8 @@ import { useRouter } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchProfileData } from "@/actions/profileActions";
+import { setProfileDetails } from "@/redux/features/accountSlice";
 
 type AvatarSize = "small" | "default" | "large";
 
@@ -52,7 +54,7 @@ const Avatar = ({
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event:any) => {
+    const handleClickOutside = (event: any) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
       }
@@ -65,28 +67,58 @@ const Avatar = ({
   }, []);
 
   useEffect(() => {
-    const getEmail = () => {
-      const encryptedEmail = Cookies.get("profileEmail");
-      if (encryptedEmail) {
-        const email = decrypt(encryptedEmail, process.env.SECRET_KEY || "");
-        setEmail(email);
+    const getProfile = async () => {
+      const jwt = Cookies.get("jwt");
+      if (!jwt) return;
+      const response = await fetchProfileData(jwt);
+      if (response.success) {
+        setAvatarUrl(response.data.profilePic || null);
+        const userName = `${response.data.firstname || ""} ${
+          response.data.lastname || ""
+        }`.trim();
+        setUsername(userName || "John Doe");
+        setEmail(response.data.email || "");
+
+        const details = {
+          email: response.data.email || null,
+          firstname: response.data.firstname || null,
+          lastname: response.data.lastname || null,
+          location: response.data.location || null,
+          phone: response.data.phone || null,
+          profilePic: response.data.profilePic || null,
+          jobTitle: response.data.jobTitle || null,
+          bio: response.data.bio || null,
+          linkedin: response.data.linkedin || null,
+          experience: response.data.experience || null,
+          education: response.data.education || null,
+          website: response.data.website || null,
+          resume: response.data.resume || null,
+        };
+
+        // Remove null or undefined values
+        const filteredDetails = Object.fromEntries(
+          Object.entries(details).filter(([_, v]) => v != null)
+        );
+
+        // Dispatch only the non-null fields
+        dispatch(setProfileDetails(filteredDetails));
       }
     };
-    getEmail();
+    getProfile();
   }, []);
 
   useEffect(() => {
-    if(account.profile.profilePic) {
+    if (account.profile.profilePic) {
       setAvatarUrl(account.profile.profilePic);
     }
-    if(account.profile.firstname || account.profile.lastname) {
+    if (account.profile.firstname || account.profile.lastname) {
       setUsername(
-        `${account.profile.firstname || ""} ${account.profile.lastname || ""}`.trim()
+        `${account.profile.firstname || ""} ${
+          account.profile.lastname || ""
+        }`.trim()
       );
     }
   }, [account.profile]);
-
-  
 
   const toggleDropdown = () => {
     if (showDropdown) {
@@ -94,7 +126,7 @@ const Avatar = ({
     }
   };
 
-  const handleMenuItemClick = (path:string) => {
+  const handleMenuItemClick = (path: string) => {
     router.push(path);
     setIsDropdownOpen(false);
   };

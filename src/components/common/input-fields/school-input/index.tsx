@@ -143,7 +143,7 @@ const SchoolInput = ({
 
   return (
     <div
-      className="flex flex-col w-full gap-2 font-raleway relative"
+      className="flex flex-col w-full gap-2 font-geist-sans relative"
       ref={dropdownRef}
     >
       <Label className="sm:text-[14px] text-[12px] text-gray-700">

@@ -20,7 +20,12 @@ type AskDialogProps = {
   submitLoadingText?: string;
 };
 
-const AskDialog = ({ confirmAction, button, description, submitLoadingText }: AskDialogProps) => {
+const AskDialog = ({
+  confirmAction,
+  button,
+  description,
+  submitLoadingText,
+}: AskDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   return (
@@ -29,23 +34,21 @@ const AskDialog = ({ confirmAction, button, description, submitLoadingText }: As
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            {description}
-          </AlertDialogDescription>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
-                      onClick={async (e) => {
-                        e.preventDefault();
-                        setIsLoading(true);
-                        await confirmAction();
-                        setIsLoading(false);
-                        setOpen(false);
-                      }}
-                    >
-                      {isLoading ? `${submitLoadingText}` : `Continue`}
-                    </AlertDialogAction>
+            onClick={async (e) => {
+              e.preventDefault();
+              setIsLoading(true);
+              await confirmAction();
+              setIsLoading(false);
+              setOpen(false);
+            }}
+          >
+            {isLoading ? `${submitLoadingText}` : `Continue`}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

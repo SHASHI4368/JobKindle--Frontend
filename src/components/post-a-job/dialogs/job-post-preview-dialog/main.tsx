@@ -10,9 +10,7 @@ import {
   Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { JobPostPreviewMainProps, Salary } from "./types";
-
-
+import { JobPostPreviewMainProps, Salary } from "@/types/jobPosts";
 
 const JobPostPreviewMain = ({ jobData }: JobPostPreviewMainProps) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -47,7 +45,7 @@ const JobPostPreviewMain = ({ jobData }: JobPostPreviewMainProps) => {
               <Building2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl font-raleway font-[700] text-gray-900 mb-1 leading-tight">
+              <h1 className="text-xl sm:text-2xl font-geist-sans font-[700] text-gray-900 mb-1 leading-tight">
                 {basicInformation.jobTitle}
               </h1>
               <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 text-gray-600 mb-3">
@@ -139,7 +137,7 @@ const JobPostPreviewMain = ({ jobData }: JobPostPreviewMainProps) => {
             onClick={() => setShowDetails(!showDetails)}
             className="flex cursor-pointer h-[40px] sm:h-[45px] items-center justify-center sm:justify-start space-x-2 text-blue-600 hover:text-blue-800 transition-colors w-full sm:w-auto"
           >
-            <span className="font-raleway font-[500] text-sm sm:text-base">
+            <span className="font-geist-sans font-[500] text-sm sm:text-base">
               {showDetails ? "Hide Details" : "View Full Details"}
             </span>
             {showDetails ? (
@@ -233,7 +231,7 @@ const JobPostPreviewMain = ({ jobData }: JobPostPreviewMainProps) => {
             <div className="pt-4 border-t border-gray-200">
               <Button
                 variant={"default"}
-                className="h-[40px] sm:h-[45px] w-full cursor-pointer text-sm sm:text-[14px] font-raleway font-[600]"
+                className="h-[40px] sm:h-[45px] w-full cursor-pointer text-sm sm:text-[14px] font-geist-sans font-[600]"
               >
                 Apply for this Position
               </Button>

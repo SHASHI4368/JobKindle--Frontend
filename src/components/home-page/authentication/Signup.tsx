@@ -85,19 +85,16 @@ const Signup = () => {
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-    
   };
 
   const handleConfirmPasswordChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     setConfirmPassword(e.target.value);
-    
   };
 
   const changeView = () => {
@@ -113,17 +110,16 @@ const Signup = () => {
       setPassword("");
       setConfirmPassword("");
       console.log(response);
-    } catch (err:any) {
+    } catch (err: any) {
       toast.error(err.message);
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
 
-  
   return (
-    <div className="w-full font-raleway h-full flex flex-col ">
-      <div className="flex cursor-pointer text-[22px] font-raleway flex-row items-center justify-center space-x-3 w-full">
+    <div className="w-full font-geist-sans h-full flex flex-col ">
+      <div className="flex cursor-pointer text-[22px] font-geist-sans flex-row items-center justify-center space-x-3 w-full">
         <div className="font-[700]  text-[18px] py-1 px-[8px] text-white rounded-[10px] bg-gradient-to-br from-primary to-secondary    ">
           Jo
         </div>

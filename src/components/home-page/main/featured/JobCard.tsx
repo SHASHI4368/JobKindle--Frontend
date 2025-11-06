@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 const JobCard = ({ job }: { job: advertisement }) => {
   return (
-    <div className="sm:w-[380px] w-[90vw] relative h-[350px] bg-white shadow-xl rounded-[10px] shadow-gray hover:scale-[1.02] transition-all duration-300 p-2 grid grid-rows-[70px_1fr_70px] font-raleway">
+    <div className="sm:w-[380px] w-[90vw] relative h-[350px] bg-white shadow-xl rounded-[10px] shadow-gray hover:scale-[1.02] transition-all duration-300 p-2 grid grid-rows-[70px_1fr_70px] font-geist-sans">
       <div className="flex flex-col  items-start">
         <div className="w-full flex flex-row items-start justify-between p-4 pb-0">
           <h2 className="text-black sm:text-[18px] text-[16px] font-[700] w-[80%]">
@@ -20,7 +20,7 @@ const JobCard = ({ job }: { job: advertisement }) => {
         </h3>
       </div>
       <div className="w-full p-4 flex flex-col gap-3">
-        <div className="flex flex-row gap-6 items-center justify-start font-raleway font-[400] text-gray-500 sm:text-[15px] text-[13px]"> 
+        <div className="flex flex-row gap-6 items-center justify-start font-geist-sans font-[400] text-gray-500 sm:text-[15px] text-[13px]">
           <div className="flex flex-row gap-1 items-center">
             <MapPin className="size-4 text-gray-500" />
             <p>{job.location}</p>
@@ -28,11 +28,11 @@ const JobCard = ({ job }: { job: advertisement }) => {
           <div className="flex flex-row gap-1 items-center">
             <Clock4 className="size-4 text-gray-500" />
             <p>{`${
-              (new Date().getDate() - new Date(job.calledDate).getDate())
+              new Date().getDate() - new Date(job.calledDate).getDate()
             } day(s) ago`}</p>
           </div>
         </div>
-        <div className="flex flex-row gap-6 items-center justify-start font-raleway font-[400] text-gray-500 sm:text-[15px] text-[13px] ">
+        <div className="flex flex-row gap-6 items-center justify-start font-geist-sans font-[400] text-gray-500 sm:text-[15px] text-[13px] ">
           <div className="flex flex-row text-green-700 gap-1 items-center">
             <DollarSign className="size-4 " />
             <p>{job.salary}</p>
@@ -43,7 +43,7 @@ const JobCard = ({ job }: { job: advertisement }) => {
             </div>
           </div>
         </div>
-        <div className="flex flex-row gap-6 items-center justify-between font-raleway font-[400] text-gray-500 sm:text-[15px] text-[13px] ">
+        <div className="flex flex-row gap-6 items-center justify-between font-geist-sans font-[400] text-gray-500 sm:text-[15px] text-[13px] ">
           <div className="flex flex-row gap-1 items-center">
             <Users className="size-4 text-gray-500" />
             <p>{`${job.applications} applicants`}</p>
@@ -53,7 +53,7 @@ const JobCard = ({ job }: { job: advertisement }) => {
             <p className="text-black sm:text-[15px] text-[13px] font-[600] ">{`${job.rating}`}</p>
           </div>
         </div>
-        <div className="flex flex-row mt-[10px] flex-wrap gap-x-6 gap-y-2 items-center justify-start font-raleway font-[400]">
+        <div className="flex flex-row mt-[10px] flex-wrap gap-x-6 gap-y-2 items-center justify-start font-geist-sans font-[400]">
           {job.requirements.map((req, index) => (
             <div
               key={index}
