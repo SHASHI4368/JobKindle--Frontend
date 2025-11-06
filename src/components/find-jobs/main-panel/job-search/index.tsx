@@ -5,7 +5,12 @@ import React from "react";
 import JobListingCard from "./JobListingCard";
 
 const JobSearch = () => {
-  const [sortBy, setSortBy] = useQueryState("sortBy", parseAsString.withDefault("mostRecent"));
+
+  
+  const [sortBy, setSortBy] = useQueryState(
+    "sortBy",
+    parseAsString.withDefault("mostRecent")
+  );
 
   const filterList = [
     { label: "Most Recent", value: "mostRecent" },

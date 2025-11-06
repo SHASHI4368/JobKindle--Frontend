@@ -1,0 +1,25 @@
+[
+  {
+    "jobTitle": "Frontend Developer",
+    "companyName": "TechCorp Solutions",
+    "interviewDate": "2025-10-15",
+    "interviewTime": "10:30 AM",
+    "interviewMode": "Virtual",
+    "interviewerName": "Sarah Johnson"
+  },
+  {
+    "jobTitle": "Software Engineer",
+    "companyName": "InnovateTech",
+    "interviewDate": "2025-10-18",
+    "interviewTime": "2:00 PM",
+    "interviewMode": "In-person"
+  },
+  {
+    "jobTitle": "Full Stack Developer",
+    "companyName": "StartupXYZ",
+    "interviewDate": "2025-10-22",
+    "interviewTime": "11:00 AM",
+    "interviewMode": "Hybrid",
+    "interviewerName": "Michael Chen"
+  }
+]

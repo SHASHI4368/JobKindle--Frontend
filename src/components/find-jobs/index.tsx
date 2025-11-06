@@ -7,6 +7,7 @@ import SidePanel from "../common/side-panel";
 import JobSearch from "./main-panel/job-search";
 import LargeScreenSearch from "./header/LargeScreenSearch";
 import SmallScreenSearch from "./header/SmallScreenSearch";
+import Interviews from "./main-panel/interviews";
 
 const FindJobs = () => {
   const [activeItem, setActiveItem] = useQueryState(
@@ -160,8 +161,9 @@ const FindJobs = () => {
           }}
         />
         <div className="flex-1 flex-col">
-          <div className="rounded-[10px] w-full md:pl-4 mb-[10px]">
+          <div className="rounded-[100px] w-full md:pl-4 mb-[10px]">
             {activeItem === "Job Search" && <JobSearch />}
+            {activeItem === "Interviews" && <Interviews />}
           </div>
         </div>
       </div>
