@@ -10,31 +10,29 @@ import {
   Building2,
   Pencil,
   Trash,
+  FileUser,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  JobPostPreviewMainProps,
-  Salary,
-} from "../../dialogs/job-post-preview-dialog/types";
 import AskDialog from "@/components/common/dialogs/ask-dialog";
 import { parseAsInteger, useQueryState } from "nuqs";
 import EditJobPostDialog from "../edit-job-post";
-import { ViewPostData } from "@/types/createJobPosts";
+import { Salary, ViewPostData, ViewPostsProps } from "@/types/jobPosts";
 import Cookies from "js-cookie";
-import { deleteJobPost, getJobPosts } from "@/actions/jobPostActions";
+import { deleteJobPost, getMyJobPosts } from "@/actions/jobPostActions";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setCreateJobPostsData } from "@/redux/features/createJobPostsSlice";
-import { ViewPostsProps } from ".";
+import ViewApplicationsDialog from "../applications";
+import { useRouter } from "next/navigation";
 
-
-const JobPostCard = ({ jobData }: ViewPostData) => {
+const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const router = useRouter();
   const dispatch = useDispatch();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [jobPostId, setJobPostId] = useQueryState("jobPostId", parseAsInteger);
 
-  const { basicInformation, jobDetails, skills, deadline } = jobData;
+  const { basicInformation, jobDetails, skills, deadline } = jobData.jobData;
 
   // Calculate days ago from deadline (mock calculation)
   const getDaysAgo = (deadlineDate: string): string => {
@@ -60,14 +58,14 @@ const JobPostCard = ({ jobData }: ViewPostData) => {
   };
 
   const handleDeletePost = async () => {
-    try{
+    try {
       const jwt = Cookies.get("jwt") || "";
       if (!jwt) {
         console.error("JWT token not found");
         return;
       }
       const response = await deleteJobPost(jwt, basicInformation.id || 0);
-      if(response.success){
+      if (response.success) {
         toast.success("Job post deleted successfully");
         await getCreatedPosts();
       } else {
@@ -76,7 +74,7 @@ const JobPostCard = ({ jobData }: ViewPostData) => {
     } catch (error) {
       toast.error("An unexpected error occurred");
     }
-  }
+  };
 
   const getCreatedPosts = async () => {
     const jwt = Cookies.get("jwt") || "";
@@ -85,31 +83,33 @@ const JobPostCard = ({ jobData }: ViewPostData) => {
       return;
     }
     try {
-      const response = await getJobPosts(jwt);
+      const response = await getMyJobPosts(jwt);
       if (response.success) {
         console.log("Fetched job posts:", response.data);
         response.jobPosts = response.data.map((post: ViewPostsProps) => ({
-          basicInformation: {
-            id: post.postId,
-            jobTitle: post.title,
-            companyName: post.companyName,
-            companyLogo: post.companyLogo,
-            location: post.location,
-            workType: post.workType,
-            experienceLevel: post.experienceLevel,
-            employmentType: post.employmentType,
-            currency: post.currency,
-            salary: { min: post.minSalary, max: post.maxSalary },
+          jobData: {
+            basicInformation: {
+              id: post.postId,
+              jobTitle: post.title,
+              companyName: post.companyName,
+              companyLogo: post.companyLogo,
+              location: post.location,
+              workType: post.workType,
+              experienceLevel: post.experienceLevel,
+              employmentType: post.employmentType,
+              currency: post.currency,
+              salary: { min: post.minSalary, max: post.maxSalary },
+            },
+            jobDetails: {
+              jobDescription: post.description,
+              requirements: post.requirements || [],
+              benefits: post.benefits,
+            },
+            skills: post.skills
+              ? post.skills.flat().map((skill) => skill.name)
+              : [],
+            deadline: post.deadline,
           },
-          jobDetails: {
-            jobDescription: post.description,
-            requirements: post.requirements || [],
-            // benefits: post.benefits || [],
-          },
-          skills: post.skills
-            ? post.skills.flat().map((skill) => skill.name)
-            : [],
-          deadline: post.deadline,
         }));
         dispatch(setCreateJobPostsData(response.jobPosts || []));
       }
@@ -120,7 +120,7 @@ const JobPostCard = ({ jobData }: ViewPostData) => {
   };
 
   return (
-    <div className="w-full mx-auto bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+    <div className="w-full mx-auto font-geist-sans bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
       {/* Header Section */}
       <div className="p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-4 sm:space-y-0">
@@ -137,7 +137,7 @@ const JobPostCard = ({ jobData }: ViewPostData) => {
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl font-raleway font-[700] text-gray-900 mb-1 leading-tight">
+              <h1 className="text-xl sm:text-2xl font-geist-sans font-[700] text-gray-900 mb-1 leading-tight">
                 {basicInformation.jobTitle}
               </h1>
               <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 text-gray-600 mb-3">
@@ -183,6 +183,8 @@ const JobPostCard = ({ jobData }: ViewPostData) => {
           </div>
 
           <div className="flex flex-row gap-2 items-center">
+            {/* <ViewApplicationsDialog jobData={jobData} /> */}
+
             <AskDialog
               confirmAction={handleEditDialogOpen}
               button={
@@ -239,14 +241,27 @@ const JobPostCard = ({ jobData }: ViewPostData) => {
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-          <div className=""></div>
+        <div className="mt-6 flex flex-col items-center sm:flex-row sm:justify-between space-y-3 sm:space-y-0">
+          <Button
+            variant={"default"}
+            className="cursor-pointer transition-all duration-150 w-full sm:w-auto h-[40px] sm:h-[45px]"
+            title="View Job Applications"
+            onClick={() =>
+              router.push(
+                `/post-a-job/applications/${jobData.jobData.basicInformation.id}`
+              )
+            }
+          >
+            <span className="font-geist-sans font-[500] ">View Applications</span>
+            <FileUser className="w-4 h-4" />
+              
+          </Button>
           <Button
             variant={"ghost"}
             onClick={() => setShowDetails(!showDetails)}
             className="flex cursor-pointer h-[40px] sm:h-[45px] items-center justify-center sm:justify-start space-x-2 text-blue-600 hover:text-blue-800 transition-colors w-full sm:w-auto"
           >
-            <span className="font-raleway font-[500] text-sm sm:text-base">
+            <span className="font-geist-sans font-[500] text-sm sm:text-base">
               {showDetails ? "Hide Details" : "View Full Details"}
             </span>
             {showDetails ? (
@@ -285,7 +300,7 @@ const JobPostCard = ({ jobData }: ViewPostData) => {
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Benefits
               </h3>
-              {/* <ul className="space-y-2">{jobDetails.benefits}</ul> */}
+              <p className="">{jobDetails.benefits}</p>
             </div>
 
             {/* All Skills */}
@@ -322,7 +337,7 @@ const JobPostCard = ({ jobData }: ViewPostData) => {
             {/* <div className="pt-4 border-t border-gray-200">
               <Button
                 variant={"default"}
-                className="h-[40px] sm:h-[45px] w-full cursor-pointer text-sm sm:text-[14px] font-raleway font-[600]"
+                className="h-[40px] sm:h-[45px] w-full cursor-pointer text-sm sm:text-[14px] font-geist-sans font-[600]"
               >
                 Apply for this Position
               </Button>

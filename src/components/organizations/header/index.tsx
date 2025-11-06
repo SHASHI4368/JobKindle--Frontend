@@ -1,9 +1,9 @@
 "use client";
 
-import React from 'react'
-import { Button } from '@/components/ui/button';
-import { Building2, EditIcon, Plus } from 'lucide-react';
-import { parseAsString, useQueryState } from 'nuqs';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Building2, EditIcon, Plus } from "lucide-react";
+import { parseAsString, useQueryState } from "nuqs";
 
 const OrganizationHeader = () => {
   const [activeItem, setActiveItem] = useQueryState(
@@ -16,10 +16,10 @@ const OrganizationHeader = () => {
         <div className="flex flex-row gap-4 items-center">
           <Building2 size={40} className="text-gray-600" />
           <div className="flex flex-col justify-items-center-safe">
-            <h1 className="font-raleway text-[20px] font-[600] ">
+            <h1 className="font-geist-sans text-[20px] font-[600] ">
               Organization Management
             </h1>
-            <p className="font-raleway text-[14px] font-[400] text-gray-500">
+            <p className="font-geist-sans text-[14px] font-[400] text-gray-500">
               Manage your organizations and post jobs
             </p>
           </div>
@@ -36,12 +36,12 @@ const OrganizationHeader = () => {
       </div>
       <div className="w-full px-[20px] md:hidden flex flex-col gap-4 items-start justify-center mt-[20px] border border-gray-200 bg-white h-[20vh] shadow-lg rounded-[10px] ">
         <div className="flex flex-row gap-4 items-center">
-          <Building2  className="text-gray-600  " />
+          <Building2 className="text-gray-600  " />
           <div className="flex flex-col justify-items-center-safe">
-            <h1 className="font-raleway sm:text-[20px] text-[18px] font-[600] ">
+            <h1 className="font-geist-sans sm:text-[20px] text-[18px] font-[600] ">
               Organization Management
             </h1>
-            <p className="font-raleway sm:text-[14px] text-[12px] font-[400] text-gray-500">
+            <p className="font-geist-sans sm:text-[14px] text-[12px] font-[400] text-gray-500">
               Manage your organizations and post jobs
             </p>
           </div>
@@ -58,6 +58,6 @@ const OrganizationHeader = () => {
       </div>
     </div>
   );
-}
+};
 
-export default OrganizationHeader
+export default OrganizationHeader;

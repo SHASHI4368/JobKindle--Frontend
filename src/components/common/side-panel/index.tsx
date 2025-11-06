@@ -36,7 +36,7 @@ const SidePanel = ({ activeItem, setActiveItem, menuItems }: SidePanelProps) => 
   
 
   return (
-    <div className="relative w-full lg:w-[25%]">
+    <div className="relative font-geist-sans w-full lg:w-[25%]">
       
       <div
         className={`

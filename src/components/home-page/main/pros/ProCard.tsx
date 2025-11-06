@@ -1,10 +1,10 @@
-import React from 'react'
-import { ProItem } from './type'
-import { CircleCheckBig } from 'lucide-react';
+import React from "react";
+import { ProItem } from "./type";
+import { CircleCheckBig } from "lucide-react";
 
 const ProCard = ({ item }: { item: ProItem }) => {
   return (
-    <div className="sm:w-[380px] w-[90vw]  font-raleway rounded-[10px] shadow-sm hover:shadow-2xl transition-all duration-500 h-[350px] border-[1px] border-[#DBEAFE] bg-gradient-to-br from-white to-[#EFF6FF] flex flex-col gap-[10px] p-6 ">
+    <div className="sm:w-[380px] w-[90vw]  font-geist-sans rounded-[10px] shadow-sm hover:shadow-2xl transition-all duration-500 h-[350px] border-[1px] border-[#DBEAFE] bg-gradient-to-br from-white to-[#EFF6FF] flex flex-col gap-[10px] p-6 ">
       <div
         className={`flex items-center justify-center rounded-[10px] min-w-[55px] max-w-[55px] min-h-[55px] opacity-95 bg-gradient-to-br from-primary to-secondary`}
       >
@@ -20,6 +20,6 @@ const ProCard = ({ item }: { item: ProItem }) => {
       </div>
     </div>
   );
-}
+};
 
-export default ProCard
+export default ProCard;

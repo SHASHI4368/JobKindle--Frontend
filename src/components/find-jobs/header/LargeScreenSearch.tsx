@@ -57,7 +57,7 @@ const LargeScreenSearch = ({ searchProps }: { searchProps: searchProps }) => {
         <div className="w-[10%]">
           <Button
             onClick={handleJobSearch}
-            className="h-[45px]"
+            className="h-[45px] w-full"
             variant="default"
           >
             <Search size={16} className="text-white" />

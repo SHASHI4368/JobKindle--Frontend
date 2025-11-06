@@ -25,7 +25,7 @@ const NavigationItem = ({
       {/* Main navigation item */}
       <div
         className={`
-        flex items-center gap-2 xl:px-4 px-1 py-2 rounded-xl font-raleway text-[14px] font-[500] 
+        flex items-center gap-2 xl:px-4 px-1 py-2 rounded-xl font-geist-sans text-[14px] font-[500] 
         transition-all duration-300 ease-in-out transform
         ${
           isActive

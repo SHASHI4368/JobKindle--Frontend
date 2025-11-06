@@ -1,11 +1,20 @@
 import NormalSelector from "@/components/common/selectors/normal-selector";
 import { FileSearch2 } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import JobListingCard from "./JobListingCard";
+import { useDispatch, useSelector } from "react-redux";
+import Cookies from "js-cookie";
+import { getAllActiveJobPosts } from "@/actions/jobPostActions";
+import { ViewPostData, ViewPostsProps } from "@/types/jobPosts";
+import { setFindJobsPostsData } from "@/redux/features/findJobsSlice";
+
 
 const JobSearch = () => {
   const [sortBy, setSortBy] = useQueryState("sortBy", parseAsString.withDefault("mostRecent"));
+  const [loading, setLoading] = useState(false);
+    const findJobs = useSelector((state: any) => state.findJobs);
+    const dispatch = useDispatch();
 
   const filterList = [
     { label: "Most Recent", value: "mostRecent" },
@@ -13,119 +22,56 @@ const JobSearch = () => {
     { label: "Highest Salary", value: "highestSalary" },
   ];
 
-  const jobPosts = [
-    {
-      basicInformation: {
-        jobTitle: "Frontend Developer",
-        companyName: "TechNova Solutions",
-        location: "Colombo, Sri Lanka",
-        workType: "hybrid",
-        experienceLevel: "mid level",
-        employmentType: "full time",
-        currency: "LKR",
-        salary: {
-          min: 150000,
-          max: 250000,
-        },
-      },
-      jobDetails: {
-        jobDescription:
-          "We are seeking a passionate and skilled Frontend Developer to join our growing team. You will be responsible for building intuitive and visually appealing web interfaces using modern JavaScript frameworks. This role offers the opportunity to work in a collaborative, fast-paced environment and contribute to cutting-edge digital solutions.",
-        requirements: [
-          "3+ years of experience in frontend development",
-          "Proficiency in React.js and TypeScript",
-          "Strong understanding of HTML5, CSS3, and responsive design",
-          "Experience with REST APIs and asynchronous programming",
-          "Familiarity with Git and version control workflows",
-        ],
-        benifits: [
-          "Hybrid work environment",
-          "Flexible working hours",
-          "Monthly performance bonuses",
-          "Comprehensive health insurance",
-          "Annual training and development budget",
-        ],
-      },
-      skills: ["React", "JavaScript", "TypeScript", "HTML", "CSS", "REST APIs"],
-      deadline: "2025-09-30",
-    },
-    {
-      basicInformation: {
-        jobTitle: "Data Analyst Intern",
-        companyName: "InsightWave Analytics",
-        location: "Remote",
-        workType: "remote",
-        experienceLevel: "entry level",
-        employmentType: "intern",
-        currency: "USD",
-        salary: {
-          min: 300,
-          max: 500,
-        },
-      },
-      jobDetails: {
-        jobDescription:
-          "InsightWave Analytics is offering an exciting internship opportunity for aspiring data analysts. This internship will give you hands-on experience in data cleaning, analysis, and visualization using real-world datasets, all while being mentored by industry experts.",
-        requirements: [
-          "Basic knowledge of data analysis concepts",
-          "Familiarity with Excel and data visualization tools",
-          "Understanding of Python or R for data analysis",
-          "Strong analytical and problem-solving skills",
-          "Enthusiastic and eager to learn",
-        ],
-        benifits: [
-          "Remote work opportunity",
-          "Mentorship from experienced data scientists",
-          "Letter of recommendation upon successful completion",
-          "Flexible schedule",
-          "Exposure to real industry data",
-        ],
-      },
-      skills: ["Excel", "Python", "Data Visualization", "Problem Solving"],
-      deadline: "2025-08-20",
-    },
-    {
-      basicInformation: {
-        jobTitle: "Senior Project Manager",
-        companyName: "Apex Global Systems",
-        location: "Singapore",
-        workType: "onsite",
-        experienceLevel: "senior level",
-        employmentType: "full time",
-        currency: "SGD",
-        salary: {
-          min: 9000,
-          max: 12000,
-        },
-      },
-      jobDetails: {
-        jobDescription:
-          "We are seeking an experienced and highly organized Senior Project Manager to lead our enterprise IT projects. The ideal candidate will have a proven track record in managing large-scale software development projects, excellent communication skills, and the ability to manage cross-functional teams.",
-        requirements: [
-          "8+ years of project management experience",
-          "PMP or PRINCE2 certification preferred",
-          "Strong leadership and team management skills",
-          "Experience with Agile and Waterfall methodologies",
-          "Excellent stakeholder communication and negotiation skills",
-        ],
-        benifits: [
-          "Attractive salary package",
-          "Onsite gym and wellness programs",
-          "Annual performance bonuses",
-          "Opportunities for career growth",
-          "Company-sponsored conferences and workshops",
-        ],
-      },
-      skills: [
-        "Project Management",
-        "Agile",
-        "Scrum",
-        "Leadership",
-        "Communication",
-      ],
-      deadline: "2025-09-15",
-    },
-  ];
+  const getActiveJobs = async () => {
+    const jwt = Cookies.get("jwt") || "";
+    if (!jwt) {
+      console.error("JWT token not found");
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await getAllActiveJobPosts(jwt);
+      if (response.success) {
+        console.log("Fetched job posts:", response.data);
+        response.jobPosts = response.data.map((post: ViewPostsProps) => ({
+          jobData: {
+            basicInformation: {
+              id: post.postId,
+              jobTitle: post.title,
+              companyName: post.companyName,
+              companyLogo: post.companyLogo,
+              location: post.location,
+              workType: post.workType,
+              experienceLevel: post.experienceLevel,
+              employmentType: post.employmentType,
+              currency: post.currency,
+              salary: { min: post.minSalary, max: post.maxSalary },
+            },
+            jobDetails: {
+              jobDescription: post.description,
+              requirements: post.requirements,
+              benefits: post.benefits,
+            },
+            skills: post.skills
+              ? post.skills.flat().map((skill) => skill.name)
+              : [],
+            deadline: post.deadline,
+          },
+        }));
+        dispatch(setFindJobsPostsData(response.jobPosts || []));
+      }
+    } catch (error) {
+      console.error("Error fetching job posts:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getActiveJobs();
+  }, []);
+
+  
 
   const handleSortChange = (item: string) => {
     setSortBy(item);
@@ -175,9 +121,17 @@ const JobSearch = () => {
         </div>
       </div>
       <div className="flex flex-col gap-4 mt-4">
-        {jobPosts.map((job, index) => (
-          <JobListingCard key={index} jobData={job} />
-        ))}
+        {findJobs.jobPosts.length === 0 ? (
+          <div className="w-full h-[200px] flex flex-col items-center justify-center space-y-4 border-2 border-dashed border-gray-300 rounded-lg">
+            <span className="text-gray-500 font-medium">
+              No job posts found.
+            </span>
+          </div>
+        ) : (
+          findJobs.jobPosts.map((post: ViewPostData, index: number) => (
+            <JobListingCard key={index} jobData={post} />
+          ))
+        )}
       </div>
     </div>
   );

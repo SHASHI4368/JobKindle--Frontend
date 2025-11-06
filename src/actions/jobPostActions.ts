@@ -1,5 +1,6 @@
 "use server";
 
+import { ApplicationDocument } from "@/types/jobPosts";
 import axios from "axios";
 const Base_URL_jobPosts = process.env.Base_URL_jobPosts;
 
@@ -39,7 +40,7 @@ export const createJobPostDraft = async (
     benefits,
     skills,
     orgId,
-  }: NewJobType,
+  }: NewJobType
 ) => {
   "use server";
   const url = `${Base_URL_jobPosts}/job-posts/drafts`;
@@ -98,7 +99,7 @@ export const updateJobPostDraft = async (
     benefits,
     skills,
     orgId,
-  }: NewJobType,
+  }: NewJobType
 ) => {
   "use server";
   const url = `${Base_URL_jobPosts}/job-posts/drafts/${draftId}`;
@@ -136,9 +137,9 @@ export const updateJobPostDraft = async (
       return { success: false, message: "An unexpected error occurred" };
     }
   }
-}
+};
 
-export const getJobDrafts = async (jwt: string) => {
+export const getMyJobDrafts = async (jwt: string) => {
   "use server";
   const url = `${Base_URL_jobPosts}/job-posts/drafts`;
   try {
@@ -177,7 +178,7 @@ export const createJobPost = async (
     benefits,
     skills,
     orgId,
-  }: NewJobType,
+  }: NewJobType
 ) => {
   "use server";
   const url = `${Base_URL_jobPosts}/job-posts/create`;
@@ -217,7 +218,7 @@ export const createJobPost = async (
   }
 };
 
-export const getJobPosts = async (jwt: string) => {
+export const getMyJobPosts = async (jwt: string) => {
   "use server";
   const url = `${Base_URL_jobPosts}/job-posts/me`;
   try {
@@ -278,7 +279,7 @@ export const updateJobPost = async (
     benefits,
     skills,
     orgId,
-  }: NewJobType,
+  }: NewJobType
 ) => {
   "use server";
   const url = `${Base_URL_jobPosts}/job-posts/update/${postId}`;
@@ -318,7 +319,7 @@ export const updateJobPost = async (
 
 export const deleteJobPost = async (jwt: string, postId: number) => {
   "use server";
-  const url = `${Base_URL_jobPosts}/job-posts/delete/${postId}`;  
+  const url = `${Base_URL_jobPosts}/job-posts/delete/${postId}`;
   console.log(url);
   try {
     const response = await axios.delete(url, {
@@ -336,4 +337,58 @@ export const deleteJobPost = async (jwt: string, postId: number) => {
       return { success: false, message: "An unexpected error occurred" };
     }
   }
-}
+};
+
+export const getAllActiveJobPosts = async (jwt: string) => {
+  "use server";
+  const url = `${Base_URL_jobPosts}/job-posts/get/filter`;
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      console.log("error", error.response.data);
+      return error.response.data;
+    } else {
+      console.log("error", error);
+      return { success: false, message: "An unexpected error occurred" };
+    }
+  }
+};
+
+export const applyToJobPost = async (
+  jwt: string,
+  postId: number,
+  documentList: ApplicationDocument[]
+) => {
+  "use server";
+  const url = `${Base_URL_jobPosts}/applications/save`;
+  try {
+    const body = {
+      postId,
+      documentList
+    };
+    console.log(body);
+    const response = await axios.post(url, body, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      console.log("error", error.response.data);
+      return error.response.data;
+    } else {
+      console.log("error", error);
+      return { success: false, message: "An unexpected error occurred" };
+    }
+  }
+};
+
+

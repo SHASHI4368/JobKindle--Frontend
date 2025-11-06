@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from 'react'
-import BasicInfo from './basic-info';
-import JobDetails from './job-details';
-import Skills from './skills';
-import { Briefcase, } from 'lucide-react';
-import { NewJobType } from './types';
-import CancelDialog from '@/components/common/dialogs/cancel-dialog';
+import React, { useEffect, useState } from "react";
+import BasicInfo from "./basic-info";
+import JobDetails from "./job-details";
+import Skills from "./skills";
+import { Briefcase } from "lucide-react";
+import { NewJobType } from "./types";
+import CancelDialog from "@/components/common/dialogs/cancel-dialog";
 import Cookies from "js-cookie";
-import SubmitDialog from '@/components/common/dialogs/submit-dialog';
-import toast from 'react-hot-toast';
-import { createJobPost, createJobPostDraft, getJobDrafts, updateJobPostDraft } from '@/actions/jobPostActions';
-import JobPostPreviewDialog from '../../dialogs/job-post-preview-dialog';
-
-
+import SubmitDialog from "@/components/common/dialogs/submit-dialog";
+import toast from "react-hot-toast";
+import {
+  createJobPost,
+  createJobPostDraft,
+  getMyJobDrafts,
+  updateJobPostDraft,
+} from "@/actions/jobPostActions";
+import JobPostPreviewDialog from "../../dialogs/job-post-preview-dialog";
 
 const NewJob = () => {
   const [loading, setLoading] = useState(false);
@@ -20,25 +23,25 @@ const NewJob = () => {
   const [hasDraft, setHasDraft] = useState(false);
   const [draftId, setDraftId] = useState<number | null>(null);
   const [jobData, setJobData] = useState<NewJobType>({
-    title: '',
+    title: "",
     company: {
-      name: '',
-      orgId: 0
+      name: "",
+      orgId: 0,
     },
-    jobDescription : '',
-    location: '',
-    workType: '',
-    experienceLevel: '',
-    employmentType: '',
+    jobDescription: "",
+    location: "",
+    workType: "",
+    experienceLevel: "",
+    employmentType: "",
     currency: {
-      name: '',
-      symbol: ''
+      name: "",
+      symbol: "",
     },
     minSalary: 0,
     maxSalary: 0,
 
-    requirements: '',
-    benefits: '',
+    requirements: "",
+    benefits: "",
     skills: [] as string[],
     deadline: new Date(),
   });
@@ -60,23 +63,23 @@ const NewJob = () => {
       deadline: jobData.deadline,
       benefits: jobData.benefits,
       skills: jobData.skills,
-      orgId: jobData.company.orgId
-    }
-    try{
-      if(!jwt) throw new Error("No JWT found");
+      orgId: jobData.company.orgId,
+    };
+    try {
+      if (!jwt) throw new Error("No JWT found");
       const response = await createJobPostDraft(jwt, body);
-      if(response.success){
+      if (response.success) {
         toast.success("Job post draft created successfully");
         setDraftDialogOpen(false);
-      }else{
+      } else {
         toast.error(response.message || "Error creating job post draft");
         setDraftDialogOpen(false);
       }
-    }catch(error){
+    } catch (error) {
       toast.error("Error creating job post draft");
       console.log("Error creating job post draft:", error);
     }
-  }
+  };
 
   const handleDraftEdit = async () => {
     const jwt = Cookies.get("jwt");
@@ -112,37 +115,37 @@ const NewJob = () => {
       toast.error("Error updating job post draft");
       console.log("Error updating job post draft:", error);
     }
-  }
+  };
 
-  const getJobPostsDrafts = async () => {
+  const getMyJobPostsDrafts = async () => {
     const jwt = Cookies.get("jwt");
     try {
       if (!jwt) throw new Error("No JWT found");
       setLoading(true);
-      const response = await getJobDrafts(jwt);
+      const response = await getMyJobDrafts(jwt);
       if (response.success) {
         setHasDraft(true);
         setDraftId(response.data.postId);
         toast.success("Your job post drafts have been loaded");
         setJobData({
-          title: response.data.title || '',
+          title: response.data.title || "",
           company: {
-            name: response.data.companyName || '',
-            orgId: response.data.orgId || 0
+            name: response.data.companyName || "",
+            orgId: response.data.orgId || 0,
           },
-          jobDescription: response.data.description || '',
-          location: response.data.location || '',
-          workType: response.data.workType || '',
-          experienceLevel: response.data.experienceLevel || '',
-          employmentType: response.data.employmentType || '',
+          jobDescription: response.data.description || "",
+          location: response.data.location || "",
+          workType: response.data.workType || "",
+          experienceLevel: response.data.experienceLevel || "",
+          employmentType: response.data.employmentType || "",
           currency: {
-            name: response.data.currency || '',
-            symbol: response.data.currencySymbol || ''
+            name: response.data.currency || "",
+            symbol: response.data.currencySymbol || "",
           },
           minSalary: response.data.minSalary || 0,
           maxSalary: response.data.maxSalary || 0,
-          requirements: response.data.requirements || '',
-          benefits: response.data.benefits || '',
+          requirements: response.data.requirements || "",
+          benefits: response.data.benefits || "",
           skills: response.data.skills || [],
           deadline: new Date(response.data.deadline) || new Date(),
         });
@@ -161,7 +164,10 @@ const NewJob = () => {
 
   const handleJobPostCreate = async () => {
     const jwt = Cookies.get("jwt");
-    const salaryString = jobData.minSalary === jobData.maxSalary ? `${jobData.currency.symbol}${jobData.minSalary}` : `${jobData.currency.symbol}${jobData.minSalary} - ${jobData.currency.symbol}${jobData.maxSalary}`;
+    const salaryString =
+      jobData.minSalary === jobData.maxSalary
+        ? `${jobData.currency.symbol}${jobData.minSalary}`
+        : `${jobData.currency.symbol}${jobData.minSalary} - ${jobData.currency.symbol}${jobData.maxSalary}`;
     const body = {
       title: jobData.title,
       companyName: jobData.company.name,
@@ -177,44 +183,44 @@ const NewJob = () => {
       deadline: jobData.deadline,
       benefits: jobData.benefits,
       skills: jobData.skills,
-      orgId: jobData.company.orgId
-    }
-    console.log(body)
-    try{
-      if(!jwt) throw new Error("No JWT found");
+      orgId: jobData.company.orgId,
+    };
+    console.log(body);
+    try {
+      if (!jwt) throw new Error("No JWT found");
       const response = await createJobPost(jwt, body);
-      if(response.success){
+      if (response.success) {
         toast.success("Job post created successfully");
         setDraftDialogOpen(false);
         handleCancel();
-      }else{
+      } else {
         toast.error(response.message || "Error creating job post");
       }
-    }catch(error){
+    } catch (error) {
       toast.error("Error creating job post");
       console.log("Error creating job post:", error);
     }
-  }
+  };
 
   const validateDraftData = () => {
     // job title is compulsory, others are optional
-    if(!jobData.title || jobData.title.trim() === ''){
+    if (!jobData.title || jobData.title.trim() === "") {
       toast.error("Job title is required");
       return false;
     }
     return true;
-  }
+  };
 
   const validateJobData = () => {
-    if(!jobData.title || jobData.title.trim() === ''){
+    if (!jobData.title || jobData.title.trim() === "") {
       toast.error("Job title is required");
       return false;
     }
-    if(!jobData.company.name || jobData.company.name.trim() === ''){
+    if (!jobData.company.name || jobData.company.name.trim() === "") {
       toast.error("Company name is required");
       return false;
     }
-    if(!jobData.location || jobData.location.trim() === ''){
+    if (!jobData.location || jobData.location.trim() === "") {
       toast.error("Location is required");
       return false;
     }
@@ -230,14 +236,14 @@ const NewJob = () => {
       toast.error("Employment type is required");
       return false;
     }
-    
-    if(
-      typeof jobData.minSalary !== 'number' ||
-      typeof jobData.maxSalary !== 'number' ||
+
+    if (
+      typeof jobData.minSalary !== "number" ||
+      typeof jobData.maxSalary !== "number" ||
       jobData.minSalary < 0 ||
       jobData.maxSalary < 0 ||
       jobData.minSalary > jobData.maxSalary
-    ){
+    ) {
       toast.error("Valid salary range is required");
       return false;
     }
@@ -253,39 +259,38 @@ const NewJob = () => {
       toast.error("Valid application deadline is required");
       return false;
     }
-    
 
     return true;
-  }
+  };
 
   const handleCancel = () => {
     setJobData({
-      title: '',
+      title: "",
       company: {
-        name: '',
-        orgId: 0
+        name: "",
+        orgId: 0,
       },
-      jobDescription : '',
-      location: '',
-      workType: '',
-      experienceLevel: '',
-      employmentType: '',
+      jobDescription: "",
+      location: "",
+      workType: "",
+      experienceLevel: "",
+      employmentType: "",
       currency: {
-        name: '',
-        symbol: ''
+        name: "",
+        symbol: "",
       },
       minSalary: 0,
       maxSalary: 0,
 
-      requirements: '',
-      benefits: '',
+      requirements: "",
+      benefits: "",
       skills: [] as string[],
       deadline: new Date(),
     });
-  }
+  };
 
   useEffect(() => {
-    getJobPostsDrafts();
+    getMyJobPostsDrafts();
   }, []);
 
   return (
@@ -308,136 +313,149 @@ const NewJob = () => {
           </div>
         </div>
       )}
-    <div className="flex flex-col gap-4 w-full">
-      <div className="flex items-center space-x-3">
-        {/* Icon */}
-        <div
-          className={`
+      <div className="flex flex-col gap-4 w-full">
+        <div className="flex items-center space-x-3">
+          {/* Icon */}
+          <div
+            className={`
           flex-shrink-0 p-2 rounded-lg transition-all duration-300
           bg-gray-100 text-gray-600 group-hover:bg-primary/10 group-hover:text-primary
         `}
-        >
-          <Briefcase />
-        </div>
+          >
+            <Briefcase />
+          </div>
 
-        {/* Text content */}
-        <div className="flex flex-row items-center justify-between w-full">
-          <div className="flex flex-col">
-            <span
-              className={`
+          {/* Text content */}
+          <div className="flex flex-row items-center justify-between w-full">
+            <div className="flex flex-col">
+              <span
+                className={`
             font-semibold text-[18px] transition-colors duration-300 text-gray-800 group-hover:text-primary
             
           `}
-            >
-              Post a New Job
-            </span>
-            <span
-              className={`
+              >
+                Post a New Job
+              </span>
+              <span
+                className={`
               text-xs mt-1 transition-colors duration-300 text-gray-500 group-hover:text-gray-600
               
             `}
-            >
-              Fill in the details below to create a new job listing.
-            </span>
+              >
+                Fill in the details below to create a new job listing.
+              </span>
+            </div>
+            <JobPostPreviewDialog
+              jobData={{
+                basicInformation: {
+                  jobTitle: jobData.title,
+                  companyName: jobData.company.name,
+
+                  location: jobData.location,
+                  workType: jobData.workType,
+                  experienceLevel: jobData.experienceLevel,
+                  employmentType: jobData.employmentType,
+                  currency: jobData.currency.symbol,
+                  salary: {
+                    min: jobData.minSalary || 0,
+                    max: jobData.maxSalary || 0,
+                  },
+                },
+                jobDetails: {
+                  jobDescription: jobData.jobDescription,
+                  requirements: jobData.requirements
+                    ? jobData.requirements
+                        .split("\n")
+                        .filter((req) => req.trim() !== "")
+                    : [],
+                  benefits: jobData.benefits
+                    ? jobData.benefits
+                        .split("\n")
+                        .filter((ben) => ben.trim() !== "")
+                    : [],
+                },
+                skills: jobData.skills,
+                deadline: jobData.deadline?.toString() || "",
+              }}
+            />
           </div>
-          <JobPostPreviewDialog jobData={{
-            basicInformation: {
-              jobTitle: jobData.title,
-              companyName: jobData.company.name,
-              
-              location: jobData.location,
-              workType: jobData.workType,
-              experienceLevel: jobData.experienceLevel,
-              employmentType: jobData.employmentType,
-              currency: jobData.currency.symbol,
-              salary: { min: jobData.minSalary || 0, max: jobData.maxSalary || 0 }
-            },
-            jobDetails: {
-              jobDescription: jobData.jobDescription,
-              requirements: jobData.requirements ? jobData.requirements.split('\n').filter(req => req.trim() !== '') : [],
-              benefits: jobData.benefits ? jobData.benefits.split('\n').filter(ben => ben.trim() !== '') : [],
-            },
-            skills: jobData.skills,
-            deadline: jobData.deadline?.toString() || '',
-          }} />
+        </div>
+        <BasicInfo jobData={jobData} setJobData={setJobData} />
+        <JobDetails jobData={jobData} setJobData={setJobData} />
+        <Skills jobData={jobData} setJobData={setJobData} />
+        <div className="md:flex hidden flex-row items-center justify-between">
+          <CancelDialog screenSize=" " handleCancel={handleCancel} />
+          <div className="flex flex-row gap-4 items-center">
+            <SubmitDialog
+              screenSize=""
+              handleSubmit={hasDraft ? handleDraftEdit : handleDraftCreate}
+              submitText="Save as Draft"
+              submitLoadingText="Saving..."
+              description="You want to save as a draft"
+              open={draftDialogOpen}
+              setOpen={setDraftDialogOpen}
+              disabled={false}
+              onTriggerClick={(e) => {
+                e.preventDefault();
+                if (validateDraftData()) setDraftDialogOpen(true);
+              }}
+              variant="outline"
+            />
+            <SubmitDialog
+              screenSize=""
+              handleSubmit={handleJobPostCreate}
+              submitText="Post Job"
+              submitLoadingText="Saving..."
+              description="You want to post the job"
+              open={submitDialogOpen}
+              setOpen={setSubmitDialogOpen}
+              disabled={false}
+              onTriggerClick={(e) => {
+                e.preventDefault();
+                if (validateJobData()) setSubmitDialogOpen(true);
+              }}
+              variant="default"
+            />
+          </div>
+        </div>
+        <div className="md:hidden flex flex-col gap-2">
+          <CancelDialog screenSize="w-full" handleCancel={handleCancel} />
+          <div className="flex w-full flex-col gap-2 items-center">
+            <SubmitDialog
+              screenSize="w-full"
+              handleSubmit={hasDraft ? handleDraftEdit : handleDraftCreate}
+              submitText="Save as Draft"
+              submitLoadingText="Saving..."
+              description="You want to save as a draft"
+              open={draftDialogOpen}
+              setOpen={setDraftDialogOpen}
+              disabled={false}
+              onTriggerClick={(e) => {
+                e.preventDefault();
+                if (validateDraftData()) setDraftDialogOpen(true);
+              }}
+              variant="outline"
+            />
+            <SubmitDialog
+              screenSize="w-full"
+              handleSubmit={handleJobPostCreate}
+              submitText="Post Job"
+              submitLoadingText="Saving..."
+              description="You want to post the job"
+              open={submitDialogOpen}
+              setOpen={setSubmitDialogOpen}
+              disabled={false}
+              onTriggerClick={(e) => {
+                e.preventDefault();
+                if (validateJobData()) setSubmitDialogOpen(true);
+              }}
+              variant="default"
+            />
+          </div>
         </div>
       </div>
-      <BasicInfo jobData={jobData} setJobData={setJobData} />
-      <JobDetails jobData={jobData} setJobData={setJobData} />
-      <Skills jobData={jobData} setJobData={setJobData} />
-      <div className="md:flex hidden flex-row items-center justify-between">
-        <CancelDialog screenSize=" " handleCancel={handleCancel} />
-        <div className="flex flex-row gap-4 items-center">
-          <SubmitDialog
-            screenSize=""
-            handleSubmit={hasDraft ? handleDraftEdit : handleDraftCreate}
-            submitText="Save as Draft"
-            submitLoadingText="Saving..."
-            description="You want to save as a draft"
-            open={draftDialogOpen}
-            setOpen={setDraftDialogOpen}
-            disabled={false}
-            onTriggerClick={(e) => {
-              e.preventDefault();
-              if(validateDraftData()) setDraftDialogOpen(true)
-            }}
-            variant="outline"
-          />
-          <SubmitDialog
-            screenSize=""
-            handleSubmit={handleJobPostCreate}
-            submitText="Post Job"
-            submitLoadingText="Saving..."
-            description="You want to post the job"
-            open={submitDialogOpen}
-            setOpen={setSubmitDialogOpen}
-            disabled={false}
-            onTriggerClick={(e) => {
-              e.preventDefault();
-              if(validateJobData()) setSubmitDialogOpen(true)
-            }}
-            variant="default"
-          />
-        </div>
-      </div>
-      <div className="md:hidden flex flex-col gap-2">
-        <CancelDialog screenSize="w-full" handleCancel={handleCancel} />
-        <div className="flex w-full flex-col gap-2 items-center">
-          <SubmitDialog
-            screenSize="w-full"
-            handleSubmit={hasDraft ? handleDraftEdit : handleDraftCreate}
-            submitText="Save as Draft"
-            submitLoadingText="Saving..."
-            description="You want to save as a draft"
-            open={draftDialogOpen}
-            setOpen={setDraftDialogOpen}
-            disabled={false}
-            onTriggerClick={(e) => {
-              e.preventDefault();
-              if(validateDraftData()) setDraftDialogOpen(true)
-            }}
-            variant="outline"
-          />
-          <SubmitDialog
-            screenSize="w-full"
-            handleSubmit={handleJobPostCreate}
-            submitText="Post Job"
-            submitLoadingText="Saving..."
-            description="You want to post the job"
-            open={submitDialogOpen}
-            setOpen={setSubmitDialogOpen}
-            disabled={false}
-            onTriggerClick={(e) => {
-              e.preventDefault();
-              if(validateJobData()) setSubmitDialogOpen(true)
-            }}
-            variant="default"
-          />
-        </div>
-      </div>
-    </div>
     </>
   );
-}
+};
 
-export default NewJob
+export default NewJob;
