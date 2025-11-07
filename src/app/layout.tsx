@@ -4,7 +4,7 @@ import "./globals.css";
 import { Providers } from "@/redux/provider";
 import Header from "@/components/header";
 import { NuqsAdapter } from "nuqs/adapters/next";
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,16 +26,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  
   return (
-    <html lang="en">
+    <html lang="en" className="group">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
           <NuqsAdapter>
             <div className="w-full min-h-full h-full flex flex-col">
-              <Header />
+              <div className="block group-[:fullscreen]:hidden">
+                <Header />
+              </div>
               <Toaster
                 position="bottom-right"
                 reverseOrder={false}

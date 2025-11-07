@@ -31,7 +31,11 @@ const NavigationPanel = () => {
   useEffect(() => {
     if (pathname === "/") setActiveItem("Home");
     else if (pathname === "/post-a-job") setActiveItem("Post a Job");
-    else if (pathname === "/find-jobs") setActiveItem("Find Jobs");
+    else if (
+      pathname === "/find-jobs" ||
+      pathname === "/find-jobs/my-interview"
+    )
+      setActiveItem("Find Jobs");
     else if (pathname === "/organizations") setActiveItem("Organizations");
     else if (pathname === "/account") setActiveItem("");
   }, [pathname]);
