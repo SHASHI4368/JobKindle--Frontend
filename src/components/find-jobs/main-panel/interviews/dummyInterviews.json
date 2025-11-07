@@ -1,25 +1,33 @@
 [
   {
-    "jobTitle": "Frontend Developer",
-    "companyName": "TechCorp Solutions",
+    "applicationId": 101,
+    "jobData": {
+      "id": 1,
+      "jobTitle": "Frontend Developer",
+      "companyName": "Tech Solutions",
+      "companyLogo": "/images/company-logo-1.png",
+      "location": "New York, NY",
+      "workType": "Remote",
+      "experienceLevel": "Mid-Level",
+      "employmentType": "Full-Time"
+    },
     "interviewDate": "2025-10-15",
-    "interviewTime": "10:30 AM",
-    "interviewMode": "Virtual",
-    "interviewerName": "Sarah Johnson"
+    "interviewTime": "10:00 AM"
   },
   {
-    "jobTitle": "Software Engineer",
-    "companyName": "InnovateTech",
-    "interviewDate": "2025-10-18",
-    "interviewTime": "2:00 PM",
-    "interviewMode": "In-person"
-  },
-  {
-    "jobTitle": "Full Stack Developer",
-    "companyName": "StartupXYZ",
-    "interviewDate": "2025-10-22",
-    "interviewTime": "11:00 AM",
-    "interviewMode": "Hybrid",
-    "interviewerName": "Michael Chen"
+    "applicationId": 102,
+    "jobData": {
+      "id": 2,
+      "jobTitle": "Backend Developer",
+      "companyName": "Innovatech",
+      "companyLogo": "/images/company-logo-1.png",
+      "location": "San Francisco, CA",
+      "workType": "On-site",
+      "experienceLevel": "Senior-Level",
+      "employmentType": "Full-Time"
+    },
+    "interviewDate": "2025-10-20",
+    "interviewTime": "2:00 PM"
   }
+  
 ]
