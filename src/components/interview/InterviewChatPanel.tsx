@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { Send, Mic, Square } from "lucide-react";
+import axios from "axios";
 
 interface Message {
   id: string;
@@ -19,14 +20,7 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
   onAnswerSubmitted,
   isWaitingForAnswer,
 }) => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      text: "Hello! Welcome to your AI interview. I'm excited to get to know you better. Shall we begin?",
-      isAI: true,
-      timestamp: new Date(),
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -60,6 +54,16 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
       handleSubmitAnswer();
     }
   };
+
+  const registerInterview = async () => {
+    const applicationId = Number(window.location.pathname.split("/").pop());
+    try {
+      const response = await axios.get(`http://localhost:8000/api/applications/${applicationId}`);
+    }catch(error){
+      console.error("Error registering interview:", error);
+    } 
+  }
+  useEffect(() => {}, []);
 
   const toggleRecording = () => {
     setIsRecording(!isRecording);
