@@ -8,14 +8,15 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   await connectDB();
-  const interview = await Interview.findById(params.id);
+  // get interview by application ID
+  const interview = await Interview.findOne({ applicationID: params.id });
   if (!interview) {
     return NextResponse.json(
-      { success: false, error: "Interview not found" },
+      { success: false, message: "Interview not found", data: null },
       { status: 404 }
     );
   }
-  return NextResponse.json({ success: true, data: interview });
+  return NextResponse.json({ success: true, message: "Interview found", data: interview });
 }
 
 // PATCH interview (add message or violation, or update status)
@@ -41,9 +42,12 @@ export async function PATCH(
       endedAt: data.endedAt || new Date(),
     };
 
-  const updated = await Interview.findByIdAndUpdate(params.id, updateOps, {
-    new: true,
-  });
+  // update using applicationID
+  const updated = await Interview.findOneAndUpdate(
+    { applicationID: params.id },
+    updateOps,
+    { new: true }
+  );
 
   if (!updated) {
     return NextResponse.json({ error: "Interview not found" }, { status: 404 });

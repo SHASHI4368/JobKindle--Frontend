@@ -20,12 +20,7 @@ const InterviewSidebar = ({
   return (
     <div className="w-80 bg-gray-800 p-4 text-white overflow-y-auto">
       <div className="space-y-4">
-        <InterviewDetails
-          jobTitle={interviewData.jobTitle}
-          companyName={interviewData.companyName}
-          interviewMode={interviewData.interviewMode}
-          interviewerName={interviewData.interviewerName}
-        />
+        <InterviewDetails/>
 
         <ViolationLog violations={violations} />
 
