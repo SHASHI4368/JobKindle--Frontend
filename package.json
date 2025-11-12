@@ -31,6 +31,8 @@
     "fs": "^0.0.1-security",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.525.0",
+    "mongodb": "^7.0.0",
+    "mongoose": "^8.19.3",
     "next": "15.3.4",
     "nuqs": "^2.4.3",
     "react": "^19.0.0",
