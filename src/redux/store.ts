@@ -7,6 +7,7 @@ import organizationReducer from "./features/organizationSlice";
 import findJobsReducer from "./features/findJobsSlice";
 import createJobPostsReducer from "./features/createJobPostsSlice";
 import profileReducer from "./features/profileSlice";
+import interviewReducer from "./features/interviewSlice";
 
 
 
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   findJobs: findJobsReducer,
   createJobPosts: createJobPostsReducer,
   organization: organizationReducer,
+  interview: interviewReducer,
 });
 
 export const store = configureStore({
