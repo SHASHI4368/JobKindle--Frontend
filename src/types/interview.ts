@@ -1,5 +1,5 @@
 export type InterviewCard = {
- applicationId: number;
+  applicationId: number;
   jobData: {
     id: number;
     jobTitle: string;
@@ -18,6 +18,7 @@ export type Conversation = {
   id?: string;
   text: string;
   isAI: boolean;
+  isTechnical: boolean;
   timestamp: Date;
 };
 
@@ -27,6 +28,18 @@ export type Violation = {
   timestamp: Date;
 };
 
+export type Evaluation = {
+  overall_feedback: string;
+  question_wise: {
+    answer: string;
+    feedback: string;
+    masked: boolean;
+    question: string;
+    score: number;
+  }[];
+  total_score: number;
+}
+
 export interface Interview {
   id?: string;
   applicationID?: string;
@@ -35,6 +48,7 @@ export interface Interview {
   status?: "ongoing" | "completed";
   conversation?: Conversation[];
   violations?: Violation[];
+  evaluation?: Evaluation | null;
 }
 
 export interface InterviewApplicationDetails {
@@ -48,4 +62,18 @@ export interface InterviewApplicationDetails {
   address: string;
   appliedAt: string;
   documentList: string[];
+}
+
+export interface InterviewDetails {
+  jobPost: {
+    postId: number;
+    title: string;
+    companyName: string;
+    companyLogo?: string;
+    location: string;
+    workType: string;
+    experienceLevel: string;
+    employmentType: string;
+    description: string;
+  };
 }

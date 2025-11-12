@@ -5,6 +5,8 @@ import { getApplicationById } from "@/actions/applicationActions";
 import React, { useEffect } from "react";
 import Cookies from "js-cookie";
 import { getJobPostById } from "@/actions/jobPostActions";
+import { useDispatch, useSelector } from "react-redux";
+import { setInterviewJobPost } from "@/redux/features/interviewSlice";
 
 type InterviewDetailsProps = {
   jobTitle: string;
@@ -15,8 +17,10 @@ type InterviewDetailsProps = {
 
 const InterviewDetails = () => {
   const [loading, setLoading] = React.useState(true);
-  const [jobTitle, setJobTitle] = React.useState("");
-  const [companyName, setCompanyName] = React.useState("");
+  const interview = useSelector((state: any) => state.interview);
+  const dispatch = useDispatch();
+
+
   const getJobPostDetails = async () => {
     const applicationId = window.location.pathname.split("/").pop();
     // get the application info first
@@ -31,8 +35,7 @@ const InterviewDetails = () => {
       if(jobPostId){
         const jobPostRes = await getJobPostById(jwt || "", jobPostId);
         const jobData = jobPostRes.data;
-        setJobTitle(jobData.title);
-        setCompanyName(jobData.companyName);
+        dispatch(setInterviewJobPost(jobData));
       }
     }catch(err){
       console.log(err);
@@ -56,17 +59,17 @@ const InterviewDetails = () => {
           </div>
         </div>
       )}
-    <div>
-      <h3 className="text-lg font-semibold mb-2">Interview Details</h3>
-      <div className="space-y-1 text-sm text-gray-300">
-        <p>
-          <strong>Position:</strong> {jobTitle}
-        </p>
-        <p>
-          <strong>Company:</strong> {companyName}
-        </p>
+      <div>
+        <h3 className="text-lg font-semibold mb-2">Interview Details</h3>
+        <div className="space-y-1 text-sm text-gray-300">
+          <p>
+            <strong>Position:</strong> {interview.jobPost.title}
+          </p>
+          <p>
+            <strong>Company:</strong> {interview.jobPost.companyName}
+          </p>
+        </div>
       </div>
-    </div>
     </>
   );
 };

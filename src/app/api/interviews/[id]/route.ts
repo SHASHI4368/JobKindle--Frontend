@@ -22,38 +22,44 @@ export async function GET(
 // PATCH interview (add message or violation, or update status)
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params;
   await connectDB();
   const data = await req.json();
   const updateOps: any = {};
 
-  // Add conversation message
-  if (data.conversation) updateOps.$push = { conversation: data.conversation };
-
-  // Add violation
-  if (data.violation)
-    updateOps.$push = { ...updateOps.$push, violations: data.violation };
-
-  // Update status / end time
-  if (data.status)
-    updateOps.$set = {
-      status: data.status,
-      endedAt: data.endedAt || new Date(),
-    };
-
-  // update using applicationID
-  const updated = await Interview.findOneAndUpdate(
-    { applicationID: params.id },
-    updateOps,
-    { new: true }
-  );
-
-  if (!updated) {
-    return NextResponse.json({ error: "Interview not found" }, { status: 404 });
+  if (data.conversation) {
+    updateOps.$push = { conversation: data.conversation };
   }
 
-  return NextResponse.json(updated);
+  if (data.violation) {
+    updateOps.$push = { ...updateOps.$push, violations: data.violation };
+  }
+
+  // Initialize $set if it doesn't exist
+  if (!updateOps.$set) {
+    updateOps.$set = {};
+  }
+
+  if (data.evaluation) {
+    updateOps.$set.evaluation = data.evaluation;
+  }
+
+  if (data.status) {
+    updateOps.$set.status = data.status;
+    updateOps.$set.endedAt = data.endedAt || new Date();
+  }
+  const updated = await Interview.findOneAndUpdate(
+    { applicationID: id },
+    updateOps,
+    { new: true, runValidators: true } // Added runValidators
+  );
+
+  if (!updated)
+    return NextResponse.json({ error: "Interview not found" }, { status: 404 });
+
+  return NextResponse.json({success: true, message: "Interview updated successfully", data: updated });
 }
 
 // DELETE interview
