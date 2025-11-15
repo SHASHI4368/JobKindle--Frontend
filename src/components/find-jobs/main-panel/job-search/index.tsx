@@ -33,7 +33,7 @@ const JobSearch = () => {
       const response = await getAllActiveJobPosts(jwt);
       if (response.success) {
         console.log("Fetched job posts:", response.data);
-        response.jobPosts = response.data.map((post: ViewPostsProps) => ({
+        response.jobPosts = response.data.content.map((post: ViewPostsProps) => ({
           jobData: {
             basicInformation: {
               id: post.postId,
