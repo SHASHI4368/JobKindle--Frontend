@@ -48,6 +48,7 @@ const ViewApplication = () => {
   };
 
   const getCreatedPosts = async () => {
+    console.log("Hi");
     const jwt = Cookies.get("jwt") || "";
     if (!jwt) {
       console.error("JWT token not found");

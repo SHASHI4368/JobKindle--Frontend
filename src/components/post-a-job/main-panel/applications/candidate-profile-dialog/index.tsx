@@ -55,7 +55,7 @@ const CandidateProfileDialog = ({
       portfolio: "Portfolio",
       certificate: "Certificate",
     };
-    return typeMap[type.toLowerCase()] || type;
+    return typeMap[type?.toLowerCase()] || type;
   };
 
   const handleDownload = (url: string, name: string) => {

@@ -71,6 +71,7 @@ const Avatar = ({
       const jwt = Cookies.get("jwt");
       if (!jwt) return;
       const response = await fetchProfileData(jwt);
+      console.log(response);
       if (response.success) {
         setAvatarUrl(response.data.profilePic || null);
         const userName = `${response.data.firstname || ""} ${
