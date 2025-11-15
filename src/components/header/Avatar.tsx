@@ -72,7 +72,7 @@ const Avatar = ({
       if (!jwt) return;
       const response = await fetchProfileData(jwt);
       console.log(response);
-      if (response.success) {
+      if (response && response.success) {
         setAvatarUrl(response.data.profilePic || null);
         const userName = `${response.data.firstname || ""} ${
           response.data.lastname || ""

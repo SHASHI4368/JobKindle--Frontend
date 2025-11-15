@@ -48,8 +48,8 @@ const ApplicationsTable = ({
   };
 
   return (
-    <div className="border rounded-lg overflow-hidden ">
-      <Table className="font-geist-sans">
+    <div className="border font-geist-sans rounded-lg overflow-hidden ">
+      <Table className="">
         <TableHeader>
           <TableRow className="bg-gray-50 hover:bg-gray-50">
             <TableHead className="w-[50px]">
