@@ -11,7 +11,7 @@ export type ApplicationDocument = {
   id: string;
   name: string;
   size: string;
-  type: "resume" | "coverLetter" | "other";
+  type: "CV" | "COVER_LETTER" | "other";
   url: string;
 };
 

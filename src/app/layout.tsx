@@ -5,6 +5,9 @@ import { Providers } from "@/redux/provider";
 import Header from "@/components/header";
 import { NuqsAdapter } from "nuqs/adapters/next";
 import { Toaster } from "react-hot-toast";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="group">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${GeistSans.className} ${geistMono.variable} antialiased`}
       >
         <Providers>
           <NuqsAdapter>

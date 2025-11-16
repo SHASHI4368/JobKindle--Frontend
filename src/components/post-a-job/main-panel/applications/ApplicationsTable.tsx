@@ -29,23 +29,40 @@ const ApplicationsTable = ({
   onToggleCandidate,
   onToggleAll,
 }: ApplicationsTableProps) => {
-  const getStatusBadge = (status: string) => {
-    const statusConfig = {
-      pending: { color: "bg-yellow-100 text-yellow-800 border border-yellow-200", label: "Pending" },
-      interview_sent: {
-        color: "bg-blue-100 text-blue-800 border border-blue-200",
-        label: "Interview Sent",
-      },
-      selected: { color: "bg-green-100 text-green-800 border border-green-200", label: "Selected" },
-    };
-    const config =
-      statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
-    return (
-      <Badge className={`${config.color} hover:${config.color}`}>
-        {config.label}
-      </Badge>
-    );
-  };
+
+ const getStatusBadge = (status: string) => {
+   const normalizedStatus = status.toLowerCase(); // 👈 convert incoming status
+
+   const statusConfig = {
+     pending: {
+       color: "bg-yellow-100 text-yellow-800 border border-yellow-200",
+       label: "Pending",
+     },
+     screened: {
+       color: "bg-indigo-100 text-indigo-800 border border-indigo-200",
+       label: "Screened",
+     },
+     interview_sent: {
+       color: "bg-blue-100 text-blue-800 border border-blue-200",
+       label: "Interview Sent",
+     },
+     selected: {
+       color: "bg-green-100 text-green-800 border border-green-200",
+       label: "Selected",
+     },
+   };
+
+   const config =
+     statusConfig[normalizedStatus as keyof typeof statusConfig] ||
+     statusConfig.pending;
+
+   return (
+     <Badge className={`${config.color} hover:${config.color}`}>
+       {config.label}
+     </Badge>
+   );
+ };
+
 
   return (
     <div className="border font-geist-sans rounded-lg overflow-hidden ">

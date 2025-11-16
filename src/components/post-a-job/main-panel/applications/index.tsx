@@ -39,6 +39,7 @@ const ViewApplication = () => {
   const [applications, setApplications] = useState<Application[] | null>(null);
   const [selectedCandidates, setSelectedCandidates] = useState<number[]>([]);
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+  const [triggerPipelineDialogOpen, setTriggerPipelineDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const toggleCandidate = (id: number) => {
@@ -107,7 +108,24 @@ const ViewApplication = () => {
       if (response.success) {
         console.log("applications: ", response.data);
         const applications = response.data;
-        setApplications(applications);
+        const formattedApplications: Application[] = applications.map(
+          (app: any) => ({
+            applicationId: app.applicationId,
+            postId: app.postId,
+            userEmail: app.userEmail,
+            firstName: app.firstName,
+            lastName: app.lastName,
+            githubUrl: app.githubUrl,
+            telephone: app.telephone,
+            address: app.address,
+            appliedAt: app.appliedAt,
+            documentList: app.documentList,
+            resumeScore: app.screeningScore,
+            interviewScore: app.interviewScore,
+            status: app.applicationStatus,
+          })
+        );
+        setApplications(formattedApplications);
       }
     } catch (error) {
       console.error("Error fetching applications:", error);
@@ -159,6 +177,7 @@ const ViewApplication = () => {
         <JobDetailsCard jobData={jobData} />
 
         <ActionsBar
+          applicants={applications || []}
           selectedCount={selectedCandidates.length}
           totalCount={applications?.length || 0}
           onSendEmail={() => setEmailDialogOpen(true)}

@@ -19,3 +19,13 @@ export interface Application {
   interviewScore: number | null;
   status: string;
 }
+
+export interface ApplicationResponse {
+  candidate_name: string;
+  cv_summary: string;
+  github_summary: string;
+  email: string;
+  match_analysis: string;
+  score: number;
+}
+			
