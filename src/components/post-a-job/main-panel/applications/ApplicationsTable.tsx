@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -13,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Eye, Mail } from "lucide-react";
 import { Application } from "@/types/application";
 import CandidateProfileDialog from "./candidate-profile-dialog";
+import ScreeningResultsDialog from "./screening-result-dialog";
 
 
 
@@ -29,6 +32,11 @@ const ApplicationsTable = ({
   onToggleCandidate,
   onToggleAll,
 }: ApplicationsTableProps) => {
+
+  const [screeningResultDialogOpen, setScreeningResultDialogOpen] =
+    useState(false);
+  const [selectedApplicantEmail, setSelectedApplicantEmail] =
+    useState<string>("");
 
  const getStatusBadge = (status: string) => {
    const normalizedStatus = status.toLowerCase(); // 👈 convert incoming status
@@ -66,6 +74,11 @@ const ApplicationsTable = ({
 
   return (
     <div className="border font-geist-sans rounded-lg overflow-hidden ">
+      <ScreeningResultsDialog
+        open={screeningResultDialogOpen}
+        onOpenChange={setScreeningResultDialogOpen}
+        applicantEmail={selectedApplicantEmail}
+      />
       <Table className="">
         <TableHeader>
           <TableRow className="bg-gray-50 hover:bg-gray-50">
@@ -86,11 +99,18 @@ const ApplicationsTable = ({
         </TableHeader>
         <TableBody>
           {applications.map((application, index) => (
-            <TableRow key={application.applicationId} className="hover:bg-gray-50">
+            <TableRow
+              key={application.applicationId}
+              className="hover:bg-gray-50"
+            >
               <TableCell>
                 <Checkbox
-                  checked={selectedCandidates.includes(application.applicationId)}
-                  onCheckedChange={() => onToggleCandidate(application.applicationId)}
+                  checked={selectedCandidates.includes(
+                    application.applicationId
+                  )}
+                  onCheckedChange={() =>
+                    onToggleCandidate(application.applicationId)
+                  }
                 />
               </TableCell>
               <TableCell className="font-medium">{index + 1}</TableCell>
@@ -100,9 +120,14 @@ const ApplicationsTable = ({
               <TableCell className="text-gray-600">
                 {application.userEmail}
               </TableCell>
-              <TableCell className="">{getStatusBadge(application.status)}</TableCell>
+              <TableCell className="">
+                {getStatusBadge(application.status)}
+              </TableCell>
               <TableCell className="text-center">
-                <span className="inline-flex items-center justify-center w-12 h-8 bg-blue-100 border border-blue-200 text-blue-800 rounded-md font-semibold text-sm">
+                <span onClick={() => {
+                  setSelectedApplicantEmail(application.userEmail);
+                  setScreeningResultDialogOpen(true);
+                }} title="View Screening Result" className="inline-flex cursor-pointer items-center justify-center w-12 h-8 bg-blue-100 border border-blue-200 text-blue-800 rounded-md font-semibold text-sm">
                   {application.resumeScore || "N/A"}
                 </span>
               </TableCell>

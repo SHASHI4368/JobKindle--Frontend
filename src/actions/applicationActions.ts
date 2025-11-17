@@ -68,4 +68,25 @@ export const triggerCVPipeline = async (id: number, jwt: string) => {
   }
 };
 
+export const getScreeningResult = async (email: string, jobPostId: number, jwt: string) => {
+  "use server";
+  const url = `${Base_URL_jobPosts}/screening/application/${jobPostId}/${email}`;
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      console.log("error", error.response.data);
+      return error.response.data;
+    } else {
+      console.log("error", error);
+      return { success: false, message: "An unexpected error occurred" };
+    }
+  }
+};
+
 

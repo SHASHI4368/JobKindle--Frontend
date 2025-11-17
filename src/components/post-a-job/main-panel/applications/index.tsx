@@ -10,6 +10,7 @@ import { getJobPostById, getMyJobPosts } from "@/actions/jobPostActions";
 import { Application } from "@/types/application";
 import { getApplicationsByJobPostId } from "@/actions/applicationActions";
 import SendEmailDialog from "./send-email-dialog";
+import ScreeningResultsDialog from "./screening-result-dialog";
 
 
 const ViewApplication = () => {
@@ -41,6 +42,7 @@ const ViewApplication = () => {
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
   const [triggerPipelineDialogOpen, setTriggerPipelineDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  
 
   const toggleCandidate = (id: number) => {
     setSelectedCandidates((prev) =>
@@ -155,6 +157,7 @@ const ViewApplication = () => {
 
   return (
     <>
+    
       {loading && (
         <div className="fixed inset-0 bg-white/60 backdrop-blur-sm z-[200] flex items-center justify-center">
           <div className="flex flex-col items-center space-y-4">
