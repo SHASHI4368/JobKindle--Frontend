@@ -14,6 +14,8 @@ import EmailSummary from "./EmailSummary";
 import EmailProgress from "./EmailProgress";
 import EmailStatusList from "./EmailStatusList";
 import RecipientPreviewList from "./RecipientPreviewList";
+import Cookies from "js-cookie";
+import { sendInterviewEmail } from "@/actions/applicationActions";
 
 type SendEmailDialogProps = {
   open: boolean;
@@ -29,6 +31,7 @@ type EmailStatus = {
   name: string;
   status: "pending" | "sending" | "sent" | "failed";
   error?: string;
+  interviewDate?: string | null; // added: store scheduled interview date
 };
 
 const SendEmailDialog = ({
@@ -43,6 +46,16 @@ const SendEmailDialog = ({
   const [isSending, setIsSending] = useState(false);
   const [emailStatuses, setEmailStatuses] = useState<EmailStatus[]>([]);
   const [progress, setProgress] = useState(0);
+
+  // new: interview date/time state (datetime-local)
+  const toLocalDateTimeInput = (d: Date) =>
+    new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+      .toISOString()
+      .slice(0, 16);
+
+  const [interviewDate, setInterviewDate] = useState<string>(() =>
+    toLocalDateTimeInput(new Date())
+  );
 
   // Build preview recipients based on current selection (before sending)
   const previewRecipients = React.useMemo(() => {
@@ -59,8 +72,50 @@ const SendEmailDialog = ({
   }, [allApplications, sendMode, selectedCandidates, recipientCount]);
 
   const handleSendEmails = async () => {
-    setIsSending(true);
-    setProgress(0);
+    const jobPostId = window.location.pathname.split("/").pop();
+    const jwt = Cookies.get("jwt") || "";
+    if (!jwt || !jobPostId) {
+      console.error(
+        "Unable to send emails. Missing authentication or job post ID."
+      );
+      return;
+    }
+    try{
+      setIsSending(true);
+      setProgress(0);
+      const response = await sendInterviewEmail(
+        Number(jobPostId),
+        previewRecipients.map((app) => app.userEmail),
+        interviewDate,
+        jwt
+      );
+      console.log(response.message);
+      if (response.success) {
+        // simulate sending statuses
+        await handleSimulateSendEmails();
+
+      }else{
+        // set all to failed
+        const failedStatuses: EmailStatus[] = previewRecipients.map((app) => ({
+          id: app.applicationId,
+          email: app.userEmail,
+          name: `${app.firstName} ${app.lastName}`,
+          status: "failed",
+          error: response.message || "Failed to send email",
+          interviewDate: interviewDate,
+        }));
+        setEmailStatuses(failedStatuses);
+        setProgress(100);
+      }
+    }catch(e){
+      console.error("Error sending interview emails:", e);
+    }finally{
+      setIsSending(false);
+    }
+  }
+
+  const handleSimulateSendEmails = async () => {
+    
 
     const recipientsToSend = previewRecipients;
     if (!recipientsToSend || recipientsToSend.length === 0) {
@@ -68,11 +123,17 @@ const SendEmailDialog = ({
       return;
     }
 
+    // convert interviewDate (local datetime-local string) to ISO for backend
+    const interviewDateISO = interviewDate
+      ? new Date(interviewDate).toISOString()
+      : null;
+
     const initialStatuses: EmailStatus[] = recipientsToSend.map((app) => ({
       id: app.applicationId,
       email: app.userEmail,
       name: `${app.firstName} ${app.lastName}`,
       status: "pending",
+      interviewDate: interviewDateISO,
     }));
     setEmailStatuses(initialStatuses);
 
@@ -82,8 +143,12 @@ const SendEmailDialog = ({
           idx === i ? { ...status, status: "sending" } : status
         )
       );
+      // simulate network + include interviewDate in payload (replace with real API call)
       await new Promise((resolve) => setTimeout(resolve, 1200));
       const isSuccess = Math.random() > 0.1;
+      // Example: you would call your API here and include interviewDateISO
+      // await api.sendInterviewEmail({ applicationId: recipientsToSend[i].applicationId, interviewDate: interviewDateISO, ... })
+
       setEmailStatuses((prev) =>
         prev.map((status, idx) =>
           idx === i
@@ -119,11 +184,13 @@ const SendEmailDialog = ({
 
   const totalRecipients = previewRecipients.length;
 
+  // require interviewDate to be set (optional: you can make it optional by removing the interviewDate check)
   const isValidSelection =
-    (sendMode === "selected" && totalRecipients > 0) ||
-    (sendMode === "count" &&
-      parseInt(recipientCount) >= 1 &&
-      parseInt(recipientCount) <= allApplications.length);
+    ((sendMode === "selected" && totalRecipients > 0) ||
+      (sendMode === "count" &&
+        parseInt(recipientCount) >= 1 &&
+        parseInt(recipientCount) <= allApplications.length)) &&
+    !!interviewDate;
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -140,7 +207,7 @@ const SendEmailDialog = ({
           </DialogTitle>
           <DialogDescription>
             {emailStatuses.length === 0
-              ? "Select recipients and send emails to candidates"
+              ? "Select recipients, choose interview date/time and send emails to candidates"
               : `Sending emails to ${emailStatuses.length} candidate${
                   emailStatuses.length > 1 ? "s" : ""
                 }`}
@@ -158,12 +225,30 @@ const SendEmailDialog = ({
                 setRecipientCount={setRecipientCount}
                 maxCount={allApplications.length}
               />
+
               <EmailSummary
                 isValid={isValidSelection}
                 count={totalRecipients}
                 sendMode={sendMode}
                 maxCount={allApplications.length}
               />
+
+              {/* new: interview date/time picker */}
+              <div className="flex items-center gap-3">
+                <label className="min-w-[160px] text-sm text-gray-700">
+                  Interview date & time
+                </label>
+                <input
+                  type="datetime-local"
+                  value={interviewDate}
+                  onChange={(e) => setInterviewDate(e.target.value)}
+                  className="px-3 py-2 border rounded-md bg-white focus:outline-none"
+                />
+                <div className="text-sm text-gray-500 italic">
+                  Timezone: local
+                </div>
+              </div>
+
               {/* New: show exactly who will receive the emails before sending */}
               <RecipientPreviewList recipients={previewRecipients} />
             </div>

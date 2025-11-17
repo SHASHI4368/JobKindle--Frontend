@@ -89,4 +89,27 @@ export const getScreeningResult = async (email: string, jobPostId: number, jwt: 
   }
 };
 
-
+export const sendInterviewEmail = async (jobPostId: number, emailList: string[], interviewDate: string | null, jwt: string) => {
+  "use server";
+  const url = `${Base_URL_jobPosts}/screening/job-post/${jobPostId}/confirm`;
+  try {
+    const body = {
+      selectedApplicationEmails: emailList,
+      interviewDate: interviewDate,
+    };
+    const response = await axios.post(url, body, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      console.log("error", error.response.data);
+      return error.response.data;
+    } else {
+      console.log("error", error);
+      return { success: false, message: "An unexpected error occurred" };
+    }
+  }
+};
