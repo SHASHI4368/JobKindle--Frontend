@@ -15,7 +15,7 @@ import {
 } from "@/actions/interviewActions";
 import { useSelector } from "react-redux";
 import Cookies from "js-cookie";
-import { getApplicationById } from "@/actions/applicationActions";
+import { endInterview, getApplicationById } from "@/actions/applicationActions";
 import {
   Conversation,
   Evaluation,
@@ -499,9 +499,16 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
         applicationData.applicationId.toString(),
         evaluation
       );
-      if(response.success){
-        setIsCompleted(true);
-        console.log("Evaluation updated:", response);
+      if (response.success) {
+        const mainRes = await endInterview(
+          applicationData.applicationId,
+          evaluation.total_score,
+          Cookies.get("jwt") || ""
+        );
+        if (mainRes.success) {
+          setIsCompleted(true);
+          console.log("Evaluation updated:", response);
+        }
       }
     } catch (error) {
       console.error("Error updating evaluation:", error);
@@ -558,7 +565,6 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
     setIsRecording(!isRecording);
     // In real implementation, integrate with speech-to-text API
   };
-
 
   return (
     <>
@@ -653,7 +659,7 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
           </div>
         </div>
       </div>
-      <InterviewCompletedDialog 
+      <InterviewCompletedDialog
         isOpen={isCompleted}
         onClose={() => {}}
         onExitInterview={() => {

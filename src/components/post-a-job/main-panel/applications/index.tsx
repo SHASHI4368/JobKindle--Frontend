@@ -184,9 +184,11 @@ const ViewApplication = () => {
           selectedCount={selectedCandidates.length}
           totalCount={applications?.length || 0}
           onSendEmail={() => setEmailDialogOpen(true)}
+          
         />
 
         <ApplicationsTable
+        
           applications={applications || []}
           selectedCandidates={selectedCandidates}
           onToggleCandidate={toggleCandidate}
@@ -200,6 +202,7 @@ const ViewApplication = () => {
         selectedCount={selectedCandidates.length}
         selectedCandidates={selectedCandidates}
         allApplications={applications || []}
+        fetchApplications={fetchApplications}
       />
     </>
   );

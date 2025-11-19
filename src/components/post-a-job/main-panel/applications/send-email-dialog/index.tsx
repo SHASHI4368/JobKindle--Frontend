@@ -23,6 +23,7 @@ type SendEmailDialogProps = {
   selectedCount: number;
   selectedCandidates: number[];
   allApplications: Application[];
+  fetchApplications: () => void;
 };
 
 type EmailStatus = {
@@ -40,6 +41,7 @@ const SendEmailDialog = ({
   selectedCount,
   selectedCandidates,
   allApplications,
+  fetchApplications,  
 }: SendEmailDialogProps) => {
   const [sendMode, setSendMode] = useState<"selected" | "count">("selected");
   const [recipientCount, setRecipientCount] = useState<string>("1");
@@ -80,7 +82,7 @@ const SendEmailDialog = ({
       );
       return;
     }
-    try{
+    try {
       setIsSending(true);
       setProgress(0);
       const response = await sendInterviewEmail(
@@ -93,8 +95,8 @@ const SendEmailDialog = ({
       if (response.success) {
         // simulate sending statuses
         await handleSimulateSendEmails();
-
-      }else{
+        
+      } else {
         // set all to failed
         const failedStatuses: EmailStatus[] = previewRecipients.map((app) => ({
           id: app.applicationId,
@@ -107,16 +109,14 @@ const SendEmailDialog = ({
         setEmailStatuses(failedStatuses);
         setProgress(100);
       }
-    }catch(e){
+    } catch (e) {
       console.error("Error sending interview emails:", e);
-    }finally{
+    } finally {
       setIsSending(false);
     }
-  }
+  };
 
   const handleSimulateSendEmails = async () => {
-    
-
     const recipientsToSend = previewRecipients;
     if (!recipientsToSend || recipientsToSend.length === 0) {
       setIsSending(false);
@@ -168,6 +168,7 @@ const SendEmailDialog = ({
 
   const handleClose = () => {
     if (!isSending) {
+      fetchApplications();
       onOpenChange(false);
       // Reset state after closing
       setTimeout(() => {
@@ -239,7 +240,7 @@ const SendEmailDialog = ({
                   Interview date & time
                 </label>
                 <input
-                  type="datetime-local"
+                  type="date"
                   value={interviewDate}
                   onChange={(e) => setInterviewDate(e.target.value)}
                   className="px-3 py-2 border rounded-md bg-white focus:outline-none"

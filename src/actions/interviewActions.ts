@@ -5,12 +5,34 @@ import { ApplicationDocument } from "@/types/jobPosts";
 import axios from "axios";
 const NextAPIURL = process.env.NextAPIURL;
 const agentURL = process.env.Agent_URL;
+const Base_URL_jobPosts = process.env.Base_URL_jobPosts;
 
 export const getInterviewDetails = async (id: number) => {
   "use server";
   const url = `${NextAPIURL}/interviews/${id}`;
   try {
     const response = await axios.get(url);
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      console.log("error", error.response.data);
+      return error.response.data;
+    } else {
+      console.log("error", error);
+      return { success: false, message: "An unexpected error occurred" };
+    }
+  }
+};
+
+export const getMyInterviews = async (jwt: string) => {
+  "use server";
+  const url = `${Base_URL_jobPosts}/applications/interviews`;
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.data) {
@@ -107,7 +129,6 @@ export const updateEvaluation = async (
 };
 
 
-
 export const startGeneralInterview = async (email: string) => {
   const url = `${agentURL}/start_general_interview`;
   try {
@@ -148,6 +169,7 @@ type QAHistory = {
   answer: string;
 }[];
 
+
 export const answerGeneralInterview = async (
   email: string,
   question: string,
@@ -170,6 +192,7 @@ export const answerGeneralInterview = async (
     }
   }
 };
+
 
 export const answerTechnicalInterview = async (
   email: string,

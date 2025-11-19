@@ -12,10 +12,14 @@ import { useSecurityMonitor } from "./hooks/useSecurityMonitor";
 import { useFullscreen } from "./hooks/useFullscreen";
 import { useFaceDetectionMonitor } from "./hooks/useFaceDetectionMonitor";
 import { useInterviewTimer } from "./hooks/useInterviewTimer";
+import Cookies from "js-cookie";
+import { getJobPostById } from "@/actions/jobPostActions";
+import { getApplicationById } from "@/actions/applicationActions";
 
 const Interview = () => {
   const router = useRouter();
   const [viewFullScreen, setFullScreen] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [interviewData, setInterviewData] = useState<any>(null);
   const [warningCount, setWarningCount] = useState(0);
   const [violations, setViolations] = useState<string[]>([]);
@@ -76,17 +80,73 @@ const Interview = () => {
     setFullScreen(true);
   }, []);
 
+  const getJobPost = async (id: number) => {
+    const jwt = Cookies.get("jwt") || "";
+    if (!jwt) {
+      console.error("JWT token not found");
+      return;
+    }
+    try {
+      const response = await getJobPostById(jwt, id);
+      console.log("job post response: ", response);
+      if (response.success) {
+        return response.data;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching job post:", error);
+    }
+  };
+
+  const getInterview = async () => {
+    const applicationId = Number(window.location.pathname.split("/").pop());
+    const jwt = Cookies.get("jwt") || "";
+    if (!jwt) {
+      console.error("JWT token not found");
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await getApplicationById(jwt, applicationId);
+      console.log(response);
+      if (response.success) {
+        console.log("interviews: ", response.data);
+        const interview = response.data;
+        const jobPost = await getJobPost(interview.postId);
+        if (jobPost) {
+          const formattedInterview = {
+            applicationId: interview.applicationId,
+            jobData: {
+              id: jobPost.postId,
+              jobTitle: jobPost.title,
+              companyName: jobPost.companyName,
+              companyLogo: jobPost.companyLogo,
+              location: jobPost.location,
+              workType: jobPost.workType,
+              experienceLevel: jobPost.experienceLevel,
+              employmentType: jobPost.employmentType,
+            },
+            interviewDate: interview.interviewDate,
+          };
+          console.log(formattedInterview);
+          setInterviewData(formattedInterview);
+        } else {
+          console.error("Job post not found for interview");
+          router.push("/find-jobs");
+        }
+      }
+    } catch (error) {
+      router.push("/find-jobs");
+      console.error("Error fetching interviews:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Initialize interview data
   useEffect(() => {
-    const applicationId = Number(window.location.pathname.split("/").pop());
-    const selectedInterview = dummyInterviews.find(
-      (interview) => interview.applicationId === applicationId
-    );
-    if (selectedInterview) {
-      setInterviewData(selectedInterview);
-    } else {
-      router.push("/find-jobs");
-    }
+    getInterview();
   }, [router]);
 
   const handleFaceDetected = (detected: boolean) => {

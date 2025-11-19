@@ -6,13 +6,15 @@ import React, { useState } from "react";
 import SecureInterviewDialog from "./SecureInterviewDialog";
 import { InterviewCard } from "@/types/interview";
 import { Button } from "@/components/ui/button";
+import { InterviewScheduleDetails } from "./types";
 
-interface InterviewListingCardProps {
-  interviewData: InterviewCard;
-}
+type InterviewListingCardProps = {
+  interviewData: InterviewScheduleDetails;
+};
+
 
 const InterviewListingCard: React.FC<InterviewListingCardProps> = ({
-  interviewData,
+  interviewData
 }) => {
   const router = useRouter();
   const [showSecurityDialog, setShowSecurityDialog] = useState(false);
@@ -33,6 +35,7 @@ const InterviewListingCard: React.FC<InterviewListingCardProps> = ({
 
   const handleConfirmInterview = () => {
     const applicationId = interviewData.applicationId;
+    console.log(applicationId);
     router.push(`/interview/${applicationId}`);
   };
 
@@ -80,7 +83,7 @@ const InterviewListingCard: React.FC<InterviewListingCardProps> = ({
         </div>
 
         {/* Details Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mt-4">
           {/* Date */}
           <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
             <Calendar className="w-5 h-5 text-gray-500" />
@@ -95,7 +98,7 @@ const InterviewListingCard: React.FC<InterviewListingCardProps> = ({
           </div>
 
           {/* Time */}
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+          {/* <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
             <Clock className="w-5 h-5 text-gray-500" />
             <div>
               <p className="text-sm font-medium text-gray-900">Time</p>
@@ -103,12 +106,16 @@ const InterviewListingCard: React.FC<InterviewListingCardProps> = ({
                 {interviewData.interviewTime}
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Action Buttons */}
         <div className="flex w-full items-center justify-between flex-row gap-3 mt-6 pt-4 ">
-          <Button onClick={() => setShowSecurityDialog(true)} variant={"default"} className="h-[45px] flex-1">
+          <Button
+            onClick={() => setShowSecurityDialog(true)}
+            variant={"default"}
+            className="h-[45px] flex-1"
+          >
             Join Interview
           </Button>
           <Button variant={"outline"} className="h-[45px] w-auto">

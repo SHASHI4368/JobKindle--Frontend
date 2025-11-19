@@ -16,7 +16,7 @@ const Professional = () => {
   const [experienceLevel, setExperienceLevel] = useState("");
   const [school, setSchool] = useState("");
   const [linkedinProfile, setLinkedinProfile] = useState("");
-  const [personalWebsite, setPersonalWebsite] = useState("");
+  const [githubUrl, setGithubUrl] = useState("");
   const account = useSelector((state: any) => state.account);
   const dispatch = useDispatch();
 
@@ -26,7 +26,7 @@ const Professional = () => {
     setExperienceLevel(account.profile.experience || "");
     setSchool(account.profile.education || "");
     setLinkedinProfile(account.profile.linkedin || "");
-    setPersonalWebsite(account.profile.website || "");
+    setGithubUrl(account.profile.githubUrl || "");
   }, [account.profile]);
 
   return (
@@ -122,10 +122,10 @@ const Professional = () => {
             isDisabled={!account.isProfileEditing}
           />
           <NormalInput
-            label="Personal Website"
-            placeholder="Enter your Personal Website URL"
-            value={personalWebsite}
-            onChange={(e) => setPersonalWebsite(e.target.value)}
+            label="GitHub Profile"
+            placeholder="Enter your GitHub profile URL"
+            value={githubUrl}
+            onChange={(e) => setGithubUrl(e.target.value)}
             isDisabled={!account.isProfileEditing}
           />
         </div>
@@ -138,7 +138,7 @@ const Professional = () => {
                 experience={experienceLevel}
                 education={school}
                 linkedin={linkedinProfile}
-                website={personalWebsite}
+                githubUrl={githubUrl}
               />
             </div>
           </>

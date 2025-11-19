@@ -95,8 +95,34 @@ export const sendInterviewEmail = async (jobPostId: number, emailList: string[],
   try {
     const body = {
       selectedApplicationEmails: emailList,
-      interviewDate: interviewDate,
+      interviewDate: new Date(interviewDate || "").toISOString(),
     };
+    const response = await axios.post(url, body, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      console.log("error", error.response.data);
+      return error.response.data;
+    } else {
+      console.log("error", error);
+      return { success: false, message: "An unexpected error occurred" };
+    }
+  }
+};
+
+export const endInterview = async (
+  id: number,
+  interviewScore: number,
+  jwt: string
+) => {
+  "use server";
+  const url = `${Base_URL_jobPosts}/set-interview-score/${id}`;
+  try {
+    const body: any = { interviewScore };
     const response = await axios.post(url, body, {
       headers: {
         Authorization: `Bearer ${jwt}`,
