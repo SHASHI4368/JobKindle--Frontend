@@ -13,7 +13,7 @@ export type Account = {
     linkedin: string | null;
     experience: string | null;
     education: string | null;
-    website: string | null;
+    githubUrl: string | null;
     resume: string | null;
   };
 };

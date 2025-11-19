@@ -49,9 +49,17 @@ const JobListingCard = ({ jobData }: { jobData: ViewPostData }) => {
       <div className="p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-4 sm:space-y-0">
           <div className="flex items-start space-x-3 sm:space-x-4">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
-              <Building2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-            </div>
+            {basicInformation.companyLogo ? (
+              <img
+                src={basicInformation.companyLogo}
+                alt={basicInformation.companyName}
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg"
+              />
+            ) : (
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Building2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <h1 className="text-xl sm:text-2xl font-geist-sans font-[700] text-gray-900 mb-1 leading-tight">
                 {basicInformation.jobTitle}

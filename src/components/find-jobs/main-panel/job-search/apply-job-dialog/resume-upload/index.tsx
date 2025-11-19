@@ -34,10 +34,11 @@ const ResumeUploadBox = ({ resume, setResume, resumeUpload, setResumeUpload }: R
           setLoading(true);
           if (account.profile.resume) {
             const resumeDetails = await getImageData(account.profile.resume);
+            console.log(resumeDetails);
             if (resumeDetails) {
               setResume({
                 id: resumeDetails.versionInfo.id,
-                type: "resume",
+                type: "CV",
                 url: resumeDetails.url,
                 name: resumeDetails.name,
                 size: (resumeDetails.size / 1024).toFixed(2) + " KB",
@@ -70,7 +71,7 @@ const ResumeUploadBox = ({ resume, setResume, resumeUpload, setResumeUpload }: R
     handleSaveChanges(response.fileId);
     setResume({
       id: response.fileId,
-      type: "resume",
+      type: "CV",
       url: response.url,
       name: response.name,
       size: (response.size / 1024).toFixed(2) + " KB",

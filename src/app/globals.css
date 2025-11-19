@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Monofett&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Monofett&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"); */
 @import "tailwindcss";
 @import "tw-animate-css";
 @tailwind utilities;
@@ -52,7 +52,7 @@
   --font-geist-mono: var(--geist-mono);
 }
 
-@layer base {
+/* @layer base {
   @font-face {
     font-family: "Geist Sans";
     src: url("/fonts/geist-sans.woff2") format("woff2");
@@ -65,7 +65,7 @@
     font-weight: 100 900;
     font-display: swap;
   }
-}
+} */
 
 :root {
   --radius: 0.625rem;

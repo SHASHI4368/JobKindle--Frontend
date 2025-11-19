@@ -43,7 +43,7 @@ const Account = () => {
                 linkedin: data.data.linkedin || "",
                 experience: data.data.experience || [],
                 education: data.data.education || [],
-                website: data.data.website || "",
+                githubUrl: data.data.githubUrl || "",
                 resume: data.data.resume || null,
               }));
            }

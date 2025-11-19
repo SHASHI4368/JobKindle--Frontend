@@ -30,7 +30,7 @@ type ProfileUpdateDialogProps = {
   experience?: string;
   education?: string;
   linkedin?: string;
-  website?: string;
+  githubUrl?: string;
 };
 
 const ProfileUpdateDialog = ({
@@ -44,7 +44,7 @@ const ProfileUpdateDialog = ({
   experience,
   education,
   linkedin,
-  website,
+  githubUrl,
 }: ProfileUpdateDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
@@ -62,7 +62,7 @@ const ProfileUpdateDialog = ({
         experience,
         education,
         linkedin,
-        website,
+        githubUrl,
       });
       toast.success(message || "Profile updated successfully");
       const details = {
@@ -76,7 +76,7 @@ const ProfileUpdateDialog = ({
         linkedin: linkedin,
         experience: experience,
         education: education,
-        website: website,
+        githubUrl: githubUrl,
       };
 
       // Remove null or undefined values

@@ -1,152 +1,159 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Camera, CameraOff, Mic, MicOff, Monitor } from "lucide-react";
 
-interface CandidateVideoPanelProps {
+type Props = {
   onFaceDetected: (detected: boolean) => void;
-}
+};
 
-const CandidateVideoPanel: React.FC<CandidateVideoPanelProps> = ({
-  onFaceDetected,
-}) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
-  const [isCameraOn, setIsCameraOn] = useState(true);
-  const [isMicOn, setIsMicOn] = useState(true);
-  const [faceDetected, setFaceDetected] = useState(false);
+const CandidateVideoPanel: React.FC<Props> = ({ onFaceDetected }) => {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const [cameraAvailable, setCameraAvailable] = useState<boolean | null>(null);
+  const retryTimer = useRef<number | null>(null);
 
-  useEffect(() => {
-    startCamera();
-    return () => {
-      stopCamera();
-    };
-  }, []);
+  const stopCurrentStream = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t) => {
+        try {
+          t.onended = null;
+          t.stop();
+        } catch (e) {}
+      });
+      streamRef.current = null;
+    }
+  };
 
   const startCamera = async () => {
+    stopCurrentStream();
+
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 640, height: 480 },
-        audio: true,
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: false,
       });
-
+      // set stream
+      streamRef.current = stream;
       if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
+        videoRef.current.srcObject = stream;
+        // try to play; ignore errors
+        await videoRef.current.play().catch(() => {});
       }
-      setStream(mediaStream);
 
-      // Simple face detection simulation (in real implementation, use face-api.js or similar)
-      const faceDetectionInterval = setInterval(() => {
-        const detected = Math.random() > 0.3; // Simulate face detection
-        setFaceDetected(detected);
-        onFaceDetected(detected);
-      }, 2000);
+      setCameraAvailable(true);
+      onFaceDetected(true);
 
-      return () => clearInterval(faceDetectionInterval);
-    } catch (error) {
-      console.error("Error accessing camera:", error);
+      // detect track end (user disabled camera)
+      stream.getVideoTracks().forEach((track) => {
+        track.onended = () => {
+          setCameraAvailable(false);
+          onFaceDetected(false);
+        };
+      });
+    } catch (err) {
+      // getUserMedia failed (no device or permission denied)
+      console.warn("Camera init failed:", err);
+      setCameraAvailable(false);
+      onFaceDetected(false);
     }
   };
 
-  const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
-    }
-  };
+  useEffect(() => {
+    let mounted = true;
 
-  const toggleCamera = () => {
-    if (stream) {
-      const videoTrack = stream.getVideoTracks()[0];
-      if (videoTrack) {
-        videoTrack.enabled = !videoTrack.enabled;
-        setIsCameraOn(videoTrack.enabled);
+    const attemptStart = async () => {
+      // try start once immediately
+      await startCamera();
+
+      // if failed, keep small retry window while component mounted (covers permission popups / user enabling)
+      if (mounted && cameraAvailable === false) {
+        // try a few retries spaced out
+        if (retryTimer.current) {
+          clearTimeout(retryTimer.current);
+        }
+        retryTimer.current = window.setTimeout(async () => {
+          await startCamera();
+        }, 1500);
       }
-    }
-  };
+    };
 
-  const toggleMic = () => {
-    if (stream) {
-      const audioTrack = stream.getAudioTracks()[0];
-      if (audioTrack) {
-        audioTrack.enabled = !audioTrack.enabled;
-        setIsMicOn(audioTrack.enabled);
+    attemptStart();
+
+    const onDevicesChange = async () => {
+      // device list changed (camera plugged/unplugged or permission changes). Check if video input exists then attempt start.
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const hasVideoInput = devices.some((d) => d.kind === "videoinput");
+        // if there is a video input and we currently have no active stream, try to (re)start
+        if (
+          hasVideoInput &&
+          (!streamRef.current ||
+            streamRef.current.getVideoTracks().length === 0)
+        ) {
+          // short delay to allow OS to finish enabling device
+          setTimeout(() => startCamera(), 400);
+        } else if (!hasVideoInput) {
+          // no device available
+          stopCurrentStream();
+          setCameraAvailable(false);
+          onFaceDetected(false);
+        }
+      } catch (e) {
+        console.warn("Error handling devicechange:", e);
       }
+    };
+
+    navigator.mediaDevices?.addEventListener?.("devicechange", onDevicesChange);
+    // some browsers might expose ondevicechange directly
+    if (
+      navigator.mediaDevices &&
+      (navigator.mediaDevices as any).ondevicechange === undefined
+    ) {
+      // addEventListener already used above; otherwise attach fallback
+      try {
+        (navigator.mediaDevices as any).ondevicechange = onDevicesChange;
+      } catch {}
     }
-  };
+
+    return () => {
+      mounted = false;
+      if (retryTimer.current) {
+        clearTimeout(retryTimer.current);
+        retryTimer.current = null;
+      }
+      navigator.mediaDevices?.removeEventListener?.(
+        "devicechange",
+        onDevicesChange
+      );
+      try {
+        (navigator.mediaDevices as any).ondevicechange = null;
+      } catch {}
+      stopCurrentStream();
+      if (videoRef.current) {
+        try {
+          videoRef.current.srcObject = null;
+        } catch {}
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <div className="relative bg-gray-900 rounded-lg overflow-hidden">
-      {/* Video Display */}
-      <div className="relative aspect-video">
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          playsInline
-          className="w-full h-full object-cover"
-        />
-
-        {/* Face Detection Indicator */}
-        <div className="absolute top-3 right-3">
-          <div
-            className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${
-              faceDetected
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-            }`}
-          >
-            <div
-              className={`w-2 h-2 rounded-full ${
-                faceDetected ? "bg-green-500" : "bg-red-500"
-              }`}
-            />
-            {faceDetected ? "Face Detected" : "No Face Detected"}
+    <div className="w-full h-full bg-black flex items-center justify-center relative">
+      <video
+        ref={videoRef}
+        className="w-full h-full object-cover rounded-md"
+        playsInline
+        muted
+        autoPlay
+      />
+      {cameraAvailable === false && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="bg-black/60 text-white px-4 py-2 rounded">
+            Camera not available — please enable camera and grant permissions
           </div>
         </div>
-
-        {/* Candidate Name */}
-        <div className="absolute bottom-3 left-3">
-          <div className="bg-black/70 text-white px-3 py-1 rounded-full text-sm">
-            You
-          </div>
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={toggleCamera}
-            className={`p-3 rounded-full transition-colors duration-200 ${
-              isCameraOn
-                ? "bg-gray-700 hover:bg-gray-600 text-white"
-                : "bg-red-600 hover:bg-red-700 text-white"
-            }`}
-          >
-            {isCameraOn ? (
-              <Camera className="w-5 h-5" />
-            ) : (
-              <CameraOff className="w-5 h-5" />
-            )}
-          </button>
-
-          <button
-            onClick={toggleMic}
-            className={`p-3 rounded-full transition-colors duration-200 ${
-              isMicOn
-                ? "bg-gray-700 hover:bg-gray-600 text-white"
-                : "bg-red-600 hover:bg-red-700 text-white"
-            }`}
-          >
-            {isMicOn ? (
-              <Mic className="w-5 h-5" />
-            ) : (
-              <MicOff className="w-5 h-5" />
-            )}
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
