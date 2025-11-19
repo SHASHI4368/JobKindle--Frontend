@@ -23,7 +23,7 @@ export type Conversation = {
 };
 
 export type Violation = {
-  id: string;
+  id?: string;
   name: string;
   timestamp: Date;
 };

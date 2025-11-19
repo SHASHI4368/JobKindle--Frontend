@@ -155,6 +155,30 @@ export const updateConversation = async (
   }
 };
 
+export const updateViolations = async (
+  applicationId: string,
+  { name, timestamp }: Violation
+) => {
+  "use server";
+  const url = `${NextAPIURL}/interviews/${applicationId}`;
+  try {
+    const body: any = {};
+    if (name && timestamp) {
+      body.violation = { name, timestamp };
+    }
+    const response = await axios.patch(url, body);
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      console.log("error", error.response.data);
+      return error.response.data;
+    } else {
+      console.log("error", error);
+      return { success: false, message: "An unexpected error occurred" };
+    }
+  }
+};
+
 export const updateEvaluation = async (
   applicationId: string,
   evaluation: Evaluation
