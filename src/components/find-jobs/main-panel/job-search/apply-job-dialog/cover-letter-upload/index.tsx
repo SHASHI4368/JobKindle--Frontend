@@ -32,7 +32,7 @@ const CoverLetterUploadBox = ({
     console.log("File uploaded successfully:", response);
     setCoverLetter({
       id: response.fileId,
-      type: "coverLetter",
+      type: "COVER_LETTER",
       url: response.url,
       name: response.name,
       size: (response.size / 1024).toFixed(2) + " KB",

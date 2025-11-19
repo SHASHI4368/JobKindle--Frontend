@@ -12,13 +12,14 @@ import { DialogTrigger } from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 import { InterviewCard } from "@/types/interview";
 import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
+import { InterviewScheduleDetails } from "./types";
 
 
 interface SecureInterviewDialogProps {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  interviewData: InterviewCard;
+  interviewData: InterviewScheduleDetails;
 }
 
 const SecureInterviewDialog: React.FC<SecureInterviewDialogProps> = ({
@@ -61,10 +62,6 @@ const SecureInterviewDialog: React.FC<SecureInterviewDialogProps> = ({
               <p>
                 <span className="font-medium">Date:</span>{" "}
                 {interviewData.interviewDate}
-              </p>
-              <p>
-                <span className="font-medium">Time:</span>{" "}
-                {interviewData.interviewTime}
               </p>
             </div>
           </div>

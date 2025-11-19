@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -13,8 +15,8 @@ import { Badge } from "@/components/ui/badge";
 import { Eye, Mail } from "lucide-react";
 import { Application } from "@/types/application";
 import CandidateProfileDialog from "./candidate-profile-dialog";
-
-
+import ScreeningResultsDialog from "./screening-result-dialog";
+import InterviewResultsDialog from "./interview-result-dialog";
 
 type ApplicationsTableProps = {
   applications: Application[];
@@ -29,17 +31,48 @@ const ApplicationsTable = ({
   onToggleCandidate,
   onToggleAll,
 }: ApplicationsTableProps) => {
+  const [screeningResultDialogOpen, setScreeningResultDialogOpen] =
+    useState(false);
+  const [interviewResultDialogOpen, setInterviewResultDialogOpen] =
+    useState(false);
+  const [selectedApplicantEmail, setSelectedApplicantEmail] =
+    useState<string>("");
+  const [selectedApplicationId, setSelectedApplicationId] = useState<number | null>(null);
+
   const getStatusBadge = (status: string) => {
-    const statusConfig = {
-      pending: { color: "bg-yellow-100 text-yellow-800 border border-yellow-200", label: "Pending" },
-      interview_sent: {
-        color: "bg-blue-100 text-blue-800 border border-blue-200",
-        label: "Interview Sent",
+    // Normalize: remove spaces, lowercase everything
+    const normalizedStatus = status.trim().toLowerCase();
+
+    // 💡 All statuses your system supports
+    const statusConfig: Record<string, { color: string; label: string }> = {
+      pending: {
+        color: "bg-yellow-100 text-yellow-800 border border-yellow-200",
+        label: "Pending",
       },
-      selected: { color: "bg-green-100 text-green-800 border border-green-200", label: "Selected" },
+      screened: {
+        color: "bg-indigo-100 text-indigo-800 border border-indigo-200",
+        label: "Screened",
+      },
+      interview_scheduled: {
+        color: "bg-blue-100 text-blue-800 border border-blue-200",
+        label: "Interview Scheduled",
+      },
+      selected: {
+        color: "bg-green-100 text-green-800 border border-green-200",
+        label: "Selected",
+      },
+
+      // ⭐ Add more statuses here later if needed
     };
-    const config =
-      statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+
+    // Fallback for unknown states
+    const fallback = {
+      color: "bg-gray-100 text-gray-800 border border-gray-200",
+      label: status, // show original backend label
+    };
+
+    const config = statusConfig[normalizedStatus] || fallback;
+
     return (
       <Badge className={`${config.color} hover:${config.color}`}>
         {config.label}
@@ -48,8 +81,18 @@ const ApplicationsTable = ({
   };
 
   return (
-    <div className="border rounded-lg overflow-hidden ">
-      <Table className="font-geist-sans">
+    <div className="border font-geist-sans rounded-lg overflow-hidden ">
+      <ScreeningResultsDialog
+        open={screeningResultDialogOpen}
+        onOpenChange={setScreeningResultDialogOpen}
+        applicantEmail={selectedApplicantEmail}
+      />
+      <InterviewResultsDialog
+        open={interviewResultDialogOpen}
+        onOpenChange={setInterviewResultDialogOpen}
+        applicationId={selectedApplicationId!}
+      />
+      <Table className="">
         <TableHeader>
           <TableRow className="bg-gray-50 hover:bg-gray-50">
             <TableHead className="w-[50px]">
@@ -69,11 +112,18 @@ const ApplicationsTable = ({
         </TableHeader>
         <TableBody>
           {applications.map((application, index) => (
-            <TableRow key={application.applicationId} className="hover:bg-gray-50">
+            <TableRow
+              key={application.applicationId}
+              className="hover:bg-gray-50"
+            >
               <TableCell>
                 <Checkbox
-                  checked={selectedCandidates.includes(application.applicationId)}
-                  onCheckedChange={() => onToggleCandidate(application.applicationId)}
+                  checked={selectedCandidates.includes(
+                    application.applicationId
+                  )}
+                  onCheckedChange={() =>
+                    onToggleCandidate(application.applicationId)
+                  }
                 />
               </TableCell>
               <TableCell className="font-medium">{index + 1}</TableCell>
@@ -83,15 +133,30 @@ const ApplicationsTable = ({
               <TableCell className="text-gray-600">
                 {application.userEmail}
               </TableCell>
-              <TableCell className="">{getStatusBadge(application.status)}</TableCell>
+              <TableCell className="">
+                {getStatusBadge(application.status)}
+              </TableCell>
               <TableCell className="text-center">
-                <span className="inline-flex items-center justify-center w-12 h-8 bg-blue-100 border border-blue-200 text-blue-800 rounded-md font-semibold text-sm">
+                <span
+                  onClick={() => {
+                    setSelectedApplicantEmail(application.userEmail);
+                    setScreeningResultDialogOpen(true);
+                  }}
+                  title="View Screening Result"
+                  className="inline-flex cursor-pointer items-center justify-center w-12 h-8 bg-blue-100 border border-blue-200 text-blue-800 rounded-md font-semibold text-sm"
+                >
                   {application.resumeScore || "N/A"}
                 </span>
               </TableCell>
               <TableCell className="text-center">
                 {application.interviewScore ? (
-                  <span className="inline-flex items-center justify-center w-12 h-8 bg-purple-100 border border-purple-200 text-purple-800 rounded-md font-semibold text-sm">
+                  <span 
+                   onClick={() => {
+                    setSelectedApplicationId(application.applicationId);
+                    setInterviewResultDialogOpen(true);
+                  }}
+                  title="View Interview Result"
+                  className="inline-flex cursor-pointer items-center justify-center w-12 h-8 bg-purple-100 border border-purple-200 text-purple-800 rounded-md font-semibold text-sm">
                     {application.interviewScore}
                   </span>
                 ) : (

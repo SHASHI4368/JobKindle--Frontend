@@ -31,9 +31,9 @@ export const updatePersonalInfo = async (
     experience,
     education,
     linkedin,
-    website,
+    githubUrl,
     resumeUrl,
-    profilePic
+    profilePic,
   }: {
     firstName?: string;
     lastName?: string;
@@ -45,7 +45,7 @@ export const updatePersonalInfo = async (
     experience?: string;
     education?: string;
     linkedin?: string;
-    website?: string;
+    githubUrl?: string;
     resumeUrl?: string;
     profilePic?: string;
   }
@@ -64,7 +64,7 @@ export const updatePersonalInfo = async (
     if (experience) body.experience = experience;
     if (education) body.education = education;
     if (linkedin) body.linkedin = linkedin;
-    if (website) body.website = website;
+    if (githubUrl) body.githubUrl = githubUrl;
     if (resumeUrl) body.resume = resumeUrl;
     if (profilePic) body.profilePic = profilePic;
 

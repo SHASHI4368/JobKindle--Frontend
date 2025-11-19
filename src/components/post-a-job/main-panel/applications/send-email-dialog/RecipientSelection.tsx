@@ -52,10 +52,10 @@ const RecipientSelection = ({
               <span className="px-2.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
                 {selectedCount}
               </span>
-            </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm pl-[30px] text-gray-600">
               Send emails to candidates you've selected from the table
             </p>
+            </div>
           </Label>
         </div>
 
@@ -75,10 +75,10 @@ const RecipientSelection = ({
               <span className="font-medium text-gray-900">
                 Specific Number of Candidates
               </span>
-            </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm pl-[30px] text-gray-600">
               Send emails to the first N candidates from your list
             </p>
+            </div>
             {sendMode === "count" && (
               <div className="pt-2">
                 <Input

@@ -35,7 +35,7 @@ const SecurityHeader = ({
           {warningCount > 0 && (
             <div className="flex items-center gap-2 bg-red-700 px-3 py-1 rounded animate-pulse">
               <AlertTriangle className="w-4 h-4" />
-              <span>⚠️ VIOLATIONS: {warningCount}/5</span>
+              <span>⚠️ VIOLATIONS: {warningCount}/20</span>
             </div>
           )}
 

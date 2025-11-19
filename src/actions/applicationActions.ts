@@ -45,3 +45,97 @@ export const getApplicationById = async (jwt: string, applicationId: number) => 
     }
   }
 };
+
+export const triggerCVPipeline = async (id: number, jwt: string) => {
+  "use server";
+  const url = `${Base_URL_jobPosts}/screening/run/${id}`;
+  try {
+    const body: any = {};
+    const response = await axios.post(url, body, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      console.log("error", error.response.data);
+      return error.response.data;
+    } else {
+      console.log("error", error);
+      return { success: false, message: "An unexpected error occurred" };
+    }
+  }
+};
+
+export const getScreeningResult = async (email: string, jobPostId: number, jwt: string) => {
+  "use server";
+  const url = `${Base_URL_jobPosts}/screening/application/${jobPostId}/${email}`;
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      console.log("error", error.response.data);
+      return error.response.data;
+    } else {
+      console.log("error", error);
+      return { success: false, message: "An unexpected error occurred" };
+    }
+  }
+};
+
+export const sendInterviewEmail = async (jobPostId: number, emailList: string[], interviewDate: string | null, jwt: string) => {
+  "use server";
+  const url = `${Base_URL_jobPosts}/screening/job-post/${jobPostId}/confirm`;
+  try {
+    const body = {
+      selectedApplicationEmails: emailList,
+      interviewDate: new Date(interviewDate || "").toISOString(),
+    };
+    const response = await axios.post(url, body, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      console.log("error", error.response.data);
+      return error.response.data;
+    } else {
+      console.log("error", error);
+      return { success: false, message: "An unexpected error occurred" };
+    }
+  }
+};
+
+export const endInterview = async (
+  id: number,
+  interviewScore: number,
+  jwt: string
+) => {
+  "use server";
+  const url = `${Base_URL_jobPosts}/applications/set-interview-score/${id}`;
+  try {
+    const body: any = { interviewScore };
+    const response = await axios.patch(url, body, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      console.log("error", error.response.data);
+      return error.response.data;
+    } else {
+      console.log("error", error);
+      return { success: false, message: "An unexpected error occurred" };
+    }
+  }
+};

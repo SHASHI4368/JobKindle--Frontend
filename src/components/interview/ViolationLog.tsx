@@ -12,7 +12,7 @@ const ViolationLog = ({ violations }: ViolationLogProps) => {
       <h3 className="text-lg font-semibold mb-2 text-red-400">
         🚨 Security Violations
       </h3>
-      <div className="max-h-60 overflow-y-auto space-y-1">
+      <div className="max-h-60 beautiful-scrollbar overflow-y-auto space-y-1">
         {violations.map((violation, index) => (
           <div
             key={index}
