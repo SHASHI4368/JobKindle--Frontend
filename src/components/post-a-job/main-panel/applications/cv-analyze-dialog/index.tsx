@@ -19,12 +19,14 @@ type CVAnalyzeDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   applicants: Application[];
+  fetchApplications: () => void;
 };
 
 const CVAnalyzeDialog: React.FC<CVAnalyzeDialogProps> = ({
   open,
   onOpenChange,
   applicants,
+  fetchApplications,
 }) => {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<CVScore[] | null>(null);
@@ -49,6 +51,7 @@ const CVAnalyzeDialog: React.FC<CVAnalyzeDialogProps> = ({
           score: item.score,
         }));
         setResults(results);
+        await fetchApplications();
       }
     } catch (e) {
       console.error("Error analyzing CVs:", e);

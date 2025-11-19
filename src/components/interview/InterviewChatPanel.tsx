@@ -10,6 +10,7 @@ import {
   getInterviewDetails,
   startGeneralInterview,
   startTechnicalInterview,
+  updateApplicationStatus,
   updateConversation,
   updateEvaluation,
 } from "@/actions/interviewActions";
@@ -20,6 +21,7 @@ import {
   Conversation,
   Evaluation,
   InterviewApplicationDetails,
+  Violation,
 } from "@/types/interview";
 import InterviewCompletedDialog from "./dialogs/InterviewCompletedDialog";
 import { useRouter } from "next/navigation";
@@ -47,6 +49,7 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
   const [applicationData, setApplicationData] =
     useState<InterviewApplicationDetails | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [violations, setViolations] = useState<Violation[]>([]);
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -420,7 +423,8 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
         // 2) Ask backend for next question (AI)
         const response = await answerTechnicalInterview(
           applicationData.userEmail,
-          qa_history
+          qa_history,
+          violations
         );
         const question =
           response.next_question ?? response.question ?? response.message;
@@ -438,10 +442,17 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
             }
           );
           console.log(response);
+          console.log(messageRes)
           if (messageRes.success && messageRes.data) {
+            console.log("test 1")
             if (
               question === "Thank you for completing the technical interview!"
             ) {
+              console.log("test 2")
+              if(response.evaluation.total_score === 0 || response.evaluation.total_score === null || response.evaluation.total_score === undefined){
+                handleSubmitTechnicalAnswer();
+                return;
+              }
               // Interview complete - handle accordingly
               await addEvaluationDetails(response.evaluation);
               setMessages((prev) => [
@@ -451,10 +462,20 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
               return;
             }
           } else {
+            console.log("test 3")
             if (
               question === "Thank you for completing the technical interview!"
             ) {
+              console.log("test 4")
               // Interview complete - handle accordingly
+              if (
+                response.evaluation.total_score === 0 ||
+                response.evaluation.total_score === null ||
+                response.evaluation.total_score === undefined
+              ) {
+                handleSubmitTechnicalAnswer();
+                return;
+              }
               await addEvaluationDetails(response.evaluation);
               setMessages((prev) => [
                 ...prev,
@@ -493,19 +514,25 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
   };
 
   const addEvaluationDetails = async (evaluation: Evaluation) => {
+    console.log("test 5")
     if (!applicationData) return;
+    console.log("test 6");
     try {
       const response = await updateEvaluation(
         applicationData.applicationId.toString(),
         evaluation
       );
       if (response.success) {
+        console.log("test 7");
+        console.log(evaluation.total_score)
         const mainRes = await endInterview(
           applicationData.applicationId,
           evaluation.total_score,
           Cookies.get("jwt") || ""
         );
+        console.log(mainRes)
         if (mainRes.success) {
+          console.log("test 8");
           setIsCompleted(true);
           console.log("Evaluation updated:", response);
         }
@@ -539,11 +566,15 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
   // update init flow to pass normalized conversation and fetched app to getFirstQuestion
   useEffect(() => {
     const applicationId = window.location.pathname.split("/").pop();
-
     const initInterview = async () => {
       const appDetails = await getApplicationDetailsById(applicationId || "");
       if (!appDetails) return;
-
+      const statusRes = await updateApplicationStatus(
+        Cookies.get("jwt") || "",
+        Number(applicationId),
+        "INTERVIEW_STARTED"
+      );
+      console.log(statusRes.data);
       const { exists, conversation } = await checkInterviewIsThere(
         applicationId || ""
       );

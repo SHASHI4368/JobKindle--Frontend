@@ -9,6 +9,7 @@ type ActionsBarProps = {
   totalCount: number;
   onSendEmail: () => void;
   applicants: Application[]; // added: pass applicants list
+  fetchApplications: () => void; // added: function to fetch applications
 };
 
 const ActionsBar = ({
@@ -16,6 +17,7 @@ const ActionsBar = ({
   totalCount,
   onSendEmail,
   applicants,
+  fetchApplications,
 }: ActionsBarProps) => {
   const [openAnalyze, setOpenAnalyze] = useState(false);
 
@@ -41,6 +43,7 @@ const ActionsBar = ({
         open={openAnalyze}
         onOpenChange={setOpenAnalyze}
         applicants={applicants}
+        fetchApplications={fetchApplications}
       />
     </div>
   );

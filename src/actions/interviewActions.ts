@@ -1,6 +1,6 @@
 "use server";
 
-import { Conversation, Evaluation, Interview } from "@/types/interview";
+import { Conversation, Evaluation, Interview, Violation } from "@/types/interview";
 import { ApplicationDocument } from "@/types/jobPosts";
 import axios from "axios";
 const NextAPIURL = process.env.NextAPIURL;
@@ -44,6 +44,58 @@ export const getMyInterviews = async (jwt: string) => {
     }
   }
 };
+
+
+export const updateApplicationStatus = async (jwt: string, applicationId: number, status: string) => {
+  "use server";
+  const url = `${Base_URL_jobPosts}/applications/${applicationId}/status`;
+  try {
+    const response = await axios.patch(url, { status }, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      console.log("error", error.response.data);
+      return error.response.data;
+    } else {
+      console.log("error", error);
+      return { success: false, message: "An unexpected error occurred" };
+    }
+  }
+};
+
+export const updateApplicationInterviewScore = async (
+  jwt: string,
+  applicationId: number,
+  interviewScore: number
+) => {
+  "use server";
+  const url = `${Base_URL_jobPosts}/applications/set-interview-score/${applicationId}`;
+  try {
+    const response = await axios.patch(
+      url,
+      { interviewScore },
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      console.log("error", error.response.data);
+      return error.response.data;
+    } else {
+      console.log("error", error);
+      return { success: false, message: "An unexpected error occurred" };
+    }
+  }
+};
+
 
 export const createInterview = async ({
   id,
@@ -196,11 +248,12 @@ export const answerGeneralInterview = async (
 
 export const answerTechnicalInterview = async (
   email: string,
-  qa_history: QAHistory
+  qa_history: QAHistory,
+  violations: Violation[]
 ) => {
   const url = `${agentURL}/next_question`;
   try {
-    const response = await axios.post(url, { email, qa_history });
+    const response = await axios.post(url, { email, qa_history, violations });
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.data) {

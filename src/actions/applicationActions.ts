@@ -120,10 +120,10 @@ export const endInterview = async (
   jwt: string
 ) => {
   "use server";
-  const url = `${Base_URL_jobPosts}/set-interview-score/${id}`;
+  const url = `${Base_URL_jobPosts}/applications/set-interview-score/${id}`;
   try {
     const body: any = { interviewScore };
-    const response = await axios.post(url, body, {
+    const response = await axios.patch(url, body, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },

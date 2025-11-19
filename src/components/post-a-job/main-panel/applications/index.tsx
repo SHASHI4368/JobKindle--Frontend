@@ -157,7 +157,6 @@ const ViewApplication = () => {
 
   return (
     <>
-    
       {loading && (
         <div className="fixed inset-0 bg-white/60 backdrop-blur-sm z-[200] flex items-center justify-center">
           <div className="flex flex-col items-center space-y-4">
@@ -184,11 +183,10 @@ const ViewApplication = () => {
           selectedCount={selectedCandidates.length}
           totalCount={applications?.length || 0}
           onSendEmail={() => setEmailDialogOpen(true)}
-          
+          fetchApplications={fetchApplications}
         />
 
         <ApplicationsTable
-        
           applications={applications || []}
           selectedCandidates={selectedCandidates}
           onToggleCandidate={toggleCandidate}
