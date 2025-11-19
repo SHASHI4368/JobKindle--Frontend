@@ -174,6 +174,7 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
     }
   };
 
+  
   const getFirstTechnicalQuestion = async (
     applicationDataParam: InterviewApplicationDetails | null
   ) => {
