@@ -1,3 +1,5 @@
+import { Conversation, Violation } from "./interview";
+
 export type ApplicationDucument = {
   id: string;
   type: string;
@@ -27,5 +29,24 @@ export interface ApplicationResponse {
   email: string;
   match_analysis: string;
   score: number;
+}
+
+export interface InterviewResponse {
+  applicationId: number;
+  startedAt: string;
+  endedAt: string;
+  conversation: Conversation[];
+  violations: Violation[];
+  evaluation: {
+    overall_feedback: string;
+    question_wise: {
+      answer: string;
+      feedback: string;
+      masked: boolean;
+      question: string;
+      score: number;
+    }[];
+    total_score: number;
+  }
 }
 			
