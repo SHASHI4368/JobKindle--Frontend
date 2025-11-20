@@ -1,21 +1,25 @@
 "use client";
 
-import NormalSelector from "@/components/common/selectors/normal-selector";
-import { Bot } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import InterviewListingCard from "./InterviewListingCard";
+import AppliedJobCard from "./AppliedJobCard";
+import { AppliedJob } from "./types";
+// import { getMyApplications, removeApplication } from "@/actions/applicationActions";
 import Cookies from "js-cookie";
-import { getMyInterviews } from "@/actions/interviewActions";
+import { getMyApplications } from "@/actions/applicationActions";
 import { getJobPostById } from "@/actions/jobPostActions";
-import { InterviewScheduleDetails } from "./types";
-import Link from "next/link";
+import { FileUser, Link } from "lucide-react";
+import NormalSelector from "@/components/common/selectors/normal-selector";
+import ConfirmRemoveDialog from "./ConfirmRemoveDialog";
 
-const Interviews = () => {
-  const [interviewList, setInterviewList] = useState<
-    InterviewScheduleDetails[]
-  >([]);
+const AppliedJobsPanel: React.FC = () => {
+  const [jobs, setJobs] = useState<AppliedJob[]>([]);
   const [loading, setLoading] = useState(false);
   const [filterBy, setFilterBy] = useState("all");
+  const [removeTarget, setRemoveTarget] = useState<{
+    id: number;
+    title?: string;
+  } | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const getJobPost = async (id: number) => {
     const jwt = Cookies.get("jwt") || "";
@@ -35,7 +39,7 @@ const Interviews = () => {
     }
   };
 
-  const getInterview = async () => {
+  const getAppliedJobPosts = async () => {
     const jwt = Cookies.get("jwt") || "";
     if (!jwt) {
       console.error("JWT token not found");
@@ -43,16 +47,16 @@ const Interviews = () => {
     }
     try {
       setLoading(true);
-      const response = await getMyInterviews(jwt);
+      const response = await getMyApplications(jwt);
       if (response.success) {
-        const interviews = response.data;
+        const applications = response.data;
         // reset list before populating to avoid duplicates on re-run
-        setInterviewList([]);
-        for (const interview of interviews) {
-          const jobPost = await getJobPost(interview.postId);
+        setJobs([]);
+        for (const application of applications) {
+          const jobPost = await getJobPost(application.postId);
           if (jobPost) {
-            const formattedInterview = {
-              applicationId: interview.applicationId,
+            const formattedAppliedJob = {
+              applicationId: application.applicationId,
               jobData: {
                 id: jobPost.postId,
                 jobTitle: jobPost.title,
@@ -63,9 +67,12 @@ const Interviews = () => {
                 experienceLevel: jobPost.experienceLevel,
                 employmentType: jobPost.employmentType,
               },
-              interviewDate: interview.interviewDate,
+              interviewDate: application.interviewDate,
+              applicationStatus: application.applicationStatus,
+              appliedAt: application.appliedAt,
             };
-            setInterviewList((prevList) => [...prevList, formattedInterview]);
+            console.log(formattedAppliedJob);
+            setJobs((prevList) => [...prevList, formattedAppliedJob]);
           }
         }
       }
@@ -75,11 +82,6 @@ const Interviews = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    getInterview();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const filterList = [
     { label: "All", value: "all" },
@@ -91,10 +93,23 @@ const Interviews = () => {
     setFilterBy(value);
   };
 
+  useEffect(() => {
+    getAppliedJobPosts();
+  }, []);
+
+  const handleRemove = async (applicationId: number) => {
+    setConfirmOpen(true);
+  };
+
+  const handleJoin = (job: AppliedJob) => {
+    // navigate to interview or open confirmation dialog
+    window.location.href = `/interview/${job.applicationId}`;
+  };
+
   return (
     <>
       {loading && (
-        <div className="fixed inset-0 bg-white/60 backdrop-blur-sm z-[200] flex items-center justify-center">
+        <div className="fixed  inset-0 bg-white/60 backdrop-blur-sm z-[200] flex items-center justify-center">
           <div className="flex flex-col items-center space-y-4">
             {/* Loading spinner */}
             <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
@@ -122,7 +137,7 @@ const Interviews = () => {
           bg-gray-100 text-gray-600 group-hover:bg-primary/10 group-hover:text-primary
         `}
             >
-              <Bot />
+              <FileUser />
             </div>
 
             {/* Text content */}
@@ -132,14 +147,14 @@ const Interviews = () => {
             font-[700] text-[20px] transition-colors duration-300 text-gray-800 group-hover:text-primary
           `}
               >
-                My Interviews
+                My Applied Jobs
               </span>
               <span
                 className={`
               text-xs mt-1 transition-colors duration-300 text-gray-500 group-hover:text-gray-600
             `}
               >
-                View and manage job interviews
+                View and manage your job applications
               </span>
             </div>
           </div>
@@ -155,7 +170,7 @@ const Interviews = () => {
         </div>
 
         {/* Empty state when there are no interviews */}
-        {!loading && interviewList.length === 0 ? (
+        {!loading && jobs.length === 0 ? (
           <div className="mt-8 flex flex-col items-center justify-center gap-6 py-12">
             <div className="w-40 h-40 flex items-center justify-center rounded-full bg-gradient-to-br from-indigo-50 to-indigo-100">
               {/* Illustrative SVG */}
@@ -194,11 +209,11 @@ const Interviews = () => {
 
             <div className="text-center max-w-xl px-4">
               <h3 className="text-2xl font-semibold text-gray-800">
-                No interviews found
+                No applied jobs found
               </h3>
               <p className="text-sm text-gray-500 mt-2">
-                You don't have any scheduled interviews yet. When interviews are
-                scheduled they'll appear here.
+                You haven't applied to any jobs yet. When you apply, they'll
+                appear here.
               </p>
 
               <div className="mt-6 flex items-center justify-center gap-3">
@@ -209,7 +224,7 @@ const Interviews = () => {
                   Browse Job Posts
                 </Link>
                 <button
-                  onClick={() => getInterview()}
+                  onClick={() => getAppliedJobPosts()}
                   className="inline-flex items-center px-4 py-2 border border-gray-200 rounded-md text-sm text-gray-700 hover:bg-gray-50"
                 >
                   Refresh
@@ -218,17 +233,31 @@ const Interviews = () => {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col mt-4">
-            {interviewList.map((interview, index) => {
+          <div className="flex flex-col gap-4 mt-4">
+            {jobs.map((job, index) => {
               return (
-                <InterviewListingCard key={index} interviewData={interview} />
+                <AppliedJobCard
+                  key={job.applicationId}
+                  job={job}
+                  onRemove={handleRemove}
+                  onOpenJoin={handleJoin}
+                />
               );
             })}
           </div>
         )}
       </div>
+      <ConfirmRemoveDialog
+        open={confirmOpen}
+        jobTitle={removeTarget?.title}
+        onConfirm={() => removeTarget && handleRemove(removeTarget.id)}
+        onClose={() => {
+          setConfirmOpen(false);
+          setRemoveTarget(null);
+        }}
+      />
     </>
   );
 };
 
-export default Interviews;
+export default AppliedJobsPanel;

@@ -33,19 +33,57 @@ const Interview = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // fullscreen state (do NOT auto-enter fullscreen)
-  const [isFullscreen, setIsFullscreen] = useState<boolean>(() => {
-    // Only check document on client side
-    if (typeof window !== "undefined") {
-      return !!document?.fullscreenElement;
-    }
-    return false;
-  });
+  const [isFullscreen, setIsFullscreen] = useState(
+    typeof document !== "undefined" && !!document.fullscreenElement
+  );
 
-  // update fullscreen state on change
+  // detect transitions and log a violation when user exits fullscreen
   useEffect(() => {
-    const handler = () => setIsFullscreen(!!document.fullscreenElement);
-    document.addEventListener("fullscreenchange", handler);
-    return () => document.removeEventListener("fullscreenchange", handler);
+    const prevRef = { value: !!document.fullscreenElement };
+
+    const onFullscreenChange = () => {
+      const now = !!document.fullscreenElement;
+      // if previously fullscreen and now NOT fullscreen -> user exited fullscreen
+      if (prevRef.value === true && now === false) {
+        // mark local state and call violation handler
+        setIsFullscreen(false);
+        handleFullscreenExit();
+      } else {
+        setIsFullscreen(now);
+      }
+      prevRef.value = now;
+    };
+
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    // vendor-prefixed events for broader browser support
+    document.addEventListener(
+      "webkitfullscreenchange",
+      onFullscreenChange as EventListener
+    );
+    document.addEventListener(
+      "mozfullscreenchange",
+      onFullscreenChange as EventListener
+    );
+    document.addEventListener(
+      "MSFullscreenChange",
+      onFullscreenChange as EventListener
+    );
+
+    return () => {
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
+      document.removeEventListener(
+        "webkitfullscreenchange",
+        onFullscreenChange as EventListener
+      );
+      document.removeEventListener(
+        "mozfullscreenchange",
+        onFullscreenChange as EventListener
+      );
+      document.removeEventListener(
+        "MSFullscreenChange",
+        onFullscreenChange as EventListener
+      );
+    };
   }, []);
 
   const requestUserFullscreen = async () => {
@@ -74,22 +112,25 @@ const Interview = () => {
   };
 
   const addViolationToDatabase = async (type: string) => {
-    const applicationId = interviewData.applicationId;
+    const applicationId = window.location.pathname
+      .split("/")
+      .pop() as unknown as string;
     const violation = {
       name: type,
       timestamp: new Date(),
     };
-    try{
+    console.log(violation)
+    try {
       const response = await updateViolations(applicationId, violation);
       if (response.success) {
         console.log("Violation recorded in database");
       }
-    }catch(error){
+    } catch (error) {
       console.error("Error updating violations:", error);
     }
   };
 
-  const handleViolation = (type: string, message: string) => {
+  const handleViolation = async (type: string, message: string) => {
     const newCount = warningCount + 1;
     setWarningCount(newCount);
     setViolations((prev) => [
@@ -100,7 +141,7 @@ const Interview = () => {
     setShowViolationDialog(true);
 
     console.log(`VIOLATION DETECTED: ${type} - ${message}`);
-    addViolationToDatabase(`VIOLATION DETECTED: ${type}`);
+    await addViolationToDatabase(`VIOLATION DETECTED: ${type}`);
 
     if (newCount >= 20) {
       setTimeout(async () => {

@@ -106,12 +106,12 @@ const JobListingCard = ({ jobData }: { jobData: ViewPostData }) => {
             </div>
           </div>
 
-          <Button
+          {/* <Button
             variant={"outline"}
             className="cursor-pointer w-full sm:w-auto mt-4 sm:mt-0"
           >
             Save
-          </Button>
+          </Button> */}
         </div>
 
         {/* Job Description Preview */}
