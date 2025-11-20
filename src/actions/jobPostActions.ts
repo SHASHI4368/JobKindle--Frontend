@@ -360,6 +360,49 @@ export const getAllActiveJobPosts = async (jwt: string) => {
   }
 };
 
+export const getAllActiveJobPostsWithFilters = async (jwt: string, filters: {
+  searchTerm?: string;
+  location?: string;
+  workType?: string;
+  experienceLevel?: string;
+  datePosted?: string;
+}) => {
+  "use server";
+  const url = `${Base_URL_jobPosts}/job-posts/get/filter?${
+    filters.searchTerm
+      ? `jobTitle=${encodeURIComponent(filters.searchTerm)}&`
+      : ""
+  }${
+    filters.location ? `location=${encodeURIComponent(filters.location)}&` : ""
+  }${
+    filters.workType ? `workType=${encodeURIComponent(filters.workType)}&` : ""
+  }${
+    filters.experienceLevel
+      ? `experienceLevel=${encodeURIComponent(filters.experienceLevel)}&`
+      : ""
+  }${
+    filters.datePosted
+      ? `datePosted=${encodeURIComponent(filters.datePosted)}&`
+      : ""
+  }`;
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      console.log("error", error.response.data);
+      return error.response.data;
+    } else {
+      console.log("error", error);
+      return { success: false, message: "An unexpected error occurred" };
+    }
+  }
+};
+
 export const applyToJobPost = async (
   jwt: string,
   postId: number,
