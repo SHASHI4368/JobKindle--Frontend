@@ -30,7 +30,7 @@ const LargeScreenSearch = ({ searchProps }: { searchProps: searchProps }) => {
   } = searchProps;
 
   return (
-    <div className="w-full gap-2 lg:flex hidden flex-col  relative mt-[20px]  min-h-[20vh]  ">
+    <div className="w-full gap-2 lg:flex hidden flex-col  relative   min-h-[20vh]  ">
       <div className="flex w-full flex-row items-end gap-[1%]">
         <div className="w-[59%] ">
           <InputWithIcon

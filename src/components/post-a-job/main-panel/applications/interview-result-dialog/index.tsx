@@ -17,6 +17,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { getInterviewDetails } from "@/actions/interviewActions";
+import { Violation } from "@/types/interview";
 
 type InterviewResultsDialogProps = {
   open: boolean;
@@ -103,9 +104,11 @@ const InterviewResultsDialog = ({
 
   const calculateTimingStats = () => {
     if (!interviewResult?.conversation) return null;
+
     const technicalConversation = interviewResult.conversation.filter(
       (msg) => msg.isTechnical
     );
+
     const responseTimes: number[] = [];
     for (let i = 1; i < technicalConversation.length; i++) {
       if (!technicalConversation[i].isAI && technicalConversation[i - 1].isAI) {
@@ -115,15 +118,18 @@ const InterviewResultsDialog = ({
         responseTimes.push(responseTime);
       }
     }
+
     const avgResponseTime =
       responseTimes.length > 0
         ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
         : 0;
+
     const totalDuration =
       interviewResult.endedAt && interviewResult.startedAt
         ? new Date(interviewResult.endedAt).getTime() -
           new Date(interviewResult.startedAt).getTime()
         : 0;
+
     return {
       avgResponseTime,
       totalDuration,
@@ -140,67 +146,67 @@ const InterviewResultsDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl font-geist-sans min-w-5xl beautiful-scrollbar max-h-[90vh] min-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-5xl min-w-5xl max-h-[90vh] min-h-[90vh] beautiful-scrollbar overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
-            Interview Results
-          </DialogTitle>
+          <DialogTitle className="text-2xl">Interview Results</DialogTitle>
           <DialogDescription>
             Detailed analysis of the candidate's interview performance
           </DialogDescription>
         </DialogHeader>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-12">
-            <Loader2 className="h-12 w-12 animate-spin text-blue-600 mb-4" />
-            <p className="text-gray-600">Loading interview results...</p>
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+            <span className="ml-3 text-gray-600">
+              Loading interview results...
+            </span>
           </div>
         ) : interviewResult ? (
           <div className="space-y-6">
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
+              <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
                 <div className="flex items-center gap-2 mb-2">
                   <Award className="h-5 w-5 text-blue-600" />
-                  <h3 className="font-semibold text-blue-900">Total Score</h3>
+                  <span className="text-sm font-medium text-blue-900">
+                    Total Score
+                  </span>
                 </div>
-                <p
+                <div
                   className={`text-3xl font-bold ${getTotalScoreColor(
                     interviewResult.evaluation?.total_score || 0,
-                    overallMax || 1
+                    overallMax
                   )}`}
                 >
                   {interviewResult.evaluation?.total_score || 0}{" "}
-                  <span className="text-lg font-normal text-gray-600">
-                    /{overallMax}
-                  </span>
-                </p>
+                  <span className="text-xl text-gray-500">/{overallMax}</span>
+                </div>
               </div>
 
               {timingStats && (
                 <>
-                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
+                  <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
                     <div className="flex items-center gap-2 mb-2">
                       <Clock className="h-5 w-5 text-purple-600" />
-                      <h3 className="font-semibold text-purple-900">
+                      <span className="text-sm font-medium text-purple-900">
                         Duration
-                      </h3>
+                      </span>
                     </div>
-                    <p className="text-2xl font-bold text-purple-900">
+                    <div className="text-3xl font-bold text-purple-600">
                       {formatDuration(timingStats.totalDuration)}
-                    </p>
+                    </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
+                  <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
                     <div className="flex items-center gap-2 mb-2">
                       <TrendingUp className="h-5 w-5 text-green-600" />
-                      <h3 className="font-semibold text-green-900">
+                      <span className="text-sm font-medium text-green-900">
                         Avg Response
-                      </h3>
+                      </span>
                     </div>
-                    <p className="text-2xl font-bold text-green-900">
+                    <div className="text-3xl font-bold text-green-600">
                       {formatDuration(timingStats.avgResponseTime)}
-                    </p>
+                    </div>
                   </div>
                 </>
               )}
@@ -208,104 +214,195 @@ const InterviewResultsDialog = ({
 
             {/* Overall Feedback */}
             {interviewResult.evaluation?.overall_feedback && (
-              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5" /> Overall Feedback
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h3 className="font-semibold text-blue-900 mb-2">
+                  Overall Feedback
                 </h3>
-                <p className="text-gray-700">
+                <p className="text-sm text-blue-800">
                   {interviewResult.evaluation.overall_feedback}
                 </p>
               </div>
             )}
 
-            {/* Violations */}
-            {interviewResult.violations &&
-              interviewResult.violations.length > 0 && (
-                <div className="bg-red-50 p-4 rounded-lg border border-red-200">
-                  <h3 className="font-semibold text-red-900 mb-3 flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5" /> Violations Detected
-                  </h3>
-                  <ul className="space-y-2">
-                    {interviewResult.violations.map((violation, idx) => (
-                      <li key={idx} className="text-red-700">
-                        •{" "}
-                        {typeof violation === "string"
-                          ? violation
-                          : JSON.stringify(violation)}
-                      </li>
-                    ))}
-                  </ul>
+            {/* Interview Timeline with Violations */}
+            {interviewResult.conversation &&
+              interviewResult.conversation.length > 0 && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="h-5 w-5 text-gray-600" />
+                    <h3 className="font-semibold text-gray-900">
+                      Interview Timeline
+                    </h3>
+                  </div>
+                  <div className="relative border-l-2 border-gray-200 pl-6 space-y-4">
+                    {(() => {
+                      // Combine conversation and violations into a single timeline
+                      const timeline: Array<
+                        | {
+                            type: "message";
+                            data: (typeof interviewResult.conversation)[0];
+                            timestamp: Date;
+                          }
+                        | {
+                            type: "violation";
+                            data: Violation;
+                            timestamp: Date;
+                          }
+                      > = [
+                        ...interviewResult.conversation.map((msg) => ({
+                          type: "message" as const,
+                          data: msg,
+                          timestamp: new Date(msg.timestamp),
+                        })),
+                        ...interviewResult.violations.map((violation) => ({
+                          type: "violation" as const,
+                          data: violation,
+                          timestamp: new Date(violation.timestamp),
+                        })),
+                      ].sort(
+                        (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
+                      );
+
+                      return timeline.map((item, idx) => {
+                        if (item.type === "violation") {
+                          return (
+                            <div
+                              key={`violation-${idx}`}
+                              className="relative -ml-9"
+                            >
+                              <div className="absolute left-0 w-4 h-4 bg-red-500 rounded-full border-2 border-white"></div>
+                              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                                <div className="flex items-start gap-2">
+                                  <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
+                                  <div className="flex-1">
+                                    <div className="font-medium text-red-900 text-sm">
+                                      Violation Detected
+                                    </div>
+                                    <div className="text-sm text-red-700 mt-1">
+                                      {item.data.name}
+                                    </div>
+                                    <div className="text-xs text-red-600 mt-1">
+                                      {item.timestamp.toLocaleTimeString()}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        } else {
+                          const msg = item.data;
+                          if (!msg.isTechnical) return null;
+
+                          return (
+                            <div key={`msg-${idx}`} className="relative -ml-9">
+                              <div
+                                className={`absolute left-0 w-4 h-4 rounded-full border-2 border-white ${
+                                  msg.isAI ? "bg-blue-500" : "bg-green-500"
+                                }`}
+                              ></div>
+                              <div
+                                className={`rounded-lg p-3 ${
+                                  msg.isAI
+                                    ? "bg-blue-50 border border-blue-100"
+                                    : "bg-green-50 border border-green-100"
+                                }`}
+                              >
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span
+                                    className={`text-xs font-medium ${
+                                      msg.isAI
+                                        ? "text-blue-700"
+                                        : "text-green-700"
+                                    }`}
+                                  >
+                                    {msg.isAI ? "Interviewer" : "Candidate"}
+                                  </span>
+                                  <span className="text-xs text-gray-500">
+                                    {item.timestamp.toLocaleTimeString()}
+                                  </span>
+                                </div>
+                                <p
+                                  className={`text-sm ${
+                                    msg.isAI
+                                      ? "text-blue-900"
+                                      : "text-green-900"
+                                  }`}
+                                >
+                                  {msg.text}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        }
+                      });
+                    })()}
+                  </div>
                 </div>
               )}
 
             {/* Question-wise Analysis */}
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-4 text-lg">
-                Question-wise Performance
-              </h3>
-              <div className="space-y-4">
-                {interviewResult.evaluation?.question_wise?.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className={`p-4 rounded-lg border border-gray-200 bg-white`}
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1 flex items-start gap-3">
-                        {/* small colored accent */}
-                        <span
-                          className={`inline-block w-3 h-3 rounded-full mt-2 ${getAccentClass(
-                            item.score
-                          )}`}
-                          aria-hidden
-                        />
-                        <div>
-                          <h4 className="font-semibold mb-1">
-                            Question {idx + 1}
-                          </h4>
-                          <p className="text-sm italic mb-0 text-gray-700">
-                            {item.question}
-                          </p>
-                        </div>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Award className="h-5 w-5 text-gray-600" />
+                <h3 className="font-semibold text-gray-900">
+                  Question-wise Performance
+                </h3>
+              </div>
+              {interviewResult.evaluation?.question_wise?.map((item, idx) => (
+                <div
+                  key={idx}
+                  className={`border rounded-lg overflow-hidden ${getAccentClass(
+                    item.score
+                  )}`}
+                >
+                  {/* small colored accent */}
+                  <div className="p-4 space-y-3">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 mb-1">
+                          Question {idx + 1}
+                        </h4>
+                        <p className="text-sm text-gray-700">{item.question}</p>
                       </div>
-
-                      <div className="ml-4 flex flex-col items-center">
-                        <div className={`${getBadgeClasses(item.score)}`}>
-                          {item.score}/{QUESTION_MAX}
-                        </div>
+                      <div
+                        className={`text-sm font-semibold ${getBadgeClasses(
+                          item.score
+                        )}`}
+                      >
+                        {item.score}/{QUESTION_MAX}
                       </div>
                     </div>
 
-                    <div className="space-y-3 mt-3">
-                      <div>
-                        <span className="font-semibold text-sm">Answer:</span>
-                        <p className="text-sm mt-1 p-3 rounded bg-slate-50 border border-slate-100">
-                          {item.answer}
-                        </p>
-                      </div>
+                    <div>
+                      <span className="text-xs font-medium text-gray-600">
+                        Answer:
+                      </span>
+                      <p className="text-sm text-gray-800 mt-1">
+                        {item.answer}
+                      </p>
+                    </div>
 
-                      <div>
-                        <span className="font-semibold text-sm">Feedback:</span>
-                        <p
-                          className={`text-sm mt-1 p-2 rounded ${getFeedbackBg(
-                            item.score
-                          )}`}
-                        >
-                          {item.feedback}
-                        </p>
-                      </div>
+                    <div className={`p-3 rounded ${getFeedbackBg(item.score)}`}>
+                      <span className="text-xs font-medium text-gray-600">
+                        Feedback:
+                      </span>
+                      <p className="text-sm text-gray-800 mt-1">
+                        {item.feedback}
+                      </p>
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12">
-            <p className="text-gray-600">No interview results available</p>
+          <div className="text-center py-12 text-gray-500">
+            No interview results available
           </div>
         )}
       </DialogContent>
     </Dialog>
   );
 };
+
 export default InterviewResultsDialog;

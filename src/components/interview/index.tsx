@@ -33,8 +33,8 @@ const Interview = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // fullscreen state (do NOT auto-enter fullscreen)
-  const [isFullscreen, setIsFullscreen] = useState<boolean>(
-    !!document?.fullscreenElement
+  const [isFullscreen, setIsFullscreen] = useState(
+    typeof document !== "undefined" && !!document.fullscreenElement
   );
 
   // detect transitions and log a violation when user exits fullscreen

@@ -41,6 +41,7 @@ const ApplicationsTable = ({
 
   const getStatusBadge = (status: string) => {
     // Normalize: remove spaces, lowercase everything
+    if(!status) return null;
     const normalizedStatus = status.trim().toLowerCase();
 
     // 💡 All statuses your system supports

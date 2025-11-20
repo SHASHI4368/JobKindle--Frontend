@@ -8,6 +8,7 @@ import JobSearch from "./main-panel/job-search";
 import LargeScreenSearch from "./header/LargeScreenSearch";
 import SmallScreenSearch from "./header/SmallScreenSearch";
 import Interviews from "./main-panel/interviews";
+import AppliedJobsPanel from "./main-panel/applied-jobs";
 
 const FindJobs = () => {
   const [activeItem, setActiveItem] = useQueryState(
@@ -113,34 +114,9 @@ const FindJobs = () => {
     },
   ];
   return (
-    <div className="w-full gap-4 mb-[20px] flex flex-col xl:px-[10vw] px-[5vw]">
-      <LargeScreenSearch
-        searchProps={{
-          searchTerm,
-          location,
-          datePosted,
-          experienceLevel,
-          workType,
-          setLocation,
-          dateOptions,
-          experienceOptions,
-          workTypeOptions,
-          handleClearFilters,
-          handleJobSearch,
-          handleDatePostedChange,
-          handleExperienceLevelChange,
-          handleWorkTypeChange,
-          handleSearchChange,
-          handleLocationChange,
-        }}
-      />
-      <div className="flex-1 gap-5 flex lg:flex-row lg:mt-0 mt-[20px] flex-col">
-        <SidePanel
-          activeItem={activeItem}
-          setActiveItem={setActiveItem}
-          menuItems={menuItems}
-        />
-        <SmallScreenSearch
+    <div className="w-full gap-4 mb-[20px] mt-[20px] flex flex-col xl:px-[10vw] px-[5vw]">
+      {activeItem === "Job Search" && (
+        <LargeScreenSearch
           searchProps={{
             searchTerm,
             location,
@@ -160,9 +136,39 @@ const FindJobs = () => {
             handleLocationChange,
           }}
         />
+      )}
+      <div className="flex-1 gap-5 flex lg:flex-row lg:mt-0 mt-[20px] flex-col">
+        <SidePanel
+          activeItem={activeItem}
+          setActiveItem={setActiveItem}
+          menuItems={menuItems}
+        />
+        {activeItem === "Job Search" && (
+          <SmallScreenSearch
+            searchProps={{
+              searchTerm,
+              location,
+              datePosted,
+              experienceLevel,
+              workType,
+              setLocation,
+              dateOptions,
+              experienceOptions,
+              workTypeOptions,
+              handleClearFilters,
+              handleJobSearch,
+              handleDatePostedChange,
+              handleExperienceLevelChange,
+              handleWorkTypeChange,
+              handleSearchChange,
+              handleLocationChange,
+            }}
+          />
+        )}
         <div className="flex-1 flex-col">
           <div className="rounded-[100px] w-full md:pl-4 mb-[10px]">
             {activeItem === "Job Search" && <JobSearch />}
+            {activeItem === "Applied Jobs" && <AppliedJobsPanel />}
             {activeItem === "Interviews" && <Interviews />}
           </div>
         </div>
