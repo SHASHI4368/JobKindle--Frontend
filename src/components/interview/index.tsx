@@ -16,9 +16,11 @@ import Cookies from "js-cookie";
 import { getJobPostById } from "@/actions/jobPostActions";
 import { getApplicationById } from "@/actions/applicationActions";
 import { updateViolations } from "@/actions/interviewActions";
+import AITextToSpeech from "./AITextToSpeech";
 
 const Interview = () => {
   const router = useRouter();
+  const [aiResponse, setAiResponse] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [interviewData, setInterviewData] = useState<any>(null);
   const [warningCount, setWarningCount] = useState(0);
@@ -33,19 +35,57 @@ const Interview = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // fullscreen state (do NOT auto-enter fullscreen)
-  const [isFullscreen, setIsFullscreen] = useState<boolean>(() => {
-    // Only check document on client side
-    if (typeof window !== "undefined") {
-      return !!document?.fullscreenElement;
-    }
-    return false;
-  });
+  const [isFullscreen, setIsFullscreen] = useState(
+    typeof document !== "undefined" && !!document.fullscreenElement
+  );
 
-  // update fullscreen state on change
+  // detect transitions and log a violation when user exits fullscreen
   useEffect(() => {
-    const handler = () => setIsFullscreen(!!document.fullscreenElement);
-    document.addEventListener("fullscreenchange", handler);
-    return () => document.removeEventListener("fullscreenchange", handler);
+    const prevRef = { value: !!document.fullscreenElement };
+
+    const onFullscreenChange = () => {
+      const now = !!document.fullscreenElement;
+      // if previously fullscreen and now NOT fullscreen -> user exited fullscreen
+      if (prevRef.value === true && now === false) {
+        // mark local state and call violation handler
+        setIsFullscreen(false);
+        handleFullscreenExit();
+      } else {
+        setIsFullscreen(now);
+      }
+      prevRef.value = now;
+    };
+
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    // vendor-prefixed events for broader browser support
+    document.addEventListener(
+      "webkitfullscreenchange",
+      onFullscreenChange as EventListener
+    );
+    document.addEventListener(
+      "mozfullscreenchange",
+      onFullscreenChange as EventListener
+    );
+    document.addEventListener(
+      "MSFullscreenChange",
+      onFullscreenChange as EventListener
+    );
+
+    return () => {
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
+      document.removeEventListener(
+        "webkitfullscreenchange",
+        onFullscreenChange as EventListener
+      );
+      document.removeEventListener(
+        "mozfullscreenchange",
+        onFullscreenChange as EventListener
+      );
+      document.removeEventListener(
+        "MSFullscreenChange",
+        onFullscreenChange as EventListener
+      );
+    };
   }, []);
 
   const requestUserFullscreen = async () => {
@@ -74,22 +114,25 @@ const Interview = () => {
   };
 
   const addViolationToDatabase = async (type: string) => {
-    const applicationId = interviewData.applicationId;
+    const applicationId = window.location.pathname
+      .split("/")
+      .pop() as unknown as string;
     const violation = {
       name: type,
       timestamp: new Date(),
     };
-    try{
+    console.log(violation)
+    try {
       const response = await updateViolations(applicationId, violation);
       if (response.success) {
         console.log("Violation recorded in database");
       }
-    }catch(error){
+    } catch (error) {
       console.error("Error updating violations:", error);
     }
   };
 
-  const handleViolation = (type: string, message: string) => {
+  const handleViolation = async (type: string, message: string) => {
     const newCount = warningCount + 1;
     setWarningCount(newCount);
     setViolations((prev) => [
@@ -100,7 +143,7 @@ const Interview = () => {
     setShowViolationDialog(true);
 
     console.log(`VIOLATION DETECTED: ${type} - ${message}`);
-    addViolationToDatabase(`VIOLATION DETECTED: ${type}`);
+    await addViolationToDatabase(`VIOLATION DETECTED: ${type}`);
 
     if (newCount >= 20) {
       setTimeout(async () => {
@@ -253,9 +296,12 @@ const Interview = () => {
       />
 
       <div className="flex h-[calc(100vh-60px)]">
-        <div className="w-1/3 p-4 space-y-4">
+        <div className="w-1/3 p-4 flex flex-col space-y-4 ">
           <div className="h-1/2">
             <CandidateVideoPanel onFaceDetected={handleFaceDetected} />
+          </div>
+          <div id="ai-bot" className="h-1/2  rounded-[5px]">
+            <AITextToSpeech text={aiResponse} autoPlay={true} />
           </div>
         </div>
 
@@ -263,6 +309,8 @@ const Interview = () => {
           <InterviewChatPanel
             onAnswerSubmitted={handleAnswerSubmitted}
             isWaitingForAnswer={isWaitingForAnswer}
+            aiResponse={aiResponse}
+            setAiResponse={setAiResponse}
           />
         </div>
 

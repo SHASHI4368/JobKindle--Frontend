@@ -25,11 +25,11 @@ const PostAJob = () => {
       icon: <Check size={18} />,
       description: "View and manage your created job posts",
     },
-    {
-      title: "Applications",
-      icon: <FileUser size={18} />,
-      description: "Manage job applications",
-    },
+    // {
+    //   title: "Applications",
+    //   icon: <FileUser size={18} />,
+    //   description: "Manage job applications",
+    // },
     
   ];
   

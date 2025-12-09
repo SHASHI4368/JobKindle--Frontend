@@ -37,11 +37,15 @@ interface Message {
 interface InterviewChatPanelProps {
   onAnswerSubmitted: (answer: string) => void;
   isWaitingForAnswer: boolean;
+  aiResponse?: string;
+  setAiResponse?: (response: string) => void;
 }
 
 const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
   onAnswerSubmitted,
   isWaitingForAnswer,
+  aiResponse = "",
+  setAiResponse = () => {},
 }) => {
   const router = useRouter();
   const interview = useSelector((state: any) => state.interview);
@@ -139,6 +143,8 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
       const response = await startGeneralInterview(app.userEmail);
       const question = response.question ?? response.next_question;
       if (response.success && question) {
+        console.log("test 12")
+        setAiResponse(question);
         // store AI question on server and normalize returned message if available
         const messageRes = await updateConversation(
           app.applicationId.toString(),
@@ -189,6 +195,7 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
       );
       const question = response.question ?? response.next_question;
       if (response.success && question) {
+        setAiResponse(question);
         console.log("test 11");
         // store AI question on server and normalize returned message if available
         const messageRes = await updateConversation(
@@ -304,6 +311,8 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
         response.next_question ?? response.question ?? response.message;
 
       if (question) {
+        console.log(question);
+        setAiResponse(question);
         // store AI question on server
         const messageRes = await updateConversation(
           applicationData.applicationId.toString(),
@@ -432,6 +441,8 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
         console.log(question);
 
         if (question) {
+          console.log(question);
+          setAiResponse(question);
           // store AI question on server
           const messageRes = await updateConversation(
             applicationData.applicationId.toString(),
