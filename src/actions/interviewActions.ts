@@ -166,6 +166,7 @@ export const updateViolations = async (
     if (name && timestamp) {
       body.violation = { name, timestamp };
     }
+    console.log(body);
     const response = await axios.patch(url, body);
     return response.data;
   } catch (error: any) {

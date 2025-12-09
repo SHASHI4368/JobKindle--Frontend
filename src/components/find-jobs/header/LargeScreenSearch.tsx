@@ -8,6 +8,11 @@ import { MapPin, Search, X } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
 import React, { useState } from "react";
 import { searchProps } from "./searchProps";
+import Cookies from "js-cookie";
+import { ViewPostsProps } from "@/types/jobPosts";
+import { getAllActiveJobPostsWithFilters } from "@/actions/jobPostActions";
+import { useDispatch } from "react-redux";
+import { setFindJobsPostsData } from "@/redux/features/findJobsSlice";
 
 const LargeScreenSearch = ({ searchProps }: { searchProps: searchProps }) => {
   const {
@@ -28,79 +33,147 @@ const LargeScreenSearch = ({ searchProps }: { searchProps: searchProps }) => {
     handleSearchChange,
     handleLocationChange,
   } = searchProps;
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+
+  const getActiveJobs = async () => {
+    const jwt = Cookies.get("jwt") || "";
+    if (!jwt) {
+      console.error("JWT token not found");
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await getAllActiveJobPostsWithFilters(jwt, {
+        searchTerm: searchTerm || "",
+        location: location || "",
+        workType: workType || "",
+        experienceLevel: experienceLevel || "",
+        datePosted: datePosted || "",
+      });
+      if (response.success) {
+        console.log("Fetched job posts:", response.data);
+        response.jobPosts = response.data.content.map(
+          (post: ViewPostsProps) => ({
+            jobData: {
+              basicInformation: {
+                id: post.postId,
+                jobTitle: post.title,
+                companyName: post.companyName,
+                companyLogo: post.companyLogo,
+                location: post.location,
+                workType: post.workType,
+                experienceLevel: post.experienceLevel,
+                employmentType: post.employmentType,
+                currency: post.currency,
+                salary: { min: post.minSalary, max: post.maxSalary },
+              },
+              jobDetails: {
+                jobDescription: post.description,
+                requirements: post.requirements,
+                benefits: post.benefits,
+              },
+              skills: post.skills
+                ? post.skills.flat().map((skill) => skill.name)
+                : [],
+              deadline: post.deadline,
+            },
+          })
+        );
+        dispatch(setFindJobsPostsData(response.jobPosts || []));
+      }
+    } catch (error) {
+      console.error("Error fetching job posts:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="w-full gap-2 lg:flex hidden flex-col  relative mt-[20px]  min-h-[20vh]  ">
-      <div className="flex w-full flex-row items-end gap-[1%]">
-        <div className="w-[59%] ">
-          <InputWithIcon
-            label=""
-            icon={<Search size={18} className="text-gray-500" />}
-            placeholder="Search for jobs, companies, or skills"
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
+    <>
+      {loading && (
+        <div className="fixed inset-0 bg-white/60 backdrop-blur-sm z-[200] flex items-center justify-center">
+          <div className="flex flex-col items-center space-y-4">
+            {/* Loading spinner */}
+            <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+          </div>
         </div>
-        <div className="w-[29%]">
-          <LocationInput
-            icon={<MapPin size={18} className="text-gray-500" />}
-            label=""
-            placeholder="Location"
-            value={location}
-            onChange={handleLocationChange}
-            isLocationSearch={true}
-            onLocationSelect={(location) => {
-              setLocation(location.display_name.split(",")[0]);
-            }}
-          />
+      )}
+      <div className="w-full gap-2 lg:flex hidden flex-col  relative   min-h-[20vh]  ">
+        <div className="flex w-full flex-row items-end gap-[1%]">
+          <div className="w-[59%] ">
+            <InputWithIcon
+              label=""
+              icon={<Search size={18} className="text-gray-500" />}
+              placeholder="Search for jobs, companies, or skills"
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+          </div>
+          <div className="w-[29%]">
+            <LocationInput
+              icon={<MapPin size={18} className="text-gray-500" />}
+              label=""
+              placeholder="Location"
+              value={location}
+              onChange={handleLocationChange}
+              isLocationSearch={true}
+              onLocationSelect={(location) => {
+                setLocation(location.display_name.split(",")[0]);
+              }}
+            />
+          </div>
+          <div className="w-[10%]">
+            <Button
+              onClick={async () => {
+                await handleJobSearch();
+                await getActiveJobs();
+              }}
+              className="h-[45px] w-full"
+              variant="default"
+            >
+              <Search size={16} className="text-white" />
+              <span className="text-white">Search Jobs</span>
+            </Button>
+          </div>
         </div>
-        <div className="w-[10%]">
+        <div className="flex w-full flex-row items-end gap-[1%]">
+          <div className="flex w-[69%] gap-[1%]">
+            <NormalSelector
+              label=""
+              items={dateOptions}
+              value={datePosted}
+              onChange={handleDatePostedChange}
+              placeholder="Date Posted"
+            />
+            <NormalSelector
+              label=""
+              items={experienceOptions}
+              value={experienceLevel}
+              onChange={handleExperienceLevelChange}
+              placeholder="Experience Level"
+            />
+            <NormalSelector
+              label=""
+              items={workTypeOptions}
+              value={workType}
+              onChange={handleWorkTypeChange}
+              placeholder="Work Type"
+            />
+          </div>
           <Button
-            onClick={handleJobSearch}
-            className="h-[45px] w-full"
-            variant="default"
+            onClick={handleClearFilters}
+            className="h-[45px] cursor-pointer "
+            variant="outline"
           >
-            <Search size={16} className="text-white" />
-            <span className="text-white">Search Jobs</span>
+            <span className="text-red-500">Clear Filters</span>
           </Button>
         </div>
-      </div>
-      <div className="flex w-full flex-row items-end gap-[1%]">
-        <div className="flex w-[69%] gap-[1%]">
-          <NormalSelector
-            label=""
-            items={dateOptions}
-            value={datePosted}
-            onChange={handleDatePostedChange}
-            placeholder="Date Posted"
-          />
-          <NormalSelector
-            label=""
-            items={experienceOptions}
-            value={experienceLevel}
-            onChange={handleExperienceLevelChange}
-            placeholder="Experience Level"
-          />
-          <NormalSelector
-            label=""
-            items={workTypeOptions}
-            value={workType}
-            onChange={handleWorkTypeChange}
-            placeholder="Work Type"
-          />
-        </div>
-        <Button
-          onClick={handleClearFilters}
-          className="h-[45px] cursor-pointer "
-          variant="outline"
-        >
-          <span className="text-red-500">Clear Filters</span>
-        </Button>
-      </div>
-      {/* <div className="relative mt-[20px] w-full h-px ">
+        {/* <div className="relative mt-[20px] w-full h-px ">
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-300 to-transparent animate-pulse"></div>
       </div> */}
-    </div>
+      </div>
+    </>
   );
 };
 
