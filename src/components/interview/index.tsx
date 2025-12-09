@@ -16,9 +16,11 @@ import Cookies from "js-cookie";
 import { getJobPostById } from "@/actions/jobPostActions";
 import { getApplicationById } from "@/actions/applicationActions";
 import { updateViolations } from "@/actions/interviewActions";
+import AITextToSpeech from "./AITextToSpeech";
 
 const Interview = () => {
   const router = useRouter();
+  const [aiResponse, setAiResponse] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [interviewData, setInterviewData] = useState<any>(null);
   const [warningCount, setWarningCount] = useState(0);
@@ -294,9 +296,12 @@ const Interview = () => {
       />
 
       <div className="flex h-[calc(100vh-60px)]">
-        <div className="w-1/3 p-4 space-y-4">
+        <div className="w-1/3 p-4 flex flex-col space-y-4 ">
           <div className="h-1/2">
             <CandidateVideoPanel onFaceDetected={handleFaceDetected} />
+          </div>
+          <div id="ai-bot" className="h-1/2  rounded-[5px]">
+            <AITextToSpeech text={aiResponse} autoPlay={true} />
           </div>
         </div>
 
@@ -304,6 +309,8 @@ const Interview = () => {
           <InterviewChatPanel
             onAnswerSubmitted={handleAnswerSubmitted}
             isWaitingForAnswer={isWaitingForAnswer}
+            aiResponse={aiResponse}
+            setAiResponse={setAiResponse}
           />
         </div>
 
