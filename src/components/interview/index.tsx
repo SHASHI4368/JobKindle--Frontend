@@ -17,6 +17,7 @@ import { getJobPostById } from "@/actions/jobPostActions";
 import { getApplicationById } from "@/actions/applicationActions";
 import { updateViolations } from "@/actions/interviewActions";
 import AITextToSpeech from "./AITextToSpeech";
+import HeadPoseDetector from "./head-pose-detector";
 
 const Interview = () => {
   const router = useRouter();
@@ -298,7 +299,8 @@ const Interview = () => {
       <div className="flex h-[calc(100vh-60px)]">
         <div className="w-1/3 p-4 flex flex-col space-y-4 ">
           <div className="h-1/2">
-            <CandidateVideoPanel onFaceDetected={handleFaceDetected} />
+            {/* <CandidateVideoPanel onFaceDetected={handleFaceDetected} /> */}
+            <HeadPoseDetector handleViolationsUpdate={handleViolation} />
           </div>
           <div id="ai-bot" className="h-1/2  rounded-[5px]">
             <AITextToSpeech text={aiResponse} autoPlay={true} />
