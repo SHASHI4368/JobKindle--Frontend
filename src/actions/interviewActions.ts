@@ -182,7 +182,8 @@ export const updateViolations = async (
 
 export const updateEvaluation = async (
   applicationId: string,
-  evaluation: Evaluation
+  evaluation: Evaluation,
+  headPoseCheatingUrl: string
 ) => {
   "use server";
   const url = `${NextAPIURL}/interviews/${applicationId}`;
@@ -190,6 +191,7 @@ export const updateEvaluation = async (
     const body: any = {};
     if (evaluation) {
       body.evaluation = evaluation;
+      body.headPoseCheatingUrl = headPoseCheatingUrl;
     }
     body.status = "completed";
     const response = await axios.patch(url, body);

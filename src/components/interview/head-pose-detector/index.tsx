@@ -26,9 +26,19 @@ import type {
 
 type HeadPoseDetectorProps = {
   handleViolationsUpdate?: (type: string, message: string) => void;
+  cheatingProbabilityList: CheatingProbability[];
+  setCheatingProbabilityList: React.Dispatch<
+    React.SetStateAction<CheatingProbability[]>
+  >;
+  handleFaceDetected?: (faceCount: number) => void;
 };
 
-const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({ handleViolationsUpdate }) => {
+const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
+  handleViolationsUpdate,
+  cheatingProbabilityList,
+  setCheatingProbabilityList,
+  handleFaceDetected,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(Date.now());
@@ -46,9 +56,7 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({ handleViolationsUpd
   const [fps, setFps] = useState(0);
   const [faceCount, setFaceCount] = useState(0);
   const [cheatingProbability, setCheatingProbability] = useState<number>(0);
-  const [cheatingProbabilityList, setCheatingProbabilityList] = useState<
-    CheatingProbability[]
-  >([]);
+
 
   const checkCheating = useCallback(
     async (roll: number, pitch: number, yaw: number) => {
@@ -109,6 +117,10 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({ handleViolationsUpd
         faceModel.estimateFaces(video, false),
         objectModel.detect(video),
       ]);
+
+      if (handleFaceDetected) {
+        handleFaceDetected(facePredictions.length);
+      }
 
       // Process faces
       setFaceCount(facePredictions.length);
@@ -284,7 +296,7 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({ handleViolationsUpd
   const combinedError = error || modelError;
 
   return (
-    <div className="h-full bg-linear-to-br w-full from-gray-900 via-blue-900 to-gray-900 text-white p-8">
+    <div className="h-full flex flec-col gap-4 bg-linear-to-br w-full from-gray-900 via-blue-900 to-gray-900 text-white p-8">
       <VideoCanvas
         videoRef={videoRef}
         canvasRef={canvasRef}
@@ -294,6 +306,14 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({ handleViolationsUpd
         poseHistoryLength={poseHistory.length}
         cheatingProbability={cheatingProbability}
       />
+      {/* <ExportControls
+        onExportPose={() => exportPoseToCSV(poseHistory)}
+        onExportCheating={() =>
+          exportCheatingProbabilitiesToCSV(cheatingProbabilityList)
+        }
+        onClearHistory={handleClearHistory}
+        hasData={poseHistory.length > 0 || violations.length > 0}
+      /> */}
     </div>
   );
 };

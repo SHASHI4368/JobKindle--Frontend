@@ -48,6 +48,7 @@ const InterviewSchema = new Schema({
   conversation: [ConversationSchema],
   violations: [ViolationSchema],
   evaluation: EvaluationSchema,
+  headPoseCheatingUrl: String,
 });
 
 export const Interview =

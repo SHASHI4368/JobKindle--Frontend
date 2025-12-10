@@ -25,6 +25,8 @@ import {
 } from "@/types/interview";
 import InterviewCompletedDialog from "./dialogs/InterviewCompletedDialog";
 import { useRouter } from "next/navigation";
+import { exportCheatingProbabilitiesToCSV } from "./head-pose-detector/utils/exportUtils";
+import { CheatingProbability } from "./head-pose-detector/types";
 
 interface Message {
   id: string;
@@ -39,6 +41,7 @@ interface InterviewChatPanelProps {
   isWaitingForAnswer: boolean;
   aiResponse?: string;
   setAiResponse?: (response: string) => void;
+  cheatingProbabilityList?: CheatingProbability[];
 }
 
 const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
@@ -46,6 +49,7 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
   isWaitingForAnswer,
   aiResponse = "",
   setAiResponse = () => {},
+  cheatingProbabilityList = [],
 }) => {
   const router = useRouter();
   const interview = useSelector((state: any) => state.interview);
@@ -351,7 +355,6 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
     } catch (error) {
       console.error("Error submitting answer / fetching next question:", error);
     } finally {
-      onAnswerSubmitted(currentAnswer);
       setCurrentAnswer("");
     }
   };
@@ -465,8 +468,10 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
                 handleSubmitTechnicalAnswer();
                 return;
               }
+              console.log("test nn1");
               // Interview complete - handle accordingly
               await addEvaluationDetails(response.evaluation);
+              setIsCompleted(true);
               setMessages((prev) => [
                 ...prev,
                 normalizeServerMessage(messageRes.data),
@@ -485,10 +490,12 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
                 response.evaluation.total_score === null ||
                 response.evaluation.total_score === undefined
               ) {
+                console.log("test nn2");
                 handleSubmitTechnicalAnswer();
                 return;
               }
               await addEvaluationDetails(response.evaluation);
+              setIsCompleted(true);
               setMessages((prev) => [
                 ...prev,
                 {
@@ -530,9 +537,13 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
     if (!applicationData) return;
     console.log("test 6");
     try {
+      const cheatingUrl = await exportCheatingProbabilitiesToCSV(
+        cheatingProbabilityList
+      );
       const response = await updateEvaluation(
         applicationData.applicationId.toString(),
-        evaluation
+        evaluation,
+        cheatingUrl || ""
       );
       if (response.success) {
         console.log("test 7");

@@ -25,9 +25,9 @@ export function VideoCanvas({
       <h2 className="text-xl font-semibold mb-4">Live Monitoring Feed</h2>
       <div className="relative bg-black rounded-lg overflow-hidden aspect-video">
         <div className="flex absolute top-4 right-4 z-10 flex-col gap-2">
-          <div className="flex justify-center items-center bg-black/70 border border-white px-4 py-2 rounded text-sm font-semibold">
+          {/* <div className="flex justify-center items-center bg-black/70 border border-white px-4 py-2 rounded text-sm font-semibold">
             Cheating: {(cheatingProbability * 100).toFixed(2)}%
-          </div>
+          </div> */}
         </div>
 
         <video
