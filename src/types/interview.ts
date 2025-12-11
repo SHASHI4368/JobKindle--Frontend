@@ -22,10 +22,20 @@ export type Conversation = {
   timestamp: Date;
 };
 
+export interface ViolationWithDuration {
+  type: string;
+  message: string;
+  startTime: number;
+  lastUpdate: number;
+  durationInSeconds: number;
+  isOngoing: boolean;
+}
+
 export type Violation = {
   id?: string;
   name: string;
   timestamp: Date;
+  durationInSeconds?: number;
 };
 
 export type Evaluation = {

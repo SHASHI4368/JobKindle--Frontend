@@ -18,7 +18,7 @@ const JobListingCard = ({ jobData }: { jobData: ViewPostData }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [applyDialogOpen, setApplyDialogOpen] = useState(false);
 
-  const { basicInformation, jobDetails, skills, deadline } = jobData.jobData;
+  const { basicInformation, jobDetails, skills, deadline, applicationsCount  } = jobData.jobData;
 
   // Calculate days ago from deadline (mock calculation)
   const getDaysAgo = (deadlineDate: string): string => {
@@ -92,7 +92,7 @@ const JobListingCard = ({ jobData }: { jobData: ViewPostData }) => {
                 </div>
                 <div className="flex items-center space-x-1">
                   <Users className="w-4 h-4" />
-                  <span>45 applicants</span>
+                  <span>{`${applicationsCount} applicant${applicationsCount !== 1 ? "s" : ""}`}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <span className="font-semibold text-green-600 text-sm sm:text-base">

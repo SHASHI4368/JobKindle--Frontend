@@ -84,6 +84,7 @@ const JobSearch = () => {
                 ? post.skills.flat().map((skill) => skill.name)
                 : [],
               deadline: post.deadline,
+              applicationsCount: post.applicationsCount || 0
             },
           })
         );

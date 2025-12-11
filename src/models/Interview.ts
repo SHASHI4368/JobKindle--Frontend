@@ -12,8 +12,12 @@ const ConversationSchema = new Schema(
 
 const ViolationSchema = new Schema(
   {
-    name: String,
-    timestamp: { type: Date, default: Date.now },
+    type: String,
+    message: String,
+    startTime: Number,
+    lastUpdate: Number,
+    durationInSeconds: Number,
+    isOngoing: Boolean,
   },
   { _id: false }
 );
@@ -29,7 +33,6 @@ const QuestionFeedbackSchema = new Schema(
   { _id: false }
 );
 
-
 const EvaluationSchema = new Schema(
   {
     overall_feedback: String,
@@ -38,7 +41,6 @@ const EvaluationSchema = new Schema(
   },
   { _id: false }
 );
-
 
 const InterviewSchema = new Schema({
   applicationID: { type: String, required: true },

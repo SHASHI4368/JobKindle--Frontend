@@ -45,6 +45,16 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
   const frameCountRef = useRef<number>(0);
   const lastPoseRef = useRef<HeadPose | null>(null);
 
+  // Track active violation to avoid duplicates
+  const activeViolationRef = useRef<string | null>(null);
+  const lastDetectedViolationRef = useRef<string | null>(null);
+
+  // Track violation details for resolution messages
+  const activeViolationDetailsRef = useRef<{
+    type: string;
+    message: string;
+  } | null>(null);
+
   const { faceModel, objectModel, isLoading, error: modelError } = useModels();
   const [error, setError] = useState<string>("");
   const videoRef = useWebcam(setError);
@@ -57,7 +67,6 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
   const [faceCount, setFaceCount] = useState(0);
   const [cheatingProbability, setCheatingProbability] = useState<number>(0);
 
-
   const checkCheating = useCallback(
     async (roll: number, pitch: number, yaw: number) => {
       const probability = await predictNewCheating(roll, pitch, yaw);
@@ -67,25 +76,95 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
         { probability: Number(probability), timestamp: Date.now() },
       ]);
     },
+    [setCheatingProbabilityList]
+  );
+
+  const getResolutionMessage = useCallback(
+    (type: string, originalMessage: string): string => {
+      if (type === "multiple_faces") {
+        const faceCountMatch = originalMessage.match(/(\d+) faces detected/);
+        const count = faceCountMatch ? faceCountMatch[1] : "extra";
+        return `Additional face(s) no longer detected`;
+      } else if (type === "phone") {
+        return "Phone no longer detected";
+      } else if (type === "suspicious_object") {
+        const objectMatch = originalMessage.match(/^(.+?) detected/);
+        const objectName = objectMatch ? objectMatch[1] : "Object";
+        return `${objectName} no longer detected`;
+      }
+      return "Violation cleared";
+    },
     []
   );
 
   const addViolation = useCallback(
     (type: ViolationAlert["type"], message: string) => {
-      setViolations((prev) => {
-        const recent = prev.filter(
-          (v) => Date.now() - v.timestamp < 2000 && v.type === type
-        );
-        if (recent.length > 0) return prev;
+      const violationKey = `${type}:${message}`;
 
-        return [...prev.slice(-9), { type, message, timestamp: Date.now() }];
-      });
-      if (handleViolationsUpdate) {
-        handleViolationsUpdate(type, message);
+      // Check if this is a different violation from the last one
+      if (lastDetectedViolationRef.current !== violationKey) {
+        // Different violation detected
+        lastDetectedViolationRef.current = violationKey;
+
+        // Only call handleViolationsUpdate if it's not the same as the active violation
+        if (activeViolationRef.current !== violationKey) {
+          activeViolationRef.current = violationKey;
+          activeViolationDetailsRef.current = { type, message };
+
+          setViolations((prev) => {
+            return [
+              ...prev.slice(-9),
+              { type, message, timestamp: Date.now() },
+            ];
+          });
+
+          if (handleViolationsUpdate) {
+            handleViolationsUpdate(type, message);
+          }
+        }
       }
+      // If same violation, do nothing - duration will be updated by parent component
     },
-    []
+    [handleViolationsUpdate]
   );
+
+  const clearActiveViolation = useCallback(() => {
+    // Called when no violations are detected in current frame
+    if (
+      activeViolationRef.current !== null &&
+      activeViolationDetailsRef.current !== null
+    ) {
+      // Log the resolution of the violation
+      const resolutionMessage = getResolutionMessage(
+        activeViolationDetailsRef.current.type,
+        activeViolationDetailsRef.current.message
+      );
+
+      setViolations((prev) => {
+        return [
+          ...prev.slice(-9),
+          {
+            type: `${
+              activeViolationDetailsRef.current!.type
+            }_resolved` as ViolationAlert["type"],
+            message: resolutionMessage,
+            timestamp: Date.now(),
+          },
+        ];
+      });
+
+      if (handleViolationsUpdate) {
+        handleViolationsUpdate(
+          `${activeViolationDetailsRef.current.type}_resolved`,
+          resolutionMessage
+        );
+      }
+
+      activeViolationRef.current = null;
+      lastDetectedViolationRef.current = null;
+      activeViolationDetailsRef.current = null;
+    }
+  }, [getResolutionMessage, handleViolationsUpdate]);
 
   const predictPose = useCallback(async () => {
     if (
@@ -112,6 +191,8 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
     canvas.height = video.videoHeight;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
+    let currentFrameHasViolation = false;
+
     try {
       const [facePredictions, objectPredictions] = await Promise.all([
         faceModel.estimateFaces(video, false),
@@ -125,6 +206,7 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
       // Process faces
       setFaceCount(facePredictions.length);
       if (facePredictions.length > 1) {
+        currentFrameHasViolation = true;
         addViolation(
           "multiple_faces",
           `${facePredictions.length} faces detected`
@@ -152,6 +234,7 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
           phoneClasses.some((cls) => pred.class.toLowerCase().includes(cls))
         ) {
           suspiciousObjects.push(detection);
+          currentFrameHasViolation = true;
 
           if (pred.class.toLowerCase().includes("phone")) {
             addViolation(
@@ -173,7 +256,7 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
 
         ctx.fillStyle = isPhone
           ? "rgba(255, 0, 0, 0.7)"
-          : "rgba(255, 165, 0, 0.7)";
+          : "rgba(255,165,0,0.7)";
         ctx.fillRect(x, y - 25, width, 25);
 
         ctx.fillStyle = "#ffffff";
@@ -252,6 +335,11 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
         setHeadPose(null);
       }
 
+      // If no violations in current frame, clear the active violation
+      if (!currentFrameHasViolation) {
+        clearActiveViolation();
+      }
+
       // Calculate FPS
       frameCountRef.current++;
       const currentTime = Date.now();
@@ -272,6 +360,8 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
     isLoading,
     addViolation,
     checkCheating,
+    clearActiveViolation,
+    handleFaceDetected,
   ]);
 
   useEffect(() => {
@@ -291,6 +381,9 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
     setCheatingProbabilityList([]);
     setViolations([]);
     lastPoseRef.current = null;
+    activeViolationRef.current = null;
+    lastDetectedViolationRef.current = null;
+    activeViolationDetailsRef.current = null;
   };
 
   const combinedError = error || modelError;

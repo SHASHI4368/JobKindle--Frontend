@@ -437,7 +437,7 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
         const response = await answerTechnicalInterview(
           applicationData.userEmail,
           qa_history,
-          violations
+          []
         );
         const question =
           response.next_question ?? response.question ?? response.message;
