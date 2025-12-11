@@ -13,16 +13,13 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Copy .env file to make environment variables available during build
-COPY .env .env
-
-# Set build environment variables
+# Set build environment variables including MONGODB_URI to prevent errors
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NEXT_PHASE="phase-production-build"
+ENV MONGODB_URI="mongodb://build-dummy/test"
 
-# Source environment variables from .env file
-RUN export $(cat .env | grep -v '^#' | xargs) && npm run build
+RUN npm run build
 
 FROM base AS runner
 WORKDIR /app
@@ -36,9 +33,6 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-
-# Remove .env from final image for security
-RUN rm -f .env
 
 USER nextjs
 
