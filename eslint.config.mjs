@@ -14,12 +14,11 @@ const eslintConfig = [
 
   {
     rules: {
-      // Change from 'error' to 'warn' or 'off' depending on your need
       "@typescript-eslint/no-unused-vars": [
-        "warn", // or "off"
+        "warn",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
-      ""
+      
     },
   },
 ];
