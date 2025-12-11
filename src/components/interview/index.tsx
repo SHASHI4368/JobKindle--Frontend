@@ -151,12 +151,11 @@ const Interview = () => {
     console.log(`VIOLATION DETECTED: ${type} - ${message}`);
     await addViolationToDatabase(`VIOLATION DETECTED: ${type}`);
 
-    if (newCount >= 20) {
-      setTimeout(async () => {
-        alert("Maximum violations reached. Interview will be terminated.");
-        await endInterview();
-      }, 3000);
-    }
+    // if (newCount >= 20) {
+    //   setTimeout(async () => {
+    //     await endInterview();
+    //   }, 3000);
+    // }
   };
 
   const handleFullscreenExit = () => {
@@ -262,7 +261,7 @@ const Interview = () => {
       // if face appears, we can close any face dialog automatically
     } else {
       // on lost face, show violation (but also the dialog will appear)
-      handleViolation("Face Missing", "Face not detected in camera feed");
+      // handleViolation("no_face", "Face not detected in camera feed");
     }
   };
 

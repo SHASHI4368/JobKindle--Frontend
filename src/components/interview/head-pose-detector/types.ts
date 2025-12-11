@@ -13,7 +13,7 @@ export interface Detection {
 }
 
 export interface ViolationAlert {
-  type: "phone" | "multiple_faces" | "suspicious_object";
+  type: "phone" | "multiple_faces" | "suspicious_object" | "no_face";
   message: string;
   timestamp: number;
 }

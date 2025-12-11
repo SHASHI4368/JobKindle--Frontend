@@ -33,6 +33,11 @@ type HeadPoseDetectorProps = {
   handleFaceDetected?: (faceCount: number) => void;
 };
 
+// Helper function to normalize violation messages by removing content in parentheses
+const normalizeViolationMessage = (message: string): string => {
+  return message.replace(/\s*\([^)]*\)/g, "").trim();
+};
+
 const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
   handleViolationsUpdate,
   cheatingProbabilityList,
@@ -45,15 +50,23 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
   const frameCountRef = useRef<number>(0);
   const lastPoseRef = useRef<HeadPose | null>(null);
 
-  // Track active violation to avoid duplicates
-  const activeViolationRef = useRef<string | null>(null);
-  const lastDetectedViolationRef = useRef<string | null>(null);
+  // Performance optimization: throttle cheating detection
+  const lastCheatingCheckRef = useRef<number>(0);
+  const CHEATING_CHECK_INTERVAL = 500;
 
-  // Track violation details for resolution messages
-  const activeViolationDetailsRef = useRef<{
-    type: string;
-    message: string;
-  } | null>(null);
+  // Track active violations by their normalized key
+  const activeViolationsRef = useRef<
+    Map<string, { type: string; originalMessage: string }>
+  >(new Map());
+
+  // Store callbacks in refs to avoid dependency changes
+  const handleViolationsUpdateRef = useRef(handleViolationsUpdate);
+  const handleFaceDetectedRef = useRef(handleFaceDetected);
+
+  useEffect(() => {
+    handleViolationsUpdateRef.current = handleViolationsUpdate;
+    handleFaceDetectedRef.current = handleFaceDetected;
+  }, [handleViolationsUpdate, handleFaceDetected]);
 
   const { faceModel, objectModel, isLoading, error: modelError } = useModels();
   const [error, setError] = useState<string>("");
@@ -69,12 +82,26 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
 
   const checkCheating = useCallback(
     async (roll: number, pitch: number, yaw: number) => {
-      const probability = await predictNewCheating(roll, pitch, yaw);
-      setCheatingProbability(Number(probability));
-      setCheatingProbabilityList((prev) => [
-        ...prev,
-        { probability: Number(probability), timestamp: Date.now() },
-      ]);
+      const now = Date.now();
+      if (now - lastCheatingCheckRef.current < CHEATING_CHECK_INTERVAL) {
+        return;
+      }
+      lastCheatingCheckRef.current = now;
+
+      try {
+        const probability = await predictNewCheating(roll, pitch, yaw);
+        setCheatingProbability(Number(probability));
+
+        setCheatingProbabilityList((prev) => {
+          const newList = [
+            ...prev,
+            { probability: Number(probability), timestamp: Date.now() },
+          ];
+          return newList.slice(-1000);
+        });
+      } catch (err) {
+        console.error("Cheating detection error:", err);
+      }
     },
     [setCheatingProbabilityList]
   );
@@ -82,9 +109,9 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
   const getResolutionMessage = useCallback(
     (type: string, originalMessage: string): string => {
       if (type === "multiple_faces") {
-        const faceCountMatch = originalMessage.match(/(\d+) faces detected/);
-        const count = faceCountMatch ? faceCountMatch[1] : "extra";
         return `Additional face(s) no longer detected`;
+      } else if (type === "no_face") {
+        return "Face detected";
       } else if (type === "phone") {
         return "Phone no longer detected";
       } else if (type === "suspicious_object") {
@@ -99,72 +126,69 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
 
   const addViolation = useCallback(
     (type: ViolationAlert["type"], message: string) => {
-      const violationKey = `${type}:${message}`;
+      // Normalize the message by removing parentheses content for comparison
+      const normalizedMessage = normalizeViolationMessage(message);
+      const violationKey = `${type}:${normalizedMessage}`;
 
-      // Check if this is a different violation from the last one
-      if (lastDetectedViolationRef.current !== violationKey) {
-        // Different violation detected
-        lastDetectedViolationRef.current = violationKey;
+      // Only log if this violation is not already active
+      if (!activeViolationsRef.current.has(violationKey)) {
+        activeViolationsRef.current.set(violationKey, {
+          type,
+          originalMessage: message,
+        });
 
-        // Only call handleViolationsUpdate if it's not the same as the active violation
-        if (activeViolationRef.current !== violationKey) {
-          activeViolationRef.current = violationKey;
-          activeViolationDetailsRef.current = { type, message };
+        setViolations((prev) => {
+          return [...prev.slice(-9), { type, message, timestamp: Date.now() }];
+        });
 
-          setViolations((prev) => {
-            return [
-              ...prev.slice(-9),
-              { type, message, timestamp: Date.now() },
-            ];
-          });
+        if (handleViolationsUpdateRef.current) {
+          handleViolationsUpdateRef.current(type, message);
+        }
+      }
+    },
+    []
+  );
 
-          if (handleViolationsUpdate) {
-            handleViolationsUpdate(type, message);
+  const clearResolvedViolations = useCallback(
+    (currentViolations: Set<string>) => {
+      // Check which violations are no longer present
+      const activeKeys = Array.from(activeViolationsRef.current.keys());
+
+      for (const violationKey of activeKeys) {
+        if (!currentViolations.has(violationKey)) {
+          const violationDetails =
+            activeViolationsRef.current.get(violationKey);
+          if (violationDetails) {
+            const resolutionMessage = getResolutionMessage(
+              violationDetails.type,
+              violationDetails.originalMessage
+            );
+
+            setViolations((prev) => {
+              return [
+                ...prev.slice(-9),
+                {
+                  type: `${violationDetails.type}_resolved` as ViolationAlert["type"],
+                  message: resolutionMessage,
+                  timestamp: Date.now(),
+                },
+              ];
+            });
+
+            if (handleViolationsUpdateRef.current) {
+              handleViolationsUpdateRef.current(
+                `${violationDetails.type}_resolved`,
+                resolutionMessage
+              );
+            }
+
+            activeViolationsRef.current.delete(violationKey);
           }
         }
       }
-      // If same violation, do nothing - duration will be updated by parent component
     },
-    [handleViolationsUpdate]
+    [getResolutionMessage]
   );
-
-  const clearActiveViolation = useCallback(() => {
-    // Called when no violations are detected in current frame
-    if (
-      activeViolationRef.current !== null &&
-      activeViolationDetailsRef.current !== null
-    ) {
-      // Log the resolution of the violation
-      const resolutionMessage = getResolutionMessage(
-        activeViolationDetailsRef.current.type,
-        activeViolationDetailsRef.current.message
-      );
-
-      setViolations((prev) => {
-        return [
-          ...prev.slice(-9),
-          {
-            type: `${
-              activeViolationDetailsRef.current!.type
-            }_resolved` as ViolationAlert["type"],
-            message: resolutionMessage,
-            timestamp: Date.now(),
-          },
-        ];
-      });
-
-      if (handleViolationsUpdate) {
-        handleViolationsUpdate(
-          `${activeViolationDetailsRef.current.type}_resolved`,
-          resolutionMessage
-        );
-      }
-
-      activeViolationRef.current = null;
-      lastDetectedViolationRef.current = null;
-      activeViolationDetailsRef.current = null;
-    }
-  }, [getResolutionMessage, handleViolationsUpdate]);
 
   const predictPose = useCallback(async () => {
     if (
@@ -191,7 +215,8 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
     canvas.height = video.videoHeight;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    let currentFrameHasViolation = false;
+    // Track violations detected in this frame
+    const currentFrameViolations = new Set<string>();
 
     try {
       const [facePredictions, objectPredictions] = await Promise.all([
@@ -199,18 +224,27 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
         objectModel.detect(video),
       ]);
 
-      if (handleFaceDetected) {
-        handleFaceDetected(facePredictions.length);
+      if (handleFaceDetectedRef.current) {
+        handleFaceDetectedRef.current(facePredictions.length);
       }
 
       // Process faces
       setFaceCount(facePredictions.length);
-      if (facePredictions.length > 1) {
-        currentFrameHasViolation = true;
-        addViolation(
-          "multiple_faces",
-          `${facePredictions.length} faces detected`
-        );
+
+      if (facePredictions.length === 0) {
+        // No face detected
+        const message = "No face detected";
+        const normalizedMessage = normalizeViolationMessage(message);
+        const violationKey = `no_face:${normalizedMessage}`;
+        currentFrameViolations.add(violationKey);
+        addViolation("no_face", message);
+      } else if (facePredictions.length > 1) {
+        // Multiple faces detected
+        const message = `${facePredictions.length} faces detected`;
+        const normalizedMessage = normalizeViolationMessage(message);
+        const violationKey = `multiple_faces:${normalizedMessage}`;
+        currentFrameViolations.add(violationKey);
+        addViolation("multiple_faces", message);
       }
 
       // Process objects
@@ -234,15 +268,21 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
           phoneClasses.some((cls) => pred.class.toLowerCase().includes(cls))
         ) {
           suspiciousObjects.push(detection);
-          currentFrameHasViolation = true;
 
           if (pred.class.toLowerCase().includes("phone")) {
-            addViolation(
-              "phone",
-              `Phone detected (${(pred.score * 100).toFixed(0)}% confidence)`
-            );
+            const message = `Phone detected (${(pred.score * 100).toFixed(
+              0
+            )}% confidence)`;
+            const normalizedMessage = normalizeViolationMessage(message);
+            const violationKey = `phone:${normalizedMessage}`;
+            currentFrameViolations.add(violationKey);
+            addViolation("phone", message);
           } else {
-            addViolation("suspicious_object", `${pred.class} detected`);
+            const message = `${pred.class} detected`;
+            const normalizedMessage = normalizeViolationMessage(message);
+            const violationKey = `suspicious_object:${normalizedMessage}`;
+            currentFrameViolations.add(violationKey);
+            addViolation("suspicious_object", message);
           }
         }
 
@@ -256,7 +296,7 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
 
         ctx.fillStyle = isPhone
           ? "rgba(255, 0, 0, 0.7)"
-          : "rgba(255,165,0,0.7)";
+          : "rgba(255, 165, 0, 0.7)";
         ctx.fillRect(x, y - 25, width, 25);
 
         ctx.fillStyle = "#ffffff";
@@ -286,40 +326,27 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
           bottomRight[1] - box[1]
         );
 
-        // Draw landmarks
         const keypoints = face.landmarks as number[][];
-        const landmarkLabels = [
-          "Right Eye",
-          "Left Eye",
-          "Nose",
-          "Mouth",
-          "Right Ear",
-          "Left Ear",
-        ];
 
-        keypoints.forEach((point, idx) => {
+        keypoints.forEach((point) => {
           ctx.fillStyle = "#00ff00";
           ctx.beginPath();
-          ctx.arc(point[0], point[1], 4, 0, 2 * Math.PI);
+          ctx.arc(point[0], point[1], 3, 0, 2 * Math.PI);
           ctx.fill();
-
-          ctx.strokeStyle = "#ffffff";
-          ctx.lineWidth = 1;
-          ctx.stroke();
-
-          ctx.fillStyle = "#ffffff";
-          ctx.font = "10px Arial";
-          ctx.fillText(landmarkLabels[idx], point[0] + 8, point[1] - 8);
         });
 
         // Calculate and display pose
         const pose = calculatePoseFromFace(face, canvas.width, canvas.height);
         setHeadPose(pose);
 
-        await checkCheating(pose.roll, pose.pitch, pose.yaw);
+        // Throttled cheating detection
+        checkCheating(pose.roll, pose.pitch, pose.yaw);
 
         if (hasPoseChanged(pose, lastPoseRef.current)) {
-          setPoseHistory((prev) => [...prev, pose]);
+          setPoseHistory((prev) => {
+            const newHistory = [...prev, pose];
+            return newHistory.slice(-500);
+          });
           lastPoseRef.current = pose;
         }
 
@@ -335,10 +362,8 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
         setHeadPose(null);
       }
 
-      // If no violations in current frame, clear the active violation
-      if (!currentFrameHasViolation) {
-        clearActiveViolation();
-      }
+      // Check for resolved violations
+      clearResolvedViolations(currentFrameViolations);
 
       // Calculate FPS
       frameCountRef.current++;
@@ -360,8 +385,7 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
     isLoading,
     addViolation,
     checkCheating,
-    clearActiveViolation,
-    handleFaceDetected,
+    clearResolvedViolations,
   ]);
 
   useEffect(() => {
@@ -381,9 +405,7 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
     setCheatingProbabilityList([]);
     setViolations([]);
     lastPoseRef.current = null;
-    activeViolationRef.current = null;
-    lastDetectedViolationRef.current = null;
-    activeViolationDetailsRef.current = null;
+    activeViolationsRef.current.clear();
   };
 
   const combinedError = error || modelError;
@@ -399,14 +421,6 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
         poseHistoryLength={poseHistory.length}
         cheatingProbability={cheatingProbability}
       />
-      {/* <ExportControls
-        onExportPose={() => exportPoseToCSV(poseHistory)}
-        onExportCheating={() =>
-          exportCheatingProbabilitiesToCSV(cheatingProbabilityList)
-        }
-        onClearHistory={handleClearHistory}
-        hasData={poseHistory.length > 0 || violations.length > 0}
-      /> */}
     </div>
   );
 };
