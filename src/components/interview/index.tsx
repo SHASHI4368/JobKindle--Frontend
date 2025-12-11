@@ -17,6 +17,8 @@ import { getJobPostById } from "@/actions/jobPostActions";
 import { getApplicationById } from "@/actions/applicationActions";
 import { updateViolations } from "@/actions/interviewActions";
 import AITextToSpeech from "./AITextToSpeech";
+import HeadPoseDetector from "./head-pose-detector";
+import { CheatingProbability } from "./head-pose-detector/types";
 
 const Interview = () => {
   const router = useRouter();
@@ -32,6 +34,10 @@ const Interview = () => {
     message: "",
   });
   const [isWaitingForAnswer, setIsWaitingForAnswer] = useState(true);
+
+  const [cheatingProbabilityList, setCheatingProbabilityList] = useState<
+    CheatingProbability[]
+  >([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // fullscreen state (do NOT auto-enter fullscreen)
@@ -121,7 +127,7 @@ const Interview = () => {
       name: type,
       timestamp: new Date(),
     };
-    console.log(violation)
+    console.log(violation);
     try {
       const response = await updateViolations(applicationId, violation);
       if (response.success) {
@@ -145,12 +151,11 @@ const Interview = () => {
     console.log(`VIOLATION DETECTED: ${type} - ${message}`);
     await addViolationToDatabase(`VIOLATION DETECTED: ${type}`);
 
-    if (newCount >= 20) {
-      setTimeout(async () => {
-        alert("Maximum violations reached. Interview will be terminated.");
-        await endInterview();
-      }, 3000);
-    }
+    // if (newCount >= 20) {
+    //   setTimeout(async () => {
+    //     await endInterview();
+    //   }, 3000);
+    // }
   };
 
   const handleFullscreenExit = () => {
@@ -250,13 +255,13 @@ const Interview = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
-  const handleFaceDetected = (detected: boolean) => {
-    setFaceDetected(detected);
-    if (detected) {
+  const handleFaceDetected = (faceCount: number) => {
+    
+    if (faceCount !== 0) {
       // if face appears, we can close any face dialog automatically
     } else {
       // on lost face, show violation (but also the dialog will appear)
-      handleViolation("Face Missing", "Face not detected in camera feed");
+      // handleViolation("no_face", "Face not detected in camera feed");
     }
   };
 
@@ -298,7 +303,13 @@ const Interview = () => {
       <div className="flex h-[calc(100vh-60px)]">
         <div className="w-1/3 p-4 flex flex-col space-y-4 ">
           <div className="h-1/2">
-            <CandidateVideoPanel onFaceDetected={handleFaceDetected} />
+            {/* <CandidateVideoPanel onFaceDetected={handleFaceDetected} /> */}
+            <HeadPoseDetector
+              handleViolationsUpdate={handleViolation}
+              cheatingProbabilityList={cheatingProbabilityList}
+              setCheatingProbabilityList={setCheatingProbabilityList}
+              handleFaceDetected={handleFaceDetected}
+            />
           </div>
           <div id="ai-bot" className="h-1/2  rounded-[5px]">
             <AITextToSpeech text={aiResponse} autoPlay={true} />
@@ -311,6 +322,7 @@ const Interview = () => {
             isWaitingForAnswer={isWaitingForAnswer}
             aiResponse={aiResponse}
             setAiResponse={setAiResponse}
+            cheatingProbabilityList={cheatingProbabilityList}
           />
         </div>
 

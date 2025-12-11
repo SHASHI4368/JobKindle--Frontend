@@ -46,6 +46,10 @@ export async function PATCH(
     updateOps.$set.evaluation = data.evaluation;
   }
 
+  if (data.headPoseCheatingUrl) {
+    updateOps.$set.headPoseCheatingUrl = data.headPoseCheatingUrl;
+  }
+
   if (data.status) {
     updateOps.$set.status = data.status;
     updateOps.$set.endedAt = data.endedAt || new Date();

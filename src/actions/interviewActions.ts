@@ -182,7 +182,8 @@ export const updateViolations = async (
 
 export const updateEvaluation = async (
   applicationId: string,
-  evaluation: Evaluation
+  evaluation: Evaluation,
+  headPoseCheatingUrl: string
 ) => {
   "use server";
   const url = `${NextAPIURL}/interviews/${applicationId}`;
@@ -190,6 +191,7 @@ export const updateEvaluation = async (
     const body: any = {};
     if (evaluation) {
       body.evaluation = evaluation;
+      body.headPoseCheatingUrl = headPoseCheatingUrl;
     }
     body.status = "completed";
     const response = await axios.patch(url, body);
@@ -278,7 +280,10 @@ export const answerTechnicalInterview = async (
 ) => {
   const url = `${agentURL}/next_question`;
   try {
+    console.log("qa_history", qa_history);
+    console.log("violations", violations)
     const response = await axios.post(url, { email, qa_history, violations });
+    console.log(response.data);
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.data) {

@@ -40,6 +40,7 @@ export type ViewPostData = {
     };
     skills: string[];
     deadline: string;
+    applicationsCount: number;
   };
 };
 
@@ -99,6 +100,7 @@ export type ViewPostsProps = {
   requirements: string;
   createdAt: string;
   deadline: string;
+  applicationsCount: number;
   benefits: string;
   skills: [
     {
