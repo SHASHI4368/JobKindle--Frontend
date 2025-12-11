@@ -15,7 +15,7 @@ type JobDetailsCardProps = {
 };
 
 const JobDetailsCard = ({ jobData }: JobDetailsCardProps) => {
-  const { basicInformation, deadline } = jobData.jobData;
+  const { basicInformation, deadline, applicationsCount } = jobData.jobData;
 
   const getWorkTypeDisplay = (workType: string) => {
     const workTypeMap: { [key: string]: string } = {
@@ -95,7 +95,7 @@ const JobDetailsCard = ({ jobData }: JobDetailsCardProps) => {
                 </div>
                 <div className="flex items-center space-x-1">
                   <Users className="w-4 h-4 text-gray-500" />
-                  <span>45 applicants</span>
+                  <span>{`${applicationsCount} ${applicationsCount === 1 ? 'applicant' : 'applicants'}`} </span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <span className="font-semibold text-green-700 text-sm sm:text-base">

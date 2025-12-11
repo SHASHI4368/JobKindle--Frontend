@@ -34,6 +34,7 @@ const Interview = () => {
     message: "",
   });
   const [isWaitingForAnswer, setIsWaitingForAnswer] = useState(true);
+  const [isInterviewCompleted, setIsInterviewCompleted] = useState(false); // Add this
 
   const [cheatingProbabilityList, setCheatingProbabilityList] = useState<
     CheatingProbability[]
@@ -256,7 +257,6 @@ const Interview = () => {
   }, [router]);
 
   const handleFaceDetected = (faceCount: number) => {
-    
     if (faceCount !== 0) {
       // if face appears, we can close any face dialog automatically
     } else {
@@ -270,6 +270,10 @@ const Interview = () => {
     setTimeout(() => {
       setIsWaitingForAnswer(true);
     }, 1000);
+  };
+
+  const handleInterviewCompleted = (completed: boolean) => {
+    setIsInterviewCompleted(completed);
   };
 
   async function endInterview() {
@@ -298,12 +302,12 @@ const Interview = () => {
         faceDetected={faceDetected}
         timeRemaining={timeRemaining}
         onEndInterview={endInterview}
+        isInterviewCompleted={isInterviewCompleted} // Add this
       />
 
       <div className="flex h-[calc(100vh-60px)]">
         <div className="w-1/3 p-4 flex flex-col space-y-4 ">
           <div className="h-1/2">
-            {/* <CandidateVideoPanel onFaceDetected={handleFaceDetected} /> */}
             <HeadPoseDetector
               handleViolationsUpdate={handleViolation}
               cheatingProbabilityList={cheatingProbabilityList}
@@ -323,6 +327,7 @@ const Interview = () => {
             aiResponse={aiResponse}
             setAiResponse={setAiResponse}
             cheatingProbabilityList={cheatingProbabilityList}
+            onInterviewCompleted={handleInterviewCompleted} // Add this
           />
         </div>
 

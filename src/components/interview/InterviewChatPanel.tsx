@@ -42,6 +42,7 @@ interface InterviewChatPanelProps {
   aiResponse?: string;
   setAiResponse?: (response: string) => void;
   cheatingProbabilityList?: CheatingProbability[];
+  onInterviewCompleted?: (isCompleted: boolean) => void; // Add this
 }
 
 const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
@@ -50,6 +51,7 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
   aiResponse = "",
   setAiResponse = () => {},
   cheatingProbabilityList = [],
+  onInterviewCompleted, // Add this
 }) => {
   const router = useRouter();
   const interview = useSelector((state: any) => state.interview);
@@ -598,6 +600,13 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
     setIsRecording(!isRecording);
     // In real implementation, integrate with speech-to-text API
   };
+
+  // Update the useEffect to notify parent when completion status changes
+  useEffect(() => {
+    if (onInterviewCompleted) {
+      onInterviewCompleted(isCompleted);
+    }
+  }, [isCompleted, onInterviewCompleted]);
 
   return (
     <>
