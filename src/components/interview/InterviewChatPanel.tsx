@@ -25,6 +25,8 @@ import {
 } from "@/types/interview";
 import InterviewCompletedDialog from "./dialogs/InterviewCompletedDialog";
 import { useRouter } from "next/navigation";
+import { exportCheatingProbabilitiesToCSV } from "./head-pose-detector/utils/exportUtils";
+import { CheatingProbability } from "./head-pose-detector/types";
 
 interface Message {
   id: string;
@@ -39,6 +41,8 @@ interface InterviewChatPanelProps {
   isWaitingForAnswer: boolean;
   aiResponse?: string;
   setAiResponse?: (response: string) => void;
+  cheatingProbabilityList?: CheatingProbability[];
+  onInterviewCompleted?: (isCompleted: boolean) => void; // Add this
 }
 
 const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
@@ -46,6 +50,8 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
   isWaitingForAnswer,
   aiResponse = "",
   setAiResponse = () => {},
+  cheatingProbabilityList = [],
+  onInterviewCompleted, // Add this
 }) => {
   const router = useRouter();
   const interview = useSelector((state: any) => state.interview);
@@ -143,7 +149,7 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
       const response = await startGeneralInterview(app.userEmail);
       const question = response.question ?? response.next_question;
       if (response.success && question) {
-        console.log("test 12")
+        console.log("test 12");
         setAiResponse(question);
         // store AI question on server and normalize returned message if available
         const messageRes = await updateConversation(
@@ -180,7 +186,6 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
     }
   };
 
-  
   const getFirstTechnicalQuestion = async (
     applicationDataParam: InterviewApplicationDetails | null
   ) => {
@@ -351,7 +356,6 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
     } catch (error) {
       console.error("Error submitting answer / fetching next question:", error);
     } finally {
-      onAnswerSubmitted(currentAnswer);
       setCurrentAnswer("");
     }
   };
@@ -361,39 +365,39 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
       try {
         if (!applicationData) return;
 
+        // Store answer before clearing
+        const userAnswer = currentAnswer;
+
+        // Clear input immediately
+        setCurrentAnswer("");
+
         // 1) Save user's answer to server
         const answerRes = await updateConversation(
           applicationData.applicationId.toString(),
           {
-            text: currentAnswer,
+            text: userAnswer,
             isAI: false,
             isTechnical: true,
             timestamp: new Date(),
           }
         );
 
-        if (answerRes.success && answerRes.data) {
-          setMessages((prev) => [
-            ...prev,
-            normalizeServerMessage(answerRes.data),
-          ]);
-        } else {
-          // fallback local append
-          setMessages((prev) => [
-            ...prev,
-            {
-              id: Date.now().toString(),
-              text: currentAnswer,
-              isAI: false,
-              isTechnical: true,
-              timestamp: new Date(),
-            },
-          ]);
-        }
+        const savedUserMessage =
+          answerRes.success && answerRes.data
+            ? normalizeServerMessage(answerRes.data)
+            : {
+                id: Date.now().toString(),
+                text: userAnswer,
+                isAI: false,
+                isTechnical: true,
+                timestamp: new Date(),
+              };
 
-        // get the texhnical Q&A history from messages and add currentAnswer to last object's answer
+        // Add user message to UI
+        setMessages((prev) => [...prev, savedUserMessage]);
+
+        // get the technical Q&A history from messages and add currentAnswer to last object's answer
         const qa_history: { question: string; answer: string }[] = [];
-        let currentQuestion = "";
         // get the technical Q&A history from messages
         const technicalQA = messages.filter((m) => m.isTechnical);
         console.log(technicalQA);
@@ -418,13 +422,13 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
           // add the last Q&A pair
           tempConversation = {
             question: technicalQA[technicalQA.length - 1].text,
-            answer: currentAnswer,
+            answer: userAnswer,
           };
           qa_history.push(tempConversation);
         } else {
           tempConversation = {
             question: technicalQA[technicalQA.length - 1].text,
-            answer: currentAnswer,
+            answer: userAnswer,
           };
           qa_history.push(tempConversation);
         }
@@ -434,7 +438,7 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
         const response = await answerTechnicalInterview(
           applicationData.userEmail,
           qa_history,
-          violations
+          []
         );
         const question =
           response.next_question ?? response.question ?? response.message;
@@ -443,6 +447,11 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
         if (question) {
           console.log(question);
           setAiResponse(question);
+
+          // Check if interview is complete
+          const isComplete =
+            question === "Thank you for completing the technical interview!";
+
           // store AI question on server
           const messageRes = await updateConversation(
             applicationData.applicationId.toString(),
@@ -453,100 +462,83 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
               timestamp: new Date(),
             }
           );
-          console.log(response);
-          console.log(messageRes)
-          if (messageRes.success && messageRes.data) {
-            console.log("test 1")
-            if (
-              question === "Thank you for completing the technical interview!"
-            ) {
-              console.log("test 2")
-              if(response.evaluation.total_score === 0 || response.evaluation.total_score === null || response.evaluation.total_score === undefined){
-                handleSubmitTechnicalAnswer();
-                return;
-              }
-              // Interview complete - handle accordingly
-              await addEvaluationDetails(response.evaluation);
-              setMessages((prev) => [
-                ...prev,
-                normalizeServerMessage(messageRes.data),
-              ]);
-              return;
-            }
-          } else {
-            console.log("test 3")
-            if (
-              question === "Thank you for completing the technical interview!"
-            ) {
-              console.log("test 4")
-              // Interview complete - handle accordingly
-              if (
-                response.evaluation.total_score === 0 ||
-                response.evaluation.total_score === null ||
-                response.evaluation.total_score === undefined
-              ) {
-                handleSubmitTechnicalAnswer();
-                return;
-              }
-              await addEvaluationDetails(response.evaluation);
-              setMessages((prev) => [
-                ...prev,
-                {
+
+          const savedAIMessage =
+            messageRes.success && messageRes.data
+              ? normalizeServerMessage(messageRes.data)
+              : {
                   id: Date.now().toString(),
                   text: question,
                   isAI: true,
                   isTechnical: true,
                   timestamp: new Date(),
-                },
-              ]);
+                };
+
+          // Handle completion
+          if (isComplete) {
+            if (
+              !response.evaluation ||
+              response.evaluation.total_score === 0 ||
+              response.evaluation.total_score === null ||
+              response.evaluation.total_score === undefined
+            ) {
+              console.log("Invalid evaluation, retrying...");
+              // Don't add message or open dialog, just retry
+              await handleSubmitTechnicalAnswer();
               return;
             }
-            setMessages((prev) => [
-              ...prev,
-              {
-                id: Date.now().toString(),
-                text: question,
-                isAI: true,
-                isTechnical: true,
-                timestamp: new Date(),
-              },
-            ]);
+
+            console.log("Interview completed with valid evaluation");
+            // Add completion message to UI
+            setMessages((prev) => [...prev, savedAIMessage]);
+            // Process evaluation and open dialog
+            await addEvaluationDetails(response.evaluation);
+            return;
           }
+
+          // Not complete - add next question to UI
+          setMessages((prev) => [...prev, savedAIMessage]);
         }
+
+        // Notify parent component
+        onAnswerSubmitted(userAnswer);
       } catch (error) {
         console.error(
           "Error submitting answer / fetching next question:",
           error
         );
-      } finally {
-        onAnswerSubmitted(currentAnswer);
-        setCurrentAnswer("");
       }
     }
   };
 
   const addEvaluationDetails = async (evaluation: Evaluation) => {
-    console.log("test 5")
+    console.log("Processing evaluation details");
     if (!applicationData) return;
-    console.log("test 6");
+
     try {
+      const cheatingUrl = await exportCheatingProbabilitiesToCSV(
+        cheatingProbabilityList
+      );
       const response = await updateEvaluation(
         applicationData.applicationId.toString(),
-        evaluation
+        evaluation,
+        cheatingUrl || ""
       );
+
       if (response.success) {
-        console.log("test 7");
-        console.log(evaluation.total_score)
+        console.log("Evaluation saved, ending interview");
         const mainRes = await endInterview(
           applicationData.applicationId,
           evaluation.total_score,
           Cookies.get("jwt") || ""
         );
-        console.log(mainRes)
+
         if (mainRes.success) {
-          console.log("test 8");
+          console.log(
+            "Interview ended successfully, opening completion dialog"
+          );
+          // Open dialog AFTER everything is complete
           setIsCompleted(true);
-          console.log("Evaluation updated:", response);
         }
       }
     } catch (error) {
@@ -608,6 +600,13 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
     setIsRecording(!isRecording);
     // In real implementation, integrate with speech-to-text API
   };
+
+  // Update the useEffect to notify parent when completion status changes
+  useEffect(() => {
+    if (onInterviewCompleted) {
+      onInterviewCompleted(isCompleted);
+    }
+  }, [isCompleted, onInterviewCompleted]);
 
   return (
     <>

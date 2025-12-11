@@ -204,7 +204,7 @@ const Avatar = ({
               View Profile
             </button>
 
-            <button
+            {/* <button
               onClick={() => handleMenuItemClick("/settings")}
               className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors duration-150"
             >
@@ -218,7 +218,7 @@ const Avatar = ({
             >
               <Bell size={16} className="mr-3 text-gray-400" />
               Notifications
-            </button>
+            </button> */}
 
             {/* Divider */}
             <div className="border-t border-gray-100 my-1"></div>

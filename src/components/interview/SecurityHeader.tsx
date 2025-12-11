@@ -6,6 +6,7 @@ type SecurityHeaderProps = {
   faceDetected: boolean;
   timeRemaining: number;
   onEndInterview: () => void;
+  isInterviewCompleted?: boolean; // Add this
 };
 
 const SecurityHeader = ({
@@ -13,6 +14,7 @@ const SecurityHeader = ({
   faceDetected,
   timeRemaining,
   onEndInterview,
+  isInterviewCompleted = false, // Add this
 }: SecurityHeaderProps) => {
   const formatTime = (seconds: number) => {
     const hrs = Math.floor(seconds / 3600);
@@ -24,22 +26,28 @@ const SecurityHeader = ({
   };
 
   return (
-    <div className="bg-red-600 p-3">
+    <div
+      className={`p-3 ${isInterviewCompleted ? "bg-green-600" : "bg-red-600"}`}
+    >
       <div className="flex items-center justify-between text-white text-sm">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
             <Shield className="w-4 h-4" />
-            <span>🔒 SECURE INTERVIEW MODE - ALL ACTIONS MONITORED</span>
+            <span>
+              {isInterviewCompleted
+                ? "✅ INTERVIEW COMPLETED"
+                : "🔒 SECURE INTERVIEW MODE - ALL ACTIONS MONITORED"}
+            </span>
           </div>
 
-          {warningCount > 0 && (
+          {!isInterviewCompleted && warningCount > 0 && (
             <div className="flex items-center gap-2 bg-red-700 px-3 py-1 rounded animate-pulse">
               <AlertTriangle className="w-4 h-4" />
               <span>⚠️ VIOLATIONS: {warningCount}/20</span>
             </div>
           )}
 
-          {!faceDetected && (
+          {!isInterviewCompleted && !faceDetected && (
             <div className="flex items-center gap-2 bg-yellow-600 px-3 py-1 rounded animate-pulse">
               <AlertTriangle className="w-4 h-4" />
               <span>👤 FACE NOT DETECTED</span>
@@ -48,16 +56,25 @@ const SecurityHeader = ({
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4" />
-            <span>⏱️ {formatTime(timeRemaining)}</span>
-          </div>
+          {!isInterviewCompleted && (
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              <span>⏱️ {formatTime(timeRemaining)}</span>
+            </div>
+          )}
           <button
             onClick={onEndInterview}
-            className="flex items-center gap-2 bg-red-700 hover:bg-red-800 px-3 py-1 rounded text-sm font-medium"
+            disabled={!isInterviewCompleted}
+            className={`flex items-center gap-2 px-3 py-1 rounded text-sm font-medium transition-all ${
+              isInterviewCompleted
+                ? "bg-green-700 hover:bg-green-800 cursor-pointer"
+                : "bg-red-700 hover:bg-red-800 opacity-50 cursor-not-allowed"
+            }`}
           >
             <X className="w-4 h-4" />
-            END INTERVIEW
+            {isInterviewCompleted
+              ? "EXIT INTERVIEW"
+              : "END INTERVIEW (Disabled)"}
           </button>
         </div>
       </div>

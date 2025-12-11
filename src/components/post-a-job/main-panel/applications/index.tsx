@@ -35,6 +35,7 @@ const ViewApplication = () => {
       },
       skills: [""],
       deadline: "",
+      applicationsCount: 0
     },
   });
   const [applications, setApplications] = useState<Application[] | null>(null);
@@ -86,6 +87,7 @@ const ViewApplication = () => {
               ? jobPost.skills.flat().map((skill: any) => skill.name)
               : [],
             deadline: jobPost.deadline,
+            applicationsCount: jobPost.applicationsCount || 0
           },
         };
 
