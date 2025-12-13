@@ -5,19 +5,18 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
+
 RUN npm ci
 
 FROM base AS builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
+
 COPY . .
 
-# Set build environment variables including MONGODB_URI to prevent errors
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV NEXT_PHASE="phase-production-build"
-ENV MONGODB_URI="mongodb://build-dummy/test"
 
 RUN npm run build
 

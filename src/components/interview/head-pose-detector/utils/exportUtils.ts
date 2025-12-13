@@ -7,7 +7,7 @@ const uploadCSVToImageKit = async (
 ): Promise<string> => {
   try {
     // Get authentication parameters from your backend
-    const authResponse = await fetch("http://localhost:3000/api/auth");
+    const authResponse = await fetch("http://localhost:3001/api/auth");
     const authData = await authResponse.json();
 
     // Create a Blob from CSV string

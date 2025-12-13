@@ -33,6 +33,7 @@ const InterviewResultsDialog = ({
   const [loading, setLoading] = useState(false);
   const [interviewResult, setInterviewResult] =
     useState<InterviewResponse | null>(null);
+    const [cheatingAverage, setCheatingAverage] = useState<number | null>(null);
 
   useEffect(() => {
     if (open && applicationId) {
@@ -47,6 +48,11 @@ const InterviewResultsDialog = ({
       console.log(response.data);
       if (response.success) {
         setInterviewResult(response.data);
+        const csvUrl = response.data.headPoseCheatingUrl;
+        if (csvUrl) {
+          const average = await getAverageCheatingScore(csvUrl);
+          setCheatingAverage(average);
+        }
       }
     } catch (e) {
       console.error("Error fetching interview results:", e);
@@ -102,6 +108,41 @@ const InterviewResultsDialog = ({
     return "text-red-600";
   };
 
+  const getAverageCheatingScore = async (csvUrl: string): Promise<number> => {
+    try {
+      console.log(csvUrl)
+      // Fetch the CSV file
+      const response = await fetch(csvUrl);
+      const csvText = await response.text();
+
+      // Parse the CSV
+      const lines = csvText.trim().split("\n");
+      console.log(lines);
+      // Skip the header row and process data rows
+      const cheatingScores = lines
+        .slice(1)
+        .map((line) => {
+          const columns = line.split(",");
+          // The Cheating Probability is in the third column (index 2)
+          return parseFloat(columns[2]);
+        })
+        .filter((score) => !isNaN(score)); // Filter out any invalid values
+        console.log(cheatingScores);
+      // Calculate average
+      if (cheatingScores.length === 0) {
+        return 0;
+      }
+
+      const sum = cheatingScores.reduce((acc, score) => acc + score, 0);
+      const average = sum / cheatingScores.length;
+
+      return average;
+    } catch (error) {
+      console.error("Error fetching or parsing CSV:", error);
+      throw error;
+    }
+  };
+
   const calculateTimingStats = () => {
     if (!interviewResult?.conversation) return null;
 
@@ -123,6 +164,8 @@ const InterviewResultsDialog = ({
       responseTimes.length > 0
         ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
         : 0;
+
+    
 
     const totalDuration =
       interviewResult.endedAt && interviewResult.startedAt
@@ -164,7 +207,7 @@ const InterviewResultsDialog = ({
         ) : interviewResult ? (
           <div className="space-y-6">
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
                 <div className="flex items-center gap-2 mb-2">
                   <Award className="h-5 w-5 text-blue-600" />
@@ -210,6 +253,22 @@ const InterviewResultsDialog = ({
                   </div>
                 </>
               )}
+              <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <Award className="h-5 w-5 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-900">
+                    Cheating Probability
+                  </span>
+                </div>
+                <div
+                  className={`text-3xl font-bold ${getTotalScoreColor(
+                    interviewResult.evaluation?.total_score || 0,
+                    overallMax
+                  )}`}
+                >
+                  {cheatingAverage !== null ? cheatingAverage.toFixed(2) : "N/A"}{" "}
+                </div>
+              </div>
             </div>
 
             {/* Overall Feedback */}

@@ -35,7 +35,7 @@ export type ViewPostData = {
     };
     jobDetails: {
       jobDescription: string;
-      requirements: string[];
+      requirements: string;
       benefits: string;
     };
     skills: string[];
@@ -64,8 +64,8 @@ export interface BasicInformation {
 
 export interface JobDetails {
   jobDescription: string;
-  requirements: string[];
-  benefits: string[];
+  requirements: string;
+  benefits: string;
 }
 
 export interface JobData {

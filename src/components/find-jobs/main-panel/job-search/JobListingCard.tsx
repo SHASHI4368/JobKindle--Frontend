@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Salary, ViewPostData } from "@/types/jobPosts";
 import AskDialog from "@/components/common/dialogs/ask-dialog";
 import ApplyJobDialog from "./apply-job-dialog";
+import { parseMarkdown } from "@/lib/markdown";
 
 const JobListingCard = ({ jobData }: { jobData: ViewPostData }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -92,7 +93,9 @@ const JobListingCard = ({ jobData }: { jobData: ViewPostData }) => {
                 </div>
                 <div className="flex items-center space-x-1">
                   <Users className="w-4 h-4" />
-                  <span>{`${applicationsCount} applicant${applicationsCount !== 1 ? "s" : ""}`}</span>
+                  <span>{`${applicationsCount} applicant${
+                    applicationsCount !== 1 ? "s" : ""
+                  }`}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <span className="font-semibold text-green-600 text-sm sm:text-base">
@@ -179,9 +182,7 @@ const JobListingCard = ({ jobData }: { jobData: ViewPostData }) => {
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Job Description
               </h3>
-              <p className="text-gray-700 text-sm sm:text-base leading-relaxed">
-                {jobDetails.jobDescription}
-              </p>
+              {parseMarkdown(jobDetails.jobDescription)}
             </div>
 
             {/* Requirements */}
@@ -189,7 +190,7 @@ const JobListingCard = ({ jobData }: { jobData: ViewPostData }) => {
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Requirements
               </h3>
-              <ul className="space-y-2">{jobDetails.requirements}</ul>
+              {parseMarkdown(jobDetails.requirements)}
             </div>
 
             {/* Benefits */}
@@ -197,7 +198,7 @@ const JobListingCard = ({ jobData }: { jobData: ViewPostData }) => {
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Benefits
               </h3>
-              <p className="">{jobDetails.benefits}</p>
+              {parseMarkdown(jobDetails.benefits)}
             </div>
 
             {/* All Skills */}

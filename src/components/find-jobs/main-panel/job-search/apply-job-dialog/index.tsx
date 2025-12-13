@@ -72,6 +72,7 @@ const ApplyJobDialog = ({
       );
       if (response.success) {
         toast.success("Successfully applied for job");
+        handleOpenChange(false);
       } else {
         toast.error(response.message || "Error applying for job");
       }

@@ -29,7 +29,7 @@ type ImageKitUploaderProps = {
 const ImageKitUploader = ({
   publicKey = "public_Nb3Uiddx43llkFGng2BHCcZHgWo=",
   urlEndpoint = "https://ik.imagekit.io/web92xyy0/",
-  authenticationEndpoint = "http://localhost:3000/api/auth",
+  authenticationEndpoint = "http://localhost:3001/api/auth",
   onUploadSuccess,
   onUploadError,
   maxFileSize = 10 * 1024 * 1024, // 10MB default
@@ -44,7 +44,6 @@ const ImageKitUploader = ({
   const [uploadedFile, setUploadedFile] = useState<any>(null);
   const [error, setError] = useState("");
   const [isDragOver, setIsDragOver] = useState(false);
-
 
   // Effect to trigger upload when upload prop becomes true
   useEffect(() => {
@@ -147,12 +146,12 @@ const ImageKitUploader = ({
     handleFileSelect(e.dataTransfer.files);
   };
 
-  const handleDragOver = (e:any) => {
+  const handleDragOver = (e: any) => {
     e.preventDefault();
     setIsDragOver(true);
   };
 
-  const handleDragLeave = (e:any) => {
+  const handleDragLeave = (e: any) => {
     e.preventDefault();
     setIsDragOver(false);
   };
@@ -174,13 +173,13 @@ const ImageKitUploader = ({
     }
   };
 
-  const copyToClipboard = (text:any) => {
+  const copyToClipboard = (text: any) => {
     navigator.clipboard.writeText(text).then(() => {
       console.log("Copied to clipboard");
     });
   };
 
-  const getFileIcon = (fileName:any) => {
+  const getFileIcon = (fileName: any) => {
     const extension = fileName.toLowerCase().split(".").pop();
 
     if (["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(extension)) {
@@ -211,9 +210,7 @@ const ImageKitUploader = ({
           onClick={openFileDialog}
         >
           <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <p className="text-gray-600 mb-2">
-            {placeholder}
-          </p>
+          <p className="text-gray-600 mb-2">{placeholder}</p>
           <p className="text-sm text-gray-500">
             Max size: {(maxFileSize / 1024 / 1024).toFixed(1)}MB
           </p>
@@ -273,7 +270,7 @@ const ImageKitUploader = ({
             </div>
           </div>
           <Button
-            variant={'outline'}
+            variant={"outline"}
             onClick={resetUpload}
             className="text-sm text-green-600 hover:text-green-700 transition-colors font-medium"
           >

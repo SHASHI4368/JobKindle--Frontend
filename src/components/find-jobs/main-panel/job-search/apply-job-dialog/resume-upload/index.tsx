@@ -19,7 +19,12 @@ type ResumeUploadBoxProps = {
   setResumeUpload: (upload: boolean) => void;
 };
 
-const ResumeUploadBox = ({ resume, setResume, resumeUpload, setResumeUpload }: ResumeUploadBoxProps) => {
+const ResumeUploadBox = ({
+  resume,
+  setResume,
+  resumeUpload,
+  setResumeUpload,
+}: ResumeUploadBoxProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -32,17 +37,23 @@ const ResumeUploadBox = ({ resume, setResume, resumeUpload, setResumeUpload }: R
       if (jwt) {
         try {
           setLoading(true);
-          if (account.profile.resume) {
-            const resumeDetails = await getImageData(account.profile.resume);
-            console.log(resumeDetails);
-            if (resumeDetails) {
-              setResume({
-                id: resumeDetails.versionInfo.id,
-                type: "CV",
-                url: resumeDetails.url,
-                name: resumeDetails.name,
-                size: (resumeDetails.size / 1024).toFixed(2) + " KB",
-              });
+          console.log("Hi")
+          const profileDataRes = await fetchProfileData(jwt);
+          console.log(profileDataRes);
+          if (profileDataRes.success) {
+            const resumeUrl = profileDataRes.data.resume;
+            if (resumeUrl) {
+              const resumeDetails = await getImageData(resumeUrl);
+              console.log(resumeDetails);
+              if (resumeDetails) {
+                setResume({
+                  id: resumeDetails.versionInfo.id,
+                  type: "CV",
+                  url: resumeDetails.url,
+                  name: resumeDetails.name,
+                  size: (resumeDetails.size / 1024).toFixed(2) + " KB",
+                });
+              }
             }
           }
         } catch (err) {
@@ -53,7 +64,7 @@ const ResumeUploadBox = ({ resume, setResume, resumeUpload, setResumeUpload }: R
       }
     };
     fetchData();
-  }, [account.profile]);
+  }, []);
 
   const handleSaveChanges = async (resumeUrl: string) => {
     try {

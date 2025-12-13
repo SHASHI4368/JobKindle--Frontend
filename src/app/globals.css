@@ -369,3 +369,67 @@ input[type="number"] {
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
 }
+
+
+/* ============================== */
+/* Beautiful Blue Scrollbar — Textarea */
+/* ============================== */
+
+textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+textarea::-webkit-scrollbar-track {
+  background: #eef3ff; /* soft blue-tinted gray */
+  border-radius: 10px;
+  margin: 4px;
+}
+
+/* Thumb */
+textarea::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    hsl(221, 83%, 60%),
+    hsl(225, 70%, 48%)
+  );
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background 0.3s ease;
+}
+
+/* Hover */
+textarea::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    hsl(221, 83%, 55%),
+    hsl(225, 70%, 43%)
+  );
+}
+
+/* Active (while dragging) */
+textarea::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(
+    180deg,
+    hsl(221, 83%, 50%),
+    hsl(225, 70%, 38%)
+  );
+}
+
+/* Remove arrows */
+textarea::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* Firefox support */
+textarea {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(221, 83%, 60%) #eef3ff;
+}
+
+/* Smooth scrolling */
+textarea {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+}

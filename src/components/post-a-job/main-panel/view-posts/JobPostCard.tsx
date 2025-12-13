@@ -24,6 +24,7 @@ import { useDispatch } from "react-redux";
 import { setCreateJobPostsData } from "@/redux/features/createJobPostsSlice";
 import ViewApplicationsDialog from "../applications";
 import { useRouter } from "next/navigation";
+import { parseMarkdown } from "@/lib/markdown";
 
 const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -32,7 +33,7 @@ const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [jobPostId, setJobPostId] = useQueryState("jobPostId", parseAsInteger);
 
-  const { basicInformation, jobDetails, skills, deadline } = jobData.jobData;
+  const { basicInformation, jobDetails, skills, deadline, applicationsCount } = jobData.jobData;
 
   // Calculate days ago from deadline (mock calculation)
   const getDaysAgo = (deadlineDate: string): string => {
@@ -109,6 +110,7 @@ const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
               ? post.skills.flat().map((skill) => skill.name)
               : [],
             deadline: post.deadline,
+            applicationsCount: post.applicationsCount || 0
           },
         }));
         dispatch(setCreateJobPostsData(response.jobPosts || []));
@@ -168,7 +170,7 @@ const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
                 </div>
                 <div className="flex items-center space-x-1">
                   <Users className="w-4 h-4" />
-                  <span>45 applicants</span>
+                  <span>{`${applicationsCount} ${applicationsCount === 1 ? "applicant" : "applicants"}`}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <span className="font-semibold text-green-600 text-sm sm:text-base">
@@ -252,9 +254,10 @@ const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
               )
             }
           >
-            <span className="font-geist-sans font-[500] ">View Applications</span>
+            <span className="font-geist-sans font-[500] ">
+              View Applications
+            </span>
             <FileUser className="w-4 h-4" />
-              
           </Button>
           <Button
             variant={"ghost"}
@@ -282,9 +285,7 @@ const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Job Description
               </h3>
-              <p className="text-gray-700 text-sm sm:text-base leading-relaxed">
-                {jobDetails.jobDescription}
-              </p>
+              {parseMarkdown(jobDetails.jobDescription)}
             </div>
 
             {/* Requirements */}
@@ -292,7 +293,7 @@ const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Requirements
               </h3>
-              <ul className="space-y-2">{jobDetails.requirements}</ul>
+              {parseMarkdown(jobDetails.requirements)}
             </div>
 
             {/* Benefits */}
@@ -300,7 +301,7 @@ const JobPostCard = ({ jobData }: { jobData: ViewPostData }) => {
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Benefits
               </h3>
-              <p className="">{jobDetails.benefits}</p>
+              {parseMarkdown(jobDetails.benefits)}
             </div>
 
             {/* All Skills */}

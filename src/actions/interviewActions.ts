@@ -118,6 +118,7 @@ export const createInterview = async ({
     if (violations) body.violations = violations;
 
     const response = await axios.post(url, body);
+    console.log(response.data);
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.data) {

@@ -25,7 +25,10 @@ const JobPostPreviewDialog = ({ jobData }: JobPostPreviewMainProps) => {
           </span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="overflow-auto max-h-[80vh]" style={{ width: "80vw", maxWidth: "900px" }}>
+      <DialogContent
+        className="overflow-auto beautiful-scrollbar max-h-[80vh]"
+        style={{ width: "80vw", maxWidth: "900px" }}
+      >
         <DialogHeader>
           <DialogTitle></DialogTitle>
           <JobPostPreviewMain jobData={jobData} />

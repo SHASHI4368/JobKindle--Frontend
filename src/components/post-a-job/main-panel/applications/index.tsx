@@ -30,7 +30,7 @@ const ViewApplication = () => {
       },
       jobDetails: {
         jobDescription: "",
-        requirements: [""],
+        requirements: "",
         benefits: "",
       },
       skills: [""],

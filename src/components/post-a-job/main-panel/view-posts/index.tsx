@@ -48,6 +48,7 @@ const ViewPosts = () => {
               ? post.skills.flat().map((skill) => skill.name)
               : [],
             deadline: post.deadline,
+            applicationsCount: post.applicationsCount || 0
           },
         }));
         dispatch(setCreateJobPostsData(response.jobPosts || []));

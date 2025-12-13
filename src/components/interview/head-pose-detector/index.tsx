@@ -7,6 +7,7 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import { predictNewCheating } from "./utils/cheatDetector";
 import { useModels } from "./hooks/useModels";
 import { useWebcam } from "./hooks/useWebcam";
+import CameraRequiredDialog from "./components/CameraRequiredDialog";
 import { calculatePoseFromFace, hasPoseChanged } from "./utils/poseCalculation";
 import {
   exportPoseToCSV,
@@ -70,7 +71,7 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
 
   const { faceModel, objectModel, isLoading, error: modelError } = useModels();
   const [error, setError] = useState<string>("");
-  const videoRef = useWebcam(setError);
+  const { videoRef, cameraDetected } = useWebcam(setError); // Updated
 
   const [headPose, setHeadPose] = useState<HeadPose | null>(null);
   const [poseHistory, setPoseHistory] = useState<HeadPose[]>([]);
@@ -421,6 +422,9 @@ const HeadPoseDetector: React.FC<HeadPoseDetectorProps> = ({
         poseHistoryLength={poseHistory.length}
         cheatingProbability={cheatingProbability}
       />
+
+      {/* Camera Required Dialog */}
+      <CameraRequiredDialog open={!cameraDetected} />
     </div>
   );
 };

@@ -27,7 +27,7 @@ const SecurityHeader = ({
 
   return (
     <div
-      className={`p-3 ${isInterviewCompleted ? "bg-green-600" : "bg-red-600"}`}
+      className={`p-3 z-[10000] ${isInterviewCompleted ? "bg-green-600" : "bg-red-600"}`}
     >
       <div className="flex items-center justify-between text-white text-sm">
         <div className="flex items-center gap-6">
@@ -64,11 +64,10 @@ const SecurityHeader = ({
           )}
           <button
             onClick={onEndInterview}
-            disabled={!isInterviewCompleted}
-            className={`flex items-center gap-2 px-3 py-1 rounded text-sm font-medium transition-all ${
+            className={`flex items-center  gap-2 px-3 py-1 rounded text-sm font-medium transition-all ${
               isInterviewCompleted
                 ? "bg-green-700 hover:bg-green-800 cursor-pointer"
-                : "bg-red-700 hover:bg-red-800 opacity-50 cursor-not-allowed"
+                : "bg-red-700 hover:bg-red-800 "
             }`}
           >
             <X className="w-4 h-4" />

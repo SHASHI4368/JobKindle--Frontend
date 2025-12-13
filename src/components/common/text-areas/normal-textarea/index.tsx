@@ -23,13 +23,13 @@ const NormalTextArea = ({
   isDisabled = false,
 }: NormalTextAreaProps) => {
   return (
-    <div className="flex flex-col w-full gap-2 font-geist-sans">
+    <div className="flex flex-col w-full  gap-2 font-geist-sans">
       <Label className="sm:text-[14px] text-[12px] text-gray-700">
         {label}
       </Label>
       <div>
         <Textarea
-          className="md:h-[100px] min-h-[40px] md:text-[16px] text-[14px]"
+          className="md:h-[100px]  min-h-[40px] md:text-[16px] text-[14px]"
           placeholder={placeholder}
           value={value ?? ""}
           onChange={onChange}

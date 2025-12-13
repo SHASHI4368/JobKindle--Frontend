@@ -15,10 +15,14 @@ import { useInterviewTimer } from "./hooks/useInterviewTimer";
 import Cookies from "js-cookie";
 import { getJobPostById } from "@/actions/jobPostActions";
 import { getApplicationById } from "@/actions/applicationActions";
-import { updateViolations } from "@/actions/interviewActions";
+import {
+  updateApplicationStatus,
+  updateViolations,
+} from "@/actions/interviewActions";
 import AITextToSpeech from "./AITextToSpeech";
 import HeadPoseDetector from "./head-pose-detector";
 import { CheatingProbability } from "./head-pose-detector/types";
+import InterviewCompletedDialog from "./dialogs/InterviewCompletedDialog";
 
 const Interview = () => {
   const router = useRouter();
@@ -261,7 +265,7 @@ const Interview = () => {
       // if face appears, we can close any face dialog automatically
     } else {
       // on lost face, show violation (but also the dialog will appear)
-      // handleViolation("no_face", "Face not detected in camera feed");
+      // handleViolation("no_face", "No face detected");
     }
   };
 
@@ -281,9 +285,26 @@ const Interview = () => {
     router.push("/find-jobs");
   }
 
+  const handleEndInterview = async () => {
+    const applicationId = Number(window.location.pathname.split("/").pop());
+    try {
+      const statusRes = await updateApplicationStatus(
+        Cookies.get("jwt") || "",
+        Number(applicationId),
+        "INTERVIEW_FINISHED"
+      );
+      console.log(statusRes.data);
+      if(statusRes.success){
+        router.push("/find-jobs?activeItem=Interviews");
+      }
+    } catch (err) {
+      console.error("Error updating application status:", err);
+    }
+  };
+
   if (!interviewData) {
     return (
-      <div className="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-gray-900 flex items-center justify-center z-[5000]">
         <div className="text-center text-white">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
           <p>Loading secure interview environment...</p>
@@ -337,13 +358,13 @@ const Interview = () => {
         />
       </div>
 
-      <ViolationAlertDialog
+      {/* <ViolationAlertDialog
         isOpen={showViolationDialog}
         onClose={() => setShowViolationDialog(false)}
         violationType={currentViolation.type}
         violationMessage={currentViolation.message}
         warningCount={warningCount}
-      />
+      /> */}
 
       {/* Require fullscreen dialog: blocks until user manually enters fullscreen */}
       <RequireFullscreenDialog
@@ -357,6 +378,11 @@ const Interview = () => {
         onRetry={() => {
           /* CandidateVideoPanel will re-run detection; no-op here */
         }}
+      />
+      <InterviewCompletedDialog
+        isOpen={isInterviewCompleted}
+        onClose={() => setIsInterviewCompleted(false)}
+        onExitInterview={handleEndInterview}
       />
     </div>
   );

@@ -13,6 +13,7 @@ import { login } from "@/actions/authAction";
 import { setProfileEmail } from "@/redux/features/profileSlice";
 import { encrypt } from "@/actions/crypto";
 import toast from "react-hot-toast";
+import { getAllOrganizations } from "@/actions/organizationActions";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -46,6 +47,15 @@ const Login = () => {
           expires: 1,
           path: "/",
         });
+        const orgRes = await getAllOrganizations(response.data.token);
+        if(orgRes.success){
+          const orgCount = orgRes.data.length;
+          if(orgCount > 0){
+            Cookies.set("hasOrganization", "true", { expires: 1, path: "/" });
+          } else {
+            Cookies.set("hasOrganization", "false", { expires: 1, path: "/" });
+          }
+        }
         window.location.reload();
       } else {
         toast.error(response.message);

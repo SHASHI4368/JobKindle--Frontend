@@ -348,6 +348,7 @@ const NewJob = () => {
             <JobPostPreviewDialog
               jobData={{
                 basicInformation: {
+                  id: 0,
                   jobTitle: jobData.title,
                   companyName: jobData.company.name,
 
@@ -363,16 +364,8 @@ const NewJob = () => {
                 },
                 jobDetails: {
                   jobDescription: jobData.jobDescription,
-                  requirements: jobData.requirements
-                    ? jobData.requirements
-                        .split("\n")
-                        .filter((req) => req.trim() !== "")
-                    : [],
-                  benefits: jobData.benefits
-                    ? jobData.benefits
-                        .split("\n")
-                        .filter((ben) => ben.trim() !== "")
-                    : [],
+                  requirements: jobData.requirements,
+                  benefits: jobData.benefits,
                 },
                 skills: jobData.skills,
                 deadline: jobData.deadline?.toString() || "",

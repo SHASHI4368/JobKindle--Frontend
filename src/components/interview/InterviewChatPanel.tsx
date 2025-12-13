@@ -27,6 +27,7 @@ import InterviewCompletedDialog from "./dialogs/InterviewCompletedDialog";
 import { useRouter } from "next/navigation";
 import { exportCheatingProbabilitiesToCSV } from "./head-pose-detector/utils/exportUtils";
 import { CheatingProbability } from "./head-pose-detector/types";
+import { generateInterviewEvaluation } from "@/lib/groq";
 
 interface Message {
   id: string;
@@ -443,7 +444,8 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
         const question =
           response.next_question ?? response.question ?? response.message;
         console.log(question);
-
+        console.log("Hi 111");
+        console.log(response);
         if (question) {
           console.log(question);
           setAiResponse(question);
@@ -484,7 +486,10 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
             ) {
               console.log("Invalid evaluation, retrying...");
               // Don't add message or open dialog, just retry
-              await handleSubmitTechnicalAnswer();
+              const evaluation = await generateInterviewEvaluation(qa_history);
+              console.log(evaluation);
+              setMessages((prev) => [...prev, savedAIMessage]);
+              await addEvaluationDetails(evaluation);
               return;
             }
 
@@ -611,7 +616,7 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
   return (
     <>
       {loading && (
-        <div className="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-gray-900 flex items-center justify-center z-500">
           <div className="text-center text-white">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
             <p>Loading chat data...</p>
@@ -701,14 +706,7 @@ const InterviewChatPanel: React.FC<InterviewChatPanelProps> = ({
           </div>
         </div>
       </div>
-      <InterviewCompletedDialog
-        isOpen={isCompleted}
-        onClose={() => {}}
-        onExitInterview={() => {
-          // Handle exit interview logic here
-          router.push("/find-jobs?activeItem=Interviews");
-        }}
-      />
+      
     </>
   );
 };
